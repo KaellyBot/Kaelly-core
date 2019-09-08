@@ -1,0 +1,27 @@
+language: java
+dist: trusty
+
+jdk:
+  - oraclejdk8
+
+before_install:
+  - chmod +x mvnw
+
+addons:
+  sonarcloud:
+    organization: "kaellybot"
+    token:
+      secure: $SONAR_TOKEN
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+
+after_success:
+  - mvn clean test jacoco:report coveralls:report
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh success $WEBHOOK_URL
+
+after_failure:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $WEBHOOK_URL
