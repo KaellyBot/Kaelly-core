@@ -5,7 +5,7 @@ KaellyBOT est destinée à fournir des commandes utiles à la communauté de DOF
 ## Ajoutez KaellyBOT à votre serveur : [![Official Kaelly Invite](https://img.shields.io/badge/Add-KaellyBOT-0199FE.svg?style=flat)](https://discordapp.com/oauth2/authorize?&client_id=202916641414184960&scope=bot)
 
 ## Core  
-Ce micro-service est destiné aux intéractions avec Discord par le biais de la librairie Discord4J; en ce sens, un token discord est nécessaire pour faire fonctionner correctement ce module.
+Ce micro-service est destiné aux intéractions avec Discord par le biais de la librairie [Discord4J](https://github.com/Discord4J/Discord4J); en ce sens, un token discord est nécessaire pour faire fonctionner correctement ce module.
 
 ## Licence  
 
