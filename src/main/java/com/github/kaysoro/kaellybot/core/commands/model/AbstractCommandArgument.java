@@ -6,20 +6,17 @@ import discord4j.core.object.entity.Message;
 
 public abstract class AbstractCommandArgument implements CommandArgument {
 
-    private final String VOID_MESSAGE = "";
     protected Command parent;
-    protected String pattern;
+    private String pattern;
 
-    public AbstractCommandArgument(Command parent, String subPattern){
+    protected AbstractCommandArgument(Command parent, String subPattern){
         super();
         this.parent = parent;
         this.pattern = DiscordConstants.DEFAULT_PREFIX + parent.getName() + subPattern;
     }
 
-    @Override
     public boolean triggerMessage(Message message) {
-        System.out.println(message.getContent().orElse(""));
-        return message.getContent().orElse(VOID_MESSAGE).matches(pattern);
+        return message.getContent().map(content -> content.matches(pattern)).orElse(false);
     }
 
     @Override
