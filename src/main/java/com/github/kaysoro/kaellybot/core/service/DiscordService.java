@@ -5,16 +5,14 @@ import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import discord4j.core.object.presence.Activity;
+import discord4j.core.object.presence.Presence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 @Service
 public class DiscordService implements IDiscordService{
-
-    private final static Logger LOG = LoggerFactory.getLogger(DiscordService.class);
 
     private Flux<DiscordClient> discordClient;
 
@@ -33,13 +31,14 @@ public class DiscordService implements IDiscordService{
             final DiscordClient client = new DiscordClientBuilder(token).build();
 
             client.getEventDispatcher().on(ReadyEvent.class)
-                    .subscribe(ready -> LOG.info("Logged in as " + ready.getSelf().getUsername()));
+                    .subscribe(ready -> ready.getSelf().getClient()
+                            .updatePresence(Presence.online(Activity.playing("Dofus"))));
 
             client.getEventDispatcher().on(MessageCreateEvent.class)
                     .map(MessageCreateEvent::getMessage)
                     .subscribe(msg -> commandFactory.getCommands().forEach(cmd -> cmd.request(msg)));
 
-            client.login().block();
+            client.login().subscribe();
             /**
              new ShardingClientBuilder(token)
                     .build()

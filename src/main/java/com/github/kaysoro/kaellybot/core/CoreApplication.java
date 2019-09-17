@@ -1,6 +1,7 @@
 package com.github.kaysoro.kaellybot.core;
 
 import com.github.kaysoro.kaellybot.core.service.IDiscordService;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,6 +21,6 @@ public class CoreApplication  implements CommandLineRunner {
     }
 
 	public static void main(String[] args) {
-		SpringApplication.run(CoreApplication.class, args);
+		SpringApplication.run(CoreApplication.class, ArrayUtils.EMPTY_STRING_ARRAY);
 	}
 }
