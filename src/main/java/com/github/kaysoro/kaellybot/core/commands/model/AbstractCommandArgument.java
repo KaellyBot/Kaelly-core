@@ -10,14 +10,14 @@ public abstract class AbstractCommandArgument implements CommandArgument {
     private String pattern;
     private boolean isDescribed;
 
-    AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed){
+    public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed){
         super();
         this.parent = parent;
         this.pattern = DiscordConstants.DEFAULT_PREFIX + parent.getName() + subPattern;
         this.isDescribed = isDescribed;
     }
 
-    AbstractCommandArgument(Command parent, String subPattern){
+    public AbstractCommandArgument(Command parent, String subPattern){
         this(parent, subPattern, true);
     }
 
@@ -36,7 +36,7 @@ public abstract class AbstractCommandArgument implements CommandArgument {
         return isDescribed;
     }
 
-    Command getParent(){
+    protected Command getParent(){
         return parent;
     }
 }
