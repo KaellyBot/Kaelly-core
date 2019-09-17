@@ -10,4 +10,6 @@ public interface CommandArgument {
     void execute(Message message);
 
     String help(Language lg, String prefix);
+
+    boolean isDescribed();
 }

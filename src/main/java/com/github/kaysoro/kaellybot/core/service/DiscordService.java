@@ -1,6 +1,6 @@
 package com.github.kaysoro.kaellybot.core.service;
 
-import com.github.kaysoro.kaellybot.core.commands.classic.TestCommand;
+import com.github.kaysoro.kaellybot.core.commands.classic.PingCommand;
 import com.github.kaysoro.kaellybot.core.commands.model.Command;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
@@ -31,7 +31,7 @@ public class DiscordService implements IDiscordService{
         if (discordClient == null){
 
             // TODO the following variable will be replaced by a bean dedicated to collect all declared commands
-            List<Command> commands = Stream.of(new TestCommand()).collect(Collectors.toList());
+            List<Command> commands = Stream.of(new PingCommand()).collect(Collectors.toList());
 
             final DiscordClient client = new DiscordClientBuilder(token).build();
 

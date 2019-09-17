@@ -1,6 +1,7 @@
 package com.github.kaysoro.kaellybot.core.commands.model;
 
 import com.github.kaysoro.kaellybot.core.commands.util.Translator;
+import com.github.kaysoro.kaellybot.core.model.constants.DiscordConstants;
 import com.github.kaysoro.kaellybot.core.model.constants.Language;
 import discord4j.core.object.entity.Message;
 import lombok.Getter;
@@ -29,11 +30,25 @@ public abstract class AbstractCommand implements Command {
     protected AbstractCommand(String name){
         super();
         this.name = name;
-        this.arguments = new ArrayList<>();
         this.isPublic = true;
         this.isUsableInMP = true;
         this.isAdmin = false;
         this.isHidden = false;
+
+        this.arguments = new ArrayList<>();
+        this.arguments.add(new AbstractCommandArgument(this, "\\s+help") {
+            @Override
+            public void execute(Message message) {
+                message.getChannel().flatMap(channel -> channel
+                        .createMessage(moreHelp(Language.FR, DiscordConstants.DEFAULT_PREFIX)))
+                        .subscribe();
+            }
+
+            @Override
+            public String help(Language lg, String prefix){
+                return prefix + "`" + getParent().getName() + " help` : " + Translator.getLabel(lg, "help.help");
+            }
+        });
     }
 
     @Override
@@ -50,7 +65,7 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public String moreHelp(Language lg, String prefix){
-        return help(lg, prefix) + arguments.stream()
+        return help(lg, prefix) + arguments.stream().filter(CommandArgument::isDescribed)
                 .map(arg -> "\n" + arg.help(lg, prefix))
                 .reduce(VOID_MESSAGE, (arg1, arg2) -> arg1 + arg2);
     }

@@ -6,15 +6,22 @@ import discord4j.core.object.entity.Message;
 
 public abstract class AbstractCommandArgument implements CommandArgument {
 
-    protected Command parent;
+    private Command parent;
     private String pattern;
+    private boolean isDescribed;
 
-    protected AbstractCommandArgument(Command parent, String subPattern){
+    AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed){
         super();
         this.parent = parent;
         this.pattern = DiscordConstants.DEFAULT_PREFIX + parent.getName() + subPattern;
+        this.isDescribed = isDescribed;
     }
 
+    AbstractCommandArgument(Command parent, String subPattern){
+        this(parent, subPattern, true);
+    }
+
+    @Override
     public boolean triggerMessage(Message message) {
         return message.getContent().map(content -> content.matches(pattern)).orElse(false);
     }
@@ -22,5 +29,14 @@ public abstract class AbstractCommandArgument implements CommandArgument {
     @Override
     public String help(Language lg, String prefix){
         return prefix + parent.getName();
+    }
+
+    @Override
+    public boolean isDescribed(){
+        return isDescribed;
+    }
+
+    Command getParent(){
+        return parent;
     }
 }
