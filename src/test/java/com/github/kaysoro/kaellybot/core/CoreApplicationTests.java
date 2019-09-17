@@ -1,16 +1,13 @@
 package com.github.kaysoro.kaellybot.core;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.Test;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class CoreApplicationTests {
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-	@Test
-	public void contextLoads() {
-	}
+class CoreApplicationTests {
 
+    @Test
+    void contextLoads() {
+        assertDoesNotThrow(() -> CoreApplication.main(new String[]{"--spring.main.web-environment=false"}));
+    }
 }
