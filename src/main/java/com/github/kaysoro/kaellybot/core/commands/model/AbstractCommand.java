@@ -40,13 +40,13 @@ public abstract class AbstractCommand implements Command {
             @Override
             public void execute(Message message) {
                 message.getChannel().flatMap(channel -> channel
-                        .createMessage(moreHelp(Language.FR, DiscordConstants.DEFAULT_PREFIX)))
+                        .createMessage(moreHelp(DiscordConstants.DEFAULT_LANGUAGE, DiscordConstants.DEFAULT_PREFIX)))
                         .subscribe();
             }
 
             @Override
             public String help(Language lg, String prefix){
-                return prefix + "`" + getParent().getName() + " help` : " + Translator.getLabel(lg, "help.help");
+                return prefix + "`" + getParent().getName() + " help` : " + Translator.getLabel(lg, "lambda.help");
             }
         });
     }
