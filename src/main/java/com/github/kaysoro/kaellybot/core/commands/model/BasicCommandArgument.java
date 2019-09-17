@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 public class BasicCommandArgument extends AbstractCommandArgument {
 
+    private static final String VOID_MESSAGE = "";
     private Consumer<Message> executor;
 
     public BasicCommandArgument(Command parent, String subPattern, boolean isDescribed, Consumer<Message> executor){
@@ -18,7 +19,7 @@ public class BasicCommandArgument extends AbstractCommandArgument {
     }
 
     public BasicCommandArgument(Command parent, Consumer<Message> executor){
-        this(parent, "", false, executor);
+        this(parent, VOID_MESSAGE, false, executor);
     }
 
     @Override

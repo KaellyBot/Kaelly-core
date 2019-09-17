@@ -1,7 +1,6 @@
 package com.github.kaysoro.kaellybot.core.service;
 
-import com.github.kaysoro.kaellybot.core.commands.classic.PingCommand;
-import com.github.kaysoro.kaellybot.core.commands.model.Command;
+import com.github.kaysoro.kaellybot.core.commands.factory.CommandFactory;
 import discord4j.core.DiscordClient;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
@@ -11,10 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class DiscordService implements IDiscordService{
@@ -26,13 +21,15 @@ public class DiscordService implements IDiscordService{
     @Value("${discord.token}")
     private String token;
 
+    private CommandFactory commandFactory;
+
+    public DiscordService(CommandFactory commandFactory){
+        this.commandFactory = commandFactory;
+    }
+
     @Override
     public void startBot(){
         if (discordClient == null){
-
-            // TODO the following variable will be replaced by a bean dedicated to collect all declared commands
-            List<Command> commands = Stream.of(new PingCommand()).collect(Collectors.toList());
-
             final DiscordClient client = new DiscordClientBuilder(token).build();
 
             client.getEventDispatcher().on(ReadyEvent.class)
@@ -40,7 +37,7 @@ public class DiscordService implements IDiscordService{
 
             client.getEventDispatcher().on(MessageCreateEvent.class)
                     .map(MessageCreateEvent::getMessage)
-                    .subscribe(msg -> commands.forEach(cmd -> cmd.request(msg)));
+                    .subscribe(msg -> commandFactory.getCommands().forEach(cmd -> cmd.request(msg)));
 
             client.login().block();
             /**

@@ -1,4 +1,4 @@
-package com.github.kaysoro.kaellybot.core.commands.util;
+package com.github.kaysoro.kaellybot.core.util;
 
 import com.github.kaysoro.kaellybot.core.model.constants.Language;
 import org.slf4j.Logger;
