@@ -1,5 +1,6 @@
 package com.github.kaysoro.kaellybot.core.commands.factory;
 
+import com.github.kaysoro.kaellybot.core.commands.classic.AboutCommand;
 import com.github.kaysoro.kaellybot.core.commands.classic.HelpCommand;
 import com.github.kaysoro.kaellybot.core.commands.classic.PingCommand;
 import com.github.kaysoro.kaellybot.core.commands.model.Command;
@@ -15,6 +16,7 @@ public class CommandFactory {
 
     public CommandFactory(){
         commands = new ArrayList<>();
+        commands.add(new AboutCommand());
         commands.add(new HelpCommand(this));
         commands.add(new PingCommand());
     }
