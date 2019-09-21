@@ -1,7 +1,7 @@
 package com.github.kaysoro.kaellybot.core.commands.arguments.model;
 
 import com.github.kaysoro.kaellybot.core.commands.model.Command;
-import com.github.kaysoro.kaellybot.core.model.constants.DiscordConstants;
+import com.github.kaysoro.kaellybot.core.model.constants.Constants;
 import com.github.kaysoro.kaellybot.core.model.constants.Language;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
@@ -19,7 +19,7 @@ public abstract class AbstractCommandArgument implements CommandArgument {
     public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed){
         super();
         this.parent = parent;
-        this.pattern = DiscordConstants.DEFAULT_PREFIX + parent.getName() + subPattern;
+        this.pattern = Constants.DEFAULT_PREFIX + parent.getName() + subPattern;
         this.isDescribed = isDescribed;
     }
 
@@ -35,7 +35,7 @@ public abstract class AbstractCommandArgument implements CommandArgument {
             execute(message, matcher);
         else
             message.getChannel().flatMap(channel -> channel
-                .createMessage(Translator.getLabel(DiscordConstants.DEFAULT_LANGUAGE, "exception.unknown")))
+                .createMessage(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "exception.unknown")))
             .subscribe();
     }
 

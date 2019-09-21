@@ -2,7 +2,7 @@ package com.github.kaysoro.kaellybot.core.commands.arguments.help;
 
 import com.github.kaysoro.kaellybot.core.commands.classic.HelpCommand;
 import com.github.kaysoro.kaellybot.core.commands.arguments.model.AbstractCommandArgument;
-import com.github.kaysoro.kaellybot.core.model.constants.DiscordConstants;
+import com.github.kaysoro.kaellybot.core.model.constants.Constants;
 import com.github.kaysoro.kaellybot.core.model.constants.Language;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
@@ -23,8 +23,8 @@ public class HelpArgument extends AbstractCommandArgument {
                     .createMessage(getParent().getCommandFactory().getCommands().stream()
                             .filter(cmd -> cmd.getName().equals(argument))
                             .findFirst().map(cmd ->
-                                    cmd.moreHelp(DiscordConstants.DEFAULT_LANGUAGE, DiscordConstants.DEFAULT_PREFIX))
-                            .orElse(Translator.getLabel(DiscordConstants.DEFAULT_LANGUAGE, "help.cmd.empty"))))
+                                    cmd.moreHelp(Constants.DEFAULT_LANGUAGE, Constants.DEFAULT_PREFIX))
+                            .orElse(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "help.cmd.empty"))))
                     .subscribe();
     }
 

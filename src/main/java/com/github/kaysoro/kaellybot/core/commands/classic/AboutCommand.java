@@ -12,7 +12,7 @@ public class AboutCommand extends AbstractCommand {
         super("about");
 
         getArguments().add(new BasicCommandArgument(this,
-                (client, message) -> message.getChannel()
+                message -> message.getChannel()
                         .flatMap(chan -> chan.createEmbed(spec -> spec.setTitle(Translator
                                 .getLabel(Constants.DEFAULT_LANGUAGE, "about.title")
                                 .replace("{name}", Constants.NAME)
