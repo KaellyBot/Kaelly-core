@@ -3,8 +3,11 @@ package com.github.kaysoro.kaellybot.core.commands.classic;
 import com.github.kaysoro.kaellybot.core.commands.arguments.model.BasicCommandArgument;
 import com.github.kaysoro.kaellybot.core.commands.model.AbstractCommand;
 import com.github.kaysoro.kaellybot.core.model.constants.Constants;
+import com.github.kaysoro.kaellybot.core.model.constants.Donator;
 import com.github.kaysoro.kaellybot.core.model.constants.Graphist;
 import com.github.kaysoro.kaellybot.core.util.Translator;
+
+import java.util.stream.Stream;
 
 public class AboutCommand extends AbstractCommand {
 
@@ -43,7 +46,12 @@ public class AboutCommand extends AbstractCommand {
                                                 .replace("{paypal}", Constants.PAYPAL), true)
                                 .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.graphist.title"),
                                         Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.graphist.desc")
-                                                .replace("{graphist}", Graphist.ELYCANN.toMarkdown()), true)))
+                                                .replace("{graphist}", Graphist.ELYCANN.toMarkdown()), true)
+                                .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.donators.title"),
+                                                Stream.of(Donator.values()).map(Donator::getName)
+                                                        .reduce((name1, name2) -> name1 + ", " + name2)
+                                                        .orElse(Translator.getLabel(Constants.DEFAULT_LANGUAGE,
+                                                                "about.donators.empty")), true)))
                         .subscribe()));
     }
 }
