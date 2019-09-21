@@ -1,6 +1,7 @@
 package com.github.kaysoro.kaellybot.core.commands.model;
 
 import com.github.kaysoro.kaellybot.core.commands.arguments.common.HelpArgument;
+import com.github.kaysoro.kaellybot.core.commands.arguments.model.CommandArgument;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import com.github.kaysoro.kaellybot.core.model.constants.Language;
 import discord4j.core.object.entity.Message;
@@ -17,7 +18,7 @@ import java.util.List;
 public abstract class AbstractCommand implements Command {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
-    private static final String VOID_MESSAGE = "";
+    protected static final String VOID_MESSAGE = "";
 
     protected String name;
     protected List<CommandArgument> arguments;

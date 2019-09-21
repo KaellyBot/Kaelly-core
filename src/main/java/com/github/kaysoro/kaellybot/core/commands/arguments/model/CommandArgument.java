@@ -1,4 +1,4 @@
-package com.github.kaysoro.kaellybot.core.commands.model;
+package com.github.kaysoro.kaellybot.core.commands.arguments.model;
 
 import com.github.kaysoro.kaellybot.core.model.constants.Language;
 import discord4j.core.object.entity.Message;

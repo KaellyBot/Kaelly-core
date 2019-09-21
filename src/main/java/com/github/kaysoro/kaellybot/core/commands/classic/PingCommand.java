@@ -1,7 +1,7 @@
 package com.github.kaysoro.kaellybot.core.commands.classic;
 
 import com.github.kaysoro.kaellybot.core.commands.model.AbstractCommand;
-import com.github.kaysoro.kaellybot.core.commands.model.BasicCommandArgument;
+import com.github.kaysoro.kaellybot.core.commands.arguments.model.BasicCommandArgument;
 
 import java.time.Duration;
 import java.time.Instant;
