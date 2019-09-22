@@ -1,8 +1,10 @@
 package com.github.kaysoro.kaellybot.core.model.constants;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public enum Donator {
 
     HART69("Hart69#0001"),
@@ -12,8 +14,4 @@ public enum Donator {
     SIID("! ༺ -Siid- ༻ !#0001");
 
     private String name;
-
-    Donator(String name){
-        this.name = name;
-    }
 }

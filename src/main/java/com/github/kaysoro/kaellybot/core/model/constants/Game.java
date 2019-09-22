@@ -1,8 +1,10 @@
 package com.github.kaysoro.kaellybot.core.model.constants;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public enum Game {
 
     DOFUS("Dofus", Constants.INVITE),
@@ -10,9 +12,4 @@ public enum Game {
 
     private String name;
     private String botInvite;
-
-    Game(String name, String botInvite){
-        this.name = name;
-        this.botInvite = botInvite;
-    }
 }
