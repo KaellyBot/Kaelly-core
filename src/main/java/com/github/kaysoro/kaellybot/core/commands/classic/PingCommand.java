@@ -14,7 +14,7 @@ public class PingCommand extends AbstractCommand {
         getArguments().add(new BasicCommandArgument(this,
                 message -> message.getChannel()
                         .flatMap(chan -> chan.createMessage(
-                                Duration.between(message.getTimestamp(), Instant.now()).toMillis() + "ms!"))
+                                Math.abs(Duration.between(message.getTimestamp(), Instant.now()).toMillis()) + "ms!"))
                         .subscribe()));
     }
 }
