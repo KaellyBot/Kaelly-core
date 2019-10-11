@@ -38,7 +38,7 @@ public class DiscordService implements IDiscordService{
             discordClients.flatMap(client -> client.getEventDispatcher().on(ReadyEvent.class))
                     .flatMap(event -> event.getSelf().getClient()
                                 .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName()))))
-                    .subscribe(allShardsFullyReady -> System.out.println("All shards fully ready"));
+                    .subscribe();
 
             discordClients.flatMap(client -> client.getEventDispatcher().on(MessageCreateEvent.class))
                     .map(MessageCreateEvent::getMessage)
