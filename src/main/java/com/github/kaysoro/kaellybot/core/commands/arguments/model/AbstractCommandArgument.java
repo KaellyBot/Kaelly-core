@@ -5,12 +5,15 @@ import com.github.kaysoro.kaellybot.core.model.constants.Constants;
 import com.github.kaysoro.kaellybot.core.model.constants.Language;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class AbstractCommandArgument implements CommandArgument {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractCommandArgument.class);
     private static final String VOID_MESSAGE = "";
     private Command parent;
     private String pattern;
@@ -37,6 +40,13 @@ public abstract class AbstractCommandArgument implements CommandArgument {
             message.getChannel().flatMap(channel -> channel
                 .createMessage(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "exception.unknown")))
             .subscribe();
+    }
+
+    protected void manageUnknownException(Message message, Throwable error){
+        LOG.error("Error with the following call: " + message.getContent().orElse(VOID_MESSAGE), error);
+        message.getChannel().flatMap(channel -> channel.createMessage(
+                Translator.getLabel(Constants.DEFAULT_LANGUAGE,"exception.unknown")))
+                .subscribe();
     }
 
     public abstract void execute(Message message, Matcher matcher);
