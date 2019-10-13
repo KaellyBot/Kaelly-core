@@ -1,5 +1,6 @@
 package com.github.kaysoro.kaellybot.core.model.constants;
 
+import com.github.kaysoro.kaellybot.core.util.Translator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -25,4 +26,8 @@ public enum Server {
     ILYZAELLE ("server.ilyzaelle" );
 
     private String key;
+
+    public String getLabel(Language lang){
+        return Translator.getLabel(lang, getKey());
+    }
 }

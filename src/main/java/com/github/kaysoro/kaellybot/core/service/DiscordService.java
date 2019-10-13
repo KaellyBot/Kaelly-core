@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 @Service
-public class DiscordService implements IDiscordService{
+public class DiscordService {
 
     private Flux<DiscordClient> discordClients;
 
@@ -27,7 +27,6 @@ public class DiscordService implements IDiscordService{
         this.commandFactory = commandFactory;
     }
 
-    @Override
     public void startBot(){
         if (discordClients == null){
             discordClients = new ShardingClientBuilder(token)
