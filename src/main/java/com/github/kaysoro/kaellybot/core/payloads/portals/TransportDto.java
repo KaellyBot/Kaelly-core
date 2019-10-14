@@ -17,4 +17,9 @@ public class TransportDto {
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class TransportDtoBuilder {}
+
+    @Override
+    public String toString(){
+        return area + " (" + subArea + ") **" + position.toString() + "**";
+    }
 }

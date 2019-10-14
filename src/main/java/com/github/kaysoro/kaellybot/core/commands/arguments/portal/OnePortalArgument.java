@@ -24,12 +24,14 @@ public class OnePortalArgument extends AbstractCommandArgument {
 
     @Override
     public void execute(Message message, Matcher matcher) {
-        String dimension = matcher.group(1).trim();
-        String server = matcher.group(2).trim();
+       // TODO determine server & dimension in the message
+        Server server = Server.AGRIDE;
+        Dimension dimension = Dimension.ECAFLIPUS;
 
-        portalService.getPortal(Server.AGRIDE, Dimension.ECAFLIPUS, Constants.DEFAULT_LANGUAGE)
+        portalService.getPortal(server, dimension, Constants.DEFAULT_LANGUAGE)
                 .doOnSuccess(portal -> message.getChannel()
-                        .flatMap(channel -> channel.createEmbed(spec -> PortalMapper.map(spec, portal)))
+                        .flatMap(channel -> channel.createEmbed(spec ->
+                                PortalMapper.decorateSpec(spec, dimension, portal, Constants.DEFAULT_LANGUAGE)))
                         .subscribe()
                 )
                 .doOnError(error -> manageUnknownException(message, error))

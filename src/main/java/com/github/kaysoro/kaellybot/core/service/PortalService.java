@@ -27,10 +27,9 @@ public class PortalService {
 
     private final WebClient webClient;
 
-    public PortalService(@Value("${kaelly.portals.host}") String portalHost,
-                         @Value("${kaelly.portals.port}") String portalPort) {
+    public PortalService(@Value("${kaelly.portals.url}") String portalUrl) {
         this.webClient = WebClient.builder()
-                .baseUrl(portalHost + ":" + portalPort + API_BASE_URL)
+                .baseUrl(portalUrl + API_BASE_URL)
                 .defaultHeader(HttpHeaders.USER_AGENT, USER_AGENT)
                 .filter(logRequest())
                 .build();

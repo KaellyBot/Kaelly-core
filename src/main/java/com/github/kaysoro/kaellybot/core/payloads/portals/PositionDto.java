@@ -16,4 +16,9 @@ public class PositionDto {
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class PositionDtoBuilder {}
+
+    @Override
+    public String toString(){
+        return "[" + x + ", " + y + "]";
+    }
 }
