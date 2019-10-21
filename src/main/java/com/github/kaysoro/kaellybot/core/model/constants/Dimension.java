@@ -3,8 +3,10 @@ package com.github.kaysoro.kaellybot.core.model.constants;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import java.awt.*;
+import java.util.stream.Stream;
 
 @Getter
 @AllArgsConstructor
@@ -23,5 +25,11 @@ public enum Dimension {
 
     public String getLabel(Language lang){
         return Translator.getLabel(lang, getKey());
+    }
+
+    public static Dimension valueOf(String dimensionName, Language language){
+        return Stream.of(Dimension.values())
+                .filter(dim -> dim.getLabel(language).equals(dimensionName))
+                .findFirst().orElseThrow(NullPointerException::new);
     }
 }

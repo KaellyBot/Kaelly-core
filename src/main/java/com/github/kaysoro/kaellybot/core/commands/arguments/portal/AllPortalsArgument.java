@@ -4,43 +4,44 @@ import com.github.kaysoro.kaellybot.core.commands.arguments.model.AbstractComman
 import com.github.kaysoro.kaellybot.core.commands.classic.PortalCommand;
 import com.github.kaysoro.kaellybot.core.mapper.PortalMapper;
 import com.github.kaysoro.kaellybot.core.model.constants.Constants;
-import com.github.kaysoro.kaellybot.core.model.constants.Dimension;
 import com.github.kaysoro.kaellybot.core.model.constants.Language;
 import com.github.kaysoro.kaellybot.core.model.constants.Server;
 import com.github.kaysoro.kaellybot.core.service.PortalService;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
+import reactor.core.publisher.Flux;
 
 import java.util.regex.Matcher;
 
-public class OnePortalArgument extends AbstractCommandArgument {
+public class AllPortalsArgument extends AbstractCommandArgument {
 
     private PortalService portalService;
 
-    public OnePortalArgument(PortalCommand parent, PortalService portalService){
-        super(parent, "\\s+(\\w+)\\s+(.+)", true);
+    public AllPortalsArgument(PortalCommand parent, PortalService portalService){
+        super(parent, "\\s+(\\w+)", true);
         this.portalService = portalService;
     }
 
     @Override
     public void execute(Message message, Matcher matcher) {
-       // TODO determine server & dimension in the message
+       // TODO determine server in the message
         Server server = Server.MERIANA;
-        Dimension dimension = Dimension.ENUTROSOR;
 
-        portalService.getPortal(server, dimension, Constants.DEFAULT_LANGUAGE)
-                .doOnSuccess(portal -> message.getChannel()
-                        .flatMap(channel -> channel.createEmbed(spec ->
-                                PortalMapper.decorateSpec(spec, portal, Constants.DEFAULT_LANGUAGE)))
-                        .subscribe()
-                )
+        portalService.getPortals(server, Constants.DEFAULT_LANGUAGE)
+                .collectList()
+                .doOnSuccess(portals -> message.getChannel()
+                        .flatMap(channel -> Flux.fromIterable(portals)
+                                .flatMap(portal -> channel.createEmbed(spec -> PortalMapper
+                                        .decorateSpec(spec, portal, Constants.DEFAULT_LANGUAGE)))
+                                .collectList())
+                        .subscribe())
                 .doOnError(error -> manageUnknownException(message, error))
                 .subscribe();
     }
 
     @Override
     public String help(Language lg, String prefix){
-        return prefix + "`" + getParent().getName() + " dimension server` : "
-                + Translator.getLabel(lg, "pos.one_portal");
+        return prefix + "`" + getParent().getName() + " server` : "
+                + Translator.getLabel(lg, "pos.all_portals");
     }
 }

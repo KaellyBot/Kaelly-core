@@ -14,7 +14,9 @@ public final class PortalMapper {
 
     private PortalMapper(){}
 
-    public static void decorateSpec(EmbedCreateSpec spec, Dimension dimension, PortalDto portal, Language language){
+    public static void decorateSpec(EmbedCreateSpec spec, PortalDto portal, Language language){
+        Dimension dimension = Dimension.valueOf(portal.getDimension(), language);
+
         spec.setTitle(dimension.getLabel(language))
                 .setThumbnail(dimension.getImage())
                 .setColor(dimension.getColor());
@@ -38,7 +40,8 @@ public final class PortalMapper {
             spec.addField(Translator.getLabel(language, "pos.zaap"),
                     portal.getNearestZaap().toString(), false);
 
-            spec.setFooter(getDateInformation(portal, language), "https://vignette.wikia.nocookie.net/dofus-rp/images/a/ab/Zaap2.png/revision/latest?cb=20160106163407&path-prefix=fr");
+            spec.setFooter(getDateInformation(portal, language),
+                    "http://image.noelshack.com/fichiers/2019/43/1/1571689446-zaap2.png");
         }
         else
             spec.setDescription(Translator.getLabel(language, "pos.unknown"));
