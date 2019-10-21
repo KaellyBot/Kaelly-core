@@ -5,6 +5,10 @@ import com.github.kaysoro.kaellybot.core.model.constants.Language;
 import com.github.kaysoro.kaellybot.core.payloads.portals.PortalDto;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.spec.EmbedCreateSpec;
+import org.apache.commons.lang3.time.DateUtils;
+
+import java.time.Duration;
+import java.time.Instant;
 
 public final class PortalMapper {
 
@@ -34,11 +38,38 @@ public final class PortalMapper {
             spec.addField(Translator.getLabel(language, "pos.zaap"),
                     portal.getNearestZaap().toString(), false);
 
-            // TODO
-            // Dates
-            // spec.setFooter(getDateInformation(creationSource, updateSource, lg));
+            spec.setFooter(getDateInformation(portal, language), "https://vignette.wikia.nocookie.net/dofus-rp/images/a/ab/Zaap2.png/revision/latest?cb=20160106163407&path-prefix=fr");
         }
         else
             spec.setDescription(Translator.getLabel(language, "pos.unknown"));
+    }
+
+    private static String getDateInformation(PortalDto portal, Language language){
+        StringBuilder st = new StringBuilder(Translator.getLabel(language, "pos.date.added")).append(" ")
+                .append(getLabelTimeAgo(portal.getCreationDate(), language)).append(" ")
+                .append(Translator.getLabel(language, "pos.date.by")).append(" ")
+                .append(portal.getCreationAuthor().getName());
+
+        if (portal.getLastUpdateDate() != null){
+            st.append(" - ").append(Translator.getLabel(language, "pos.date.edited")).append(" ")
+                    .append(getLabelTimeAgo(portal.getLastUpdateDate(), language)).append(" ")
+                    .append(Translator.getLabel(language, "pos.date.by")).append(" ")
+                    .append(portal.getLastAuthorUpdate().getName());
+        }
+
+        return st.append(" ").append(Translator.getLabel(language, "pos.date.via"))
+                .append(" dofus-portals.fr").toString();
+    }
+
+    private static String getLabelTimeAgo(Instant time, Language lg){
+        long timeLeft = Math.abs(Duration.between(time, Instant.now()).toMillis());
+        if (timeLeft < DateUtils.MILLIS_PER_MINUTE)
+            return Translator.getLabel(lg, "pos.date.now");
+        else if (timeLeft < DateUtils.MILLIS_PER_HOUR)
+            return Translator.getLabel(lg, "pos.date.minutes_ago")
+                    .replace("{time}", String.valueOf(timeLeft / DateUtils.MILLIS_PER_MINUTE));
+        else
+            return Translator.getLabel(lg, "pos.date.hours_ago")
+                    .replace("{time}", String.valueOf(timeLeft / DateUtils.MILLIS_PER_HOUR));
     }
 }

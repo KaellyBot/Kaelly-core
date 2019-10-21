@@ -25,8 +25,8 @@ public class OnePortalArgument extends AbstractCommandArgument {
     @Override
     public void execute(Message message, Matcher matcher) {
        // TODO determine server & dimension in the message
-        Server server = Server.AGRIDE;
-        Dimension dimension = Dimension.ECAFLIPUS;
+        Server server = Server.MERIANA;
+        Dimension dimension = Dimension.ENUTROSOR;
 
         portalService.getPortal(server, dimension, Constants.DEFAULT_LANGUAGE)
                 .doOnSuccess(portal -> message.getChannel()
