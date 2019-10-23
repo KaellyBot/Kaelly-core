@@ -21,7 +21,7 @@ public final class PortalMapper {
                 .setThumbnail(dimension.getImage())
                 .setColor(dimension.getColor());
 
-        if (portal.getIsAvailable()){
+        if (Boolean.TRUE.equals(portal.getIsAvailable())){
             spec.addField(Translator.getLabel(language, "pos.position"),
                     "**" + portal.getPosition() + "**", true);
 

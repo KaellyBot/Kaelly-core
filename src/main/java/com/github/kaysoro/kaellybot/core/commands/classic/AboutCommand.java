@@ -11,6 +11,8 @@ import java.util.stream.Stream;
 
 public class AboutCommand extends AbstractCommand {
 
+    private static final String NAME = "{name}";
+
     public AboutCommand() {
         super("about");
 
@@ -18,7 +20,7 @@ public class AboutCommand extends AbstractCommand {
                 message -> message.getChannel()
                         .flatMap(chan -> chan.createEmbed(spec -> spec.setTitle(Translator
                                 .getLabel(Constants.DEFAULT_LANGUAGE, "about.title")
-                                .replace("{name}", Constants.NAME)
+                                .replace(NAME, Constants.NAME)
                                 .replace("{version}", Constants.VERSION))
                                 .setDescription(Translator
                                         .getLabel(Constants.DEFAULT_LANGUAGE, "about.desc")
@@ -28,15 +30,15 @@ public class AboutCommand extends AbstractCommand {
                                 .setImage(Constants.CHANGELOG)
                                 .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.title"), 
                                         Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.desc")
-                                                .replace("{name}", Constants.NAME)
+                                                .replace(NAME, Constants.NAME)
                                                 .replace("{invite}", Constants.INVITE), true)
                                 .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.title"),
                                         Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.desc")
-                                                .replace("{name}", Constants.NAME)
+                                                .replace(NAME, Constants.NAME)
                                                 .replace("{discordInvite}", Constants.DISCORD_INVITE), true)
                                 .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.twitter.title"),
                                         Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.twitter.desc")
-                                                .replace("{name}", Constants.NAME)
+                                                .replace(NAME, Constants.NAME)
                                                 .replace("{twitter}", Constants.TWITTER), true)
                                 .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.opensource.title"),
                                         Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.opensource.desc")

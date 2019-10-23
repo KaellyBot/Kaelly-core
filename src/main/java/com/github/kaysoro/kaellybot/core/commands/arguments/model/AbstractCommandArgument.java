@@ -43,7 +43,7 @@ public abstract class AbstractCommandArgument implements CommandArgument {
     }
 
     protected void manageUnknownException(Message message, Throwable error){
-        LOG.error("Error with the following call: " + message.getContent().orElse(VOID_MESSAGE), error);
+        LOG.error("Error with the following call: {}", message.getContent().orElse(VOID_MESSAGE), error);
         message.getChannel().flatMap(channel -> channel.createMessage(
                 Translator.getLabel(Constants.DEFAULT_LANGUAGE,"exception.unknown")))
                 .subscribe();

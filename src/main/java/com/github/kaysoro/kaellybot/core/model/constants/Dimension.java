@@ -3,7 +3,6 @@ package com.github.kaysoro.kaellybot.core.model.constants;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import java.awt.*;
 import java.util.stream.Stream;

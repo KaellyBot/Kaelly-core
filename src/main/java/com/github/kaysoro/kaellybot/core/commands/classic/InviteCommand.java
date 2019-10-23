@@ -7,6 +7,8 @@ import com.github.kaysoro.kaellybot.core.util.Translator;
 
 public class InviteCommand extends AbstractCommand {
 
+    private static final String NAME = "{name}";
+
     public InviteCommand() {
         super("invite");
 
@@ -14,7 +16,7 @@ public class InviteCommand extends AbstractCommand {
                 message -> message.getChannel()
                         .flatMap(chan -> chan.createEmbed(spec -> spec.setTitle(Translator
                                 .getLabel(Constants.DEFAULT_LANGUAGE, "about.title")
-                                .replace("{name}", Constants.NAME)
+                                .replace(NAME, Constants.NAME)
                                 .replace("{version}", Constants.VERSION))
                                 .setDescription(Translator
                                         .getLabel(Constants.DEFAULT_LANGUAGE, "about.desc")
@@ -23,11 +25,11 @@ public class InviteCommand extends AbstractCommand {
                                 .setThumbnail(Constants.AVATAR)
                                 .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.title"), 
                                         Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.desc")
-                                                .replace("{name}", Constants.NAME)
+                                                .replace(NAME, Constants.NAME)
                                                 .replace("{invite}", Constants.INVITE), true)
                                 .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.title"),
                                         Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.desc")
-                                                .replace("{name}", Constants.NAME)
+                                                .replace(NAME, Constants.NAME)
                                                 .replace("{discordInvite}", Constants.DISCORD_INVITE), true)))
                         .subscribe()));
     }
