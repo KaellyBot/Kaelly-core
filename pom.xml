@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>com.discord4j</groupId>
 			<artifactId>discord4j-core</artifactId>
-			<version>3.0.8</version>
+			<version>3.0.10</version>
 		</dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
