@@ -4,7 +4,9 @@ import com.github.kaysoro.kaellybot.core.commands.arguments.model.BasicCommandAr
 import com.github.kaysoro.kaellybot.core.commands.model.AbstractCommand;
 import com.github.kaysoro.kaellybot.core.model.constants.Constants;
 import com.github.kaysoro.kaellybot.core.util.Translator;
+import org.springframework.stereotype.Component;
 
+@Component
 public class InviteCommand extends AbstractCommand {
 
     private static final String NAME = "{name}";

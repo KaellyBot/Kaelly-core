@@ -6,9 +6,11 @@ import com.github.kaysoro.kaellybot.core.model.constants.Constants;
 import com.github.kaysoro.kaellybot.core.model.constants.Donator;
 import com.github.kaysoro.kaellybot.core.model.constants.Graphist;
 import com.github.kaysoro.kaellybot.core.util.Translator;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Stream;
 
+@Component
 public class AboutCommand extends AbstractCommand {
 
     private static final String NAME = "{name}";

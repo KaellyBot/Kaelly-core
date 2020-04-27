@@ -5,9 +5,11 @@ import com.github.kaysoro.kaellybot.core.commands.model.AbstractCommand;
 import com.github.kaysoro.kaellybot.core.model.constants.Constants;
 import com.github.kaysoro.kaellybot.core.model.constants.Donator;
 import com.github.kaysoro.kaellybot.core.util.Translator;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Stream;
 
+@Component
 public class DonateCommand extends AbstractCommand {
 
     public DonateCommand() {

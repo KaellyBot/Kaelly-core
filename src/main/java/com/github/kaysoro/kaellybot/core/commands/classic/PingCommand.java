@@ -2,10 +2,12 @@ package com.github.kaysoro.kaellybot.core.commands.classic;
 
 import com.github.kaysoro.kaellybot.core.commands.model.AbstractCommand;
 import com.github.kaysoro.kaellybot.core.commands.arguments.model.BasicCommandArgument;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
 
+@Component
 public class PingCommand extends AbstractCommand {
 
     public PingCommand() {

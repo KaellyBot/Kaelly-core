@@ -20,7 +20,7 @@ public class HelpArgument extends AbstractCommandArgument {
         String argument = matcher.group(1);
         if (! argument.equals(getParent().getName()))
             message.getChannel().flatMap(channel -> channel
-                    .createMessage(getParent().getCommandFactory().getCommands().stream()
+                    .createMessage(getParent().getCommands().stream()
                             .filter(cmd -> cmd.getName().equals(argument))
                             .findFirst().map(cmd ->
                                     cmd.moreHelp(Constants.DEFAULT_LANGUAGE, Constants.DEFAULT_PREFIX))

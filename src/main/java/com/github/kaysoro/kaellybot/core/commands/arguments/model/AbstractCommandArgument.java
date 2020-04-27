@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 public abstract class AbstractCommandArgument implements CommandArgument {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommandArgument.class);
-    private static final String VOID_MESSAGE = "";
     private Command parent;
     private String pattern;
     private boolean isDescribed;
@@ -28,12 +27,12 @@ public abstract class AbstractCommandArgument implements CommandArgument {
 
     @Override
     public boolean triggerMessage(Message message) {
-        return message.getContent().map(content -> content.matches(pattern)).orElse(false);
+        return message.getContent().matches(pattern);
     }
 
     @Override
     public void execute(Message message){
-        Matcher matcher = Pattern.compile(pattern).matcher(message.getContent().orElse(VOID_MESSAGE));
+        Matcher matcher = Pattern.compile(pattern).matcher(message.getContent());
         if (matcher.matches())
             execute(message, matcher);
         else
@@ -43,7 +42,7 @@ public abstract class AbstractCommandArgument implements CommandArgument {
     }
 
     protected void manageUnknownException(Message message, Throwable error){
-        LOG.error("Error with the following call: {}", message.getContent().orElse(VOID_MESSAGE), error);
+        LOG.error("Error with the following call: {}", message.getContent(), error);
         message.getChannel().flatMap(channel -> channel.createMessage(
                 Translator.getLabel(Constants.DEFAULT_LANGUAGE,"exception.unknown")))
                 .subscribe();
