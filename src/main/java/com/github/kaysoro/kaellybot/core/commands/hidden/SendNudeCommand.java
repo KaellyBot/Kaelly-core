@@ -5,10 +5,12 @@ import com.github.kaysoro.kaellybot.core.commands.model.AbstractCommand;
 import com.github.kaysoro.kaellybot.core.model.constants.Constants;
 import com.github.kaysoro.kaellybot.core.model.constants.Nude;
 import com.github.kaysoro.kaellybot.core.util.Translator;
-import discord4j.core.object.entity.MessageChannel;
-import discord4j.core.object.entity.PrivateChannel;
-import discord4j.core.object.entity.TextChannel;
+import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.object.entity.channel.PrivateChannel;
+import discord4j.core.object.entity.channel.TextChannel;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SendNudeCommand extends AbstractCommand {
 
     public SendNudeCommand() {

@@ -1,50 +1,47 @@
 package com.github.kaysoro.kaellybot.core.service;
 
-import com.github.kaysoro.kaellybot.core.commands.factory.CommandFactory;
+import com.github.kaysoro.kaellybot.core.commands.model.Command;
 import com.github.kaysoro.kaellybot.core.model.constants.Constants;
 import discord4j.core.DiscordClient;
-import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
-import discord4j.core.shard.ShardingClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @Service
 public class DiscordService {
 
-    private Flux<DiscordClient> discordClients;
+    private DiscordClient discordClient;
 
     @Value("${discord.token}")
     private String token;
 
-    private CommandFactory commandFactory;
+    private List<Command> commands;
 
-    public DiscordService(CommandFactory commandFactory){
-        this.commandFactory = commandFactory;
+    public DiscordService(List<Command> commands){
+        this.commands = commands;
     }
 
     public void startBot(){
-        if (discordClients == null){
-            discordClients = new ShardingClientBuilder(token)
-                    .build()
-                    .map(DiscordClientBuilder::build)
-                    .cache();
+        if (discordClient == null){
+            discordClient = DiscordClient.create(token);
 
-            discordClients.flatMap(client -> client.getEventDispatcher().on(ReadyEvent.class))
-                    .flatMap(event -> event.getSelf().getClient()
+            discordClient.withGateway(client -> {
+                client.getEventDispatcher().on(ReadyEvent.class)
+                        .flatMap(event -> event.getSelf().getClient()
                                 .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName()))))
-                    .subscribe();
+                        .subscribe();
 
-            discordClients.flatMap(client -> client.getEventDispatcher().on(MessageCreateEvent.class))
-                    .map(MessageCreateEvent::getMessage)
-                    .subscribe(msg -> commandFactory.getCommands().forEach(cmd -> cmd.request(msg)));
+                client.getEventDispatcher().on(MessageCreateEvent.class)
+                        .map(MessageCreateEvent::getMessage)
+                        .subscribe(msg -> commands.forEach(cmd -> cmd.request(msg)));
 
-            discordClients.flatMap(DiscordClient::login)
-                    .subscribe();
+                return client.onDisconnect();
+            }).subscribe();
         }
     }
 }
