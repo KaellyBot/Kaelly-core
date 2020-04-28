@@ -1,6 +1,6 @@
 package com.github.kaysoro.kaellybot.core.service;
 
-import com.github.kaysoro.kaellybot.core.model.constants.Server;
+import com.github.kaysoro.kaellybot.core.model.constant.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 

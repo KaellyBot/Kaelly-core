@@ -1,8 +1,8 @@
 package com.github.kaysoro.kaellybot.core.mapper;
 
-import com.github.kaysoro.kaellybot.core.model.constants.Dimension;
-import com.github.kaysoro.kaellybot.core.model.constants.Language;
-import com.github.kaysoro.kaellybot.core.payloads.portals.PortalDto;
+import com.github.kaysoro.kaellybot.core.model.constant.Dimension;
+import com.github.kaysoro.kaellybot.core.model.constant.Language;
+import com.github.kaysoro.kaellybot.core.payload.kaelly.portal.PortalDto;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.spec.EmbedCreateSpec;
 import org.apache.commons.lang3.time.DateUtils;

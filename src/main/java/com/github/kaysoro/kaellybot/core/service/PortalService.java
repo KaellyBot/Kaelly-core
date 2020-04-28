@@ -1,9 +1,9 @@
 package com.github.kaysoro.kaellybot.core.service;
 
-import com.github.kaysoro.kaellybot.core.model.constants.Dimension;
-import com.github.kaysoro.kaellybot.core.model.constants.Language;
-import com.github.kaysoro.kaellybot.core.model.constants.Server;
-import com.github.kaysoro.kaellybot.core.payloads.portals.PortalDto;
+import com.github.kaysoro.kaellybot.core.model.constant.Dimension;
+import com.github.kaysoro.kaellybot.core.model.constant.Language;
+import com.github.kaysoro.kaellybot.core.model.constant.Server;
+import com.github.kaysoro.kaellybot.core.payload.kaelly.portal.PortalDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,10 +17,9 @@ import reactor.core.publisher.Mono;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 
 @Service
-public class PortalService {
+public class PortalService extends AbstractRestClientService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PortalService.class);
     private static final String API_BASE_URL = "/api";
-    private static final String USER_AGENT = "Kaelly-core";
 
     @Value("${kaelly.portals.token}")
     private String portalToken;
@@ -31,7 +30,7 @@ public class PortalService {
         this.webClient = WebClient.builder()
                 .baseUrl(portalUrl + API_BASE_URL)
                 .defaultHeader(HttpHeaders.USER_AGENT, USER_AGENT)
-                .filter(logRequest())
+                .filter(logRequest(LOGGER))
                 .build();
     }
 
@@ -50,14 +49,5 @@ public class PortalService {
                 .header(ACCEPT_LANGUAGE, language.name())
                 .retrieve()
                 .bodyToFlux(PortalDto.class);
-    }
-
-    private ExchangeFilterFunction logRequest() {
-        return (clientRequest, next) -> {
-            LOGGER.info("Request: {} {}", clientRequest.method(), clientRequest.url());
-            clientRequest.headers()
-                    .forEach((name, values) -> values.forEach(value -> LOGGER.info("{}={}", name, value)));
-            return next.exchange(clientRequest);
-        };
     }
 }

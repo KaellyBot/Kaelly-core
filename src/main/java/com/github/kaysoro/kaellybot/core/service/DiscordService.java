@@ -1,7 +1,8 @@
 package com.github.kaysoro.kaellybot.core.service;
 
-import com.github.kaysoro.kaellybot.core.commands.model.Command;
-import com.github.kaysoro.kaellybot.core.model.constants.Constants;
+import com.github.kaysoro.kaellybot.core.command.model.Command;
+import com.github.kaysoro.kaellybot.core.model.constant.Constants;
+import com.github.kaysoro.kaellybot.core.trigger.Trigger;
 import discord4j.core.DiscordClient;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -9,6 +10,7 @@ import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -22,8 +24,11 @@ public class DiscordService {
 
     private List<Command> commands;
 
-    public DiscordService(List<Command> commands){
+    private List<Trigger> triggers;
+
+    public DiscordService(List<Command> commands, List<Trigger> triggers){
         this.commands = commands;
+        this.triggers = triggers;
     }
 
     public void startBot(){
@@ -31,16 +36,24 @@ public class DiscordService {
             discordClient = DiscordClient.create(token);
 
             discordClient.withGateway(client -> {
-                client.getEventDispatcher().on(ReadyEvent.class)
-                        .flatMap(event -> event.getSelf().getClient()
+                Mono<Void> readyListener = client.getEventDispatcher().on(ReadyEvent.class)
+                        .doOnNext(event -> event.getSelf().getClient()
                                 .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName()))))
-                        .subscribe();
+                        .then();
 
-                client.getEventDispatcher().on(MessageCreateEvent.class)
+                Mono<Void> commandListener = client.getEventDispatcher().on(MessageCreateEvent.class)
                         .map(MessageCreateEvent::getMessage)
-                        .subscribe(msg -> commands.forEach(cmd -> cmd.request(msg)));
+                        .doOnNext(msg -> commands.forEach(cmd -> cmd.request(msg)))
+                        .then();
 
-                return client.onDisconnect();
+                Mono<Void> triggerListener = client.getEventDispatcher().on(MessageCreateEvent.class)
+                        .map(MessageCreateEvent::getMessage)
+                        .doOnNext(msg -> triggers.stream()
+                                .filter(trigger -> trigger.isTriggered(msg))
+                                .forEach(trigger -> trigger.execute(msg)))
+                        .then();
+
+                return Mono.when(readyListener, commandListener, triggerListener);
             }).subscribe();
         }
     }
