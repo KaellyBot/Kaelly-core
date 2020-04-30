@@ -13,48 +13,41 @@ import java.util.stream.Stream;
 @Component
 public class AboutCommand extends AbstractCommand {
 
-    private static final String NAME = "{name}";
+    public AboutCommand(Translator translator) {
+        super("about", translator);
 
-    public AboutCommand() {
-        super("about");
-
-        getArguments().add(new BasicCommandArgument(this,
+        getArguments().add(new BasicCommandArgument(this, translator,
                 message -> message.getChannel()
-                        .flatMap(chan -> chan.createEmbed(spec -> spec.setTitle(Translator
-                                .getLabel(Constants.DEFAULT_LANGUAGE, "about.title")
-                                .replace(NAME, Constants.NAME)
-                                .replace("{version}", Constants.VERSION))
-                                .setDescription(Translator
-                                        .getLabel(Constants.DEFAULT_LANGUAGE, "about.desc")
-                                        .replace("{game}", Constants.GAME.getName()))
+                        .flatMap(chan -> chan.createEmbed(spec -> spec
+                                .setTitle(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.title",
+                                        Constants.NAME, Constants.VERSION))
+                                .setDescription(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.desc",
+                                        Constants.GAME.getName()))
                                 .setColor(Constants.COLOR)
                                 .setThumbnail(Constants.AVATAR)
                                 .setImage(Constants.CHANGELOG)
-                                .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.title"), 
-                                        Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.desc")
-                                                .replace(NAME, Constants.NAME)
-                                                .replace("{invite}", Constants.INVITE), true)
-                                .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.title"),
-                                        Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.desc")
-                                                .replace(NAME, Constants.NAME)
-                                                .replace("{discordInvite}", Constants.DISCORD_INVITE), true)
-                                .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.twitter.title"),
-                                        Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.twitter.desc")
-                                                .replace(NAME, Constants.NAME)
-                                                .replace("{twitter}", Constants.TWITTER), true)
-                                .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.opensource.title"),
-                                        Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.opensource.desc")
-                                                .replace("{git}", Constants.GIT), true)
-                                .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.free.title"),
-                                        Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.free.desc")
-                                                .replace("{paypal}", Constants.PAYPAL), true)
-                                .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.graphist.title"),
-                                        Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.graphist.desc")
-                                                .replace("{graphist}", Graphist.ELYCANN.toMarkdown()), true)
-                                .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.donators.title"),
+                                .addField(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.title"),
+                                        translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.desc",
+                                                Constants.NAME, Constants.INVITE), true)
+                                .addField(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.title"),
+                                        translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.desc",
+                                                Constants.NAME, Constants.DISCORD_INVITE), true)
+                                .addField(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.twitter.title"),
+                                        translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.twitter.desc",
+                                                Constants.NAME, Constants.TWITTER), true)
+                                .addField(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.opensource.title"),
+                                        translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.opensource.desc",
+                                                Constants.GIT), true)
+                                .addField(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.free.title"),
+                                        translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.free.desc",
+                                                Constants.PAYPAL), true)
+                                .addField(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.graphist.title"),
+                                        translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.graphist.desc",
+                                                Graphist.ELYCANN.toMarkdown()), true)
+                                .addField(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.donators.title"),
                                                 Stream.of(Donator.values()).map(Donator::getName)
                                                         .reduce((name1, name2) -> name1 + ", " + name2)
-                                                        .orElse(Translator.getLabel(Constants.DEFAULT_LANGUAGE,
+                                                        .orElse(translator.getLabel(Constants.DEFAULT_LANGUAGE,
                                                                 "about.donators.empty")), true)))
                         .subscribe()));
     }

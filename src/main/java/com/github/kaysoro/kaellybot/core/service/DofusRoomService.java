@@ -37,6 +37,7 @@ public class DofusRoomService extends AbstractRestClientService {
                 .uri("/{id}", id)
                 .header(ACCEPT_LANGUAGE, language.name())
                 .retrieve()
-                .bodyToMono(PreviewDto.class);
+                .bodyToMono(PreviewDto.class)
+                .map(preview -> preview.toBuilder().id(id).build());
     }
 }

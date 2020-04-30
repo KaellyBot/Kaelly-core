@@ -1,15 +1,13 @@
 package com.github.kaysoro.kaellybot.core.model.constant;
 
-import com.github.kaysoro.kaellybot.core.util.Translator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.awt.*;
-import java.util.stream.Stream;
 
 @Getter
 @AllArgsConstructor
-public enum Dimension {
+public enum Dimension implements MultilingualEnum {
 
     ENUTROSOR("dimension.enutrosor", "http://image.noelshack.com/fichiers/2019/02/2/1546904136-enutrosor.png", new Color(255, 255, 104)),
     SRAMBAD  ("dimension.srambad"  , "http://image.noelshack.com/fichiers/2019/02/2/1546904136-srambad.png", new Color(47, 66, 104)),
@@ -21,14 +19,4 @@ public enum Dimension {
     private String image;
 
     private Color color;
-
-    public String getLabel(Language lang){
-        return Translator.getLabel(lang, getKey());
-    }
-
-    public static Dimension valueOf(String dimensionName, Language language){
-        return Stream.of(Dimension.values())
-                .filter(dim -> dim.getLabel(language).equals(dimensionName))
-                .findFirst().orElseThrow(NullPointerException::new);
-    }
 }

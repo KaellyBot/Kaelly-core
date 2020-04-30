@@ -3,6 +3,7 @@ package com.github.kaysoro.kaellybot.core.trigger;
 import com.github.kaysoro.kaellybot.core.mapper.DofusRoomPreviewMapper;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.payload.dofusroom.PreviewDto;
+import com.github.kaysoro.kaellybot.core.payload.dofusroom.StatusDto;
 import com.github.kaysoro.kaellybot.core.service.DofusRoomService;
 import discord4j.core.object.entity.Message;
 import org.springframework.stereotype.Component;
@@ -20,8 +21,11 @@ public class DofusRoomTrigger implements Trigger {
 
     private DofusRoomService dofusRoomService;
 
-    public DofusRoomTrigger(DofusRoomService dofusRoomService){
+    private DofusRoomPreviewMapper dofusRoomPreviewMapper;
+
+    public DofusRoomTrigger(DofusRoomService dofusRoomService, DofusRoomPreviewMapper dofusRoomPreviewMapper){
         this.dofusRoomService = dofusRoomService;
+        this.dofusRoomPreviewMapper = dofusRoomPreviewMapper;
     }
 
     @Override
@@ -36,10 +40,11 @@ public class DofusRoomTrigger implements Trigger {
         while(m.find()) ids.add(m.group(1));
 
         Flux<PreviewDto> previews = Flux.fromIterable(ids)
-                .flatMap(id -> dofusRoomService.getDofusRoomPreview(id, Constants.DEFAULT_LANGUAGE));
+                .flatMap(id -> dofusRoomService.getDofusRoomPreview(id, Constants.DEFAULT_LANGUAGE))
+                .filter(preview -> StatusDto.SUCCESS.equals(preview.getStatus()));
 
         Flux.zip(previews, message.getAuthorAsMember(), message.getChannel())
-                .flatMap(tuple -> tuple.getT3().createEmbed(spec -> DofusRoomPreviewMapper
+                .flatMap(tuple -> tuple.getT3().createMessage(spec -> dofusRoomPreviewMapper
                         .decorateSpec(spec, tuple.getT1(), tuple.getT2(), Constants.DEFAULT_LANGUAGE)))
                 .subscribe();
     }

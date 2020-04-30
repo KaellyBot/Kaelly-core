@@ -12,7 +12,7 @@ import lombok.Value;
 public class ItemDto {
 
     String name;
-    @JsonProperty("url") String urlImg;
+    @JsonProperty("url") String id;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class ItemDtoBuilder {}

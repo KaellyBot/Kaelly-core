@@ -11,8 +11,8 @@ import java.util.regex.Matcher;
 
 public class HelpArgument extends AbstractCommandArgument {
 
-    public HelpArgument(HelpCommand parent){
-        super(parent, "\\s+(.+)", true);
+    public HelpArgument(HelpCommand parent, Translator translator){
+        super(parent, "\\s+(.+)", true, translator);
     }
 
     @Override
@@ -24,14 +24,14 @@ public class HelpArgument extends AbstractCommandArgument {
                             .filter(cmd -> cmd.getName().equals(argument))
                             .findFirst().map(cmd ->
                                     cmd.moreHelp(Constants.DEFAULT_LANGUAGE, Constants.DEFAULT_PREFIX))
-                            .orElse(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "help.cmd.empty"))))
+                            .orElse(translator.getLabel(Constants.DEFAULT_LANGUAGE, "help.cmd.empty"))))
                     .subscribe();
     }
 
     @Override
     public String help(Language lg, String prefix){
         return prefix + "`" + getParent().getName() + " commandName` : "
-                + Translator.getLabel(lg, "help.cmd");
+                + translator.getLabel(lg, "help.cmd");
     }
 
     @Override

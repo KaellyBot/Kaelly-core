@@ -12,6 +12,7 @@ public class PreviewDto {
 
     StatusDto status;
     BuildDto data;
+    String id;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class PreviewDtoBuilder {}

@@ -26,9 +26,9 @@ public abstract class AbstractCommand implements Command {
     private boolean isUsableInMP;
     private boolean isAdmin;
     private boolean isHidden;
+    protected Translator translator;
 
-
-    protected AbstractCommand(String name){
+    protected AbstractCommand(String name, Translator translator){
         super();
         this.name = name;
         this.isPublic = true;
@@ -37,7 +37,8 @@ public abstract class AbstractCommand implements Command {
         this.isHidden = false;
 
         this.arguments = new ArrayList<>();
-        this.arguments.add(new HelpArgument(this));
+        this.arguments.add(new HelpArgument(this, translator));
+        this.translator = translator;
     }
 
     @Override
@@ -49,7 +50,7 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public String help(Language lg, String prefix){
-        return "**" + prefix + name + "** " + Translator.getLabel(lg, name.toLowerCase() + ".help");
+        return "**" + prefix + name + "** " + translator.getLabel(lg, name.toLowerCase() + ".help");
     }
 
     @Override

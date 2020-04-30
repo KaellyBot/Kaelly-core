@@ -13,24 +13,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class SendNudeCommand extends AbstractCommand {
 
-    public SendNudeCommand() {
-        super("sendnude");
+    public SendNudeCommand(Translator translator) {
+        super("sendnude", translator);
         setHidden(true);
 
-        getArguments().add(new BasicCommandArgument(this,
+        getArguments().add(new BasicCommandArgument(this, translator,
                 message -> message.getChannel()
                         .flatMap(chan -> {
                             if (isChannelAppropriate(chan))
                                 return chan.createEmbed(spec -> spec
-                                        .setTitle(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "sendnude.title"))
-                                        .setFooter(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "sendnude.author")
-                                                .replace("{author}", Nude.MOAM.getAuthor())
-                                                .replace("{position}", "1")
-                                                .replace("{number}", "1"), null)
+                                        .setTitle(translator.getLabel(Constants.DEFAULT_LANGUAGE, "sendnude.title"))
+                                        .setFooter(translator.getLabel(Constants.DEFAULT_LANGUAGE, "sendnude.author",
+                                                Nude.MOAM.getAuthor(), "1", "1"), null)
                                         .setImage(Nude.MOAM.getImage())
                                         .setColor(Constants.COLOR));
                             else
-                                return chan.createMessage(Translator
+                                return chan.createMessage(translator
                                         .getLabel(Constants.DEFAULT_LANGUAGE, "sendnude.wrongChan"));
                         })
                         .subscribe()));

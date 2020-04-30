@@ -1,12 +1,11 @@
 package com.github.kaysoro.kaellybot.core.model.constant;
 
-import com.github.kaysoro.kaellybot.core.util.Translator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Server {
+public enum Server implements MultilingualEnum {
 
     AGRIDE    ("server.agride"    ),
     ATCHAM    ("server.atcham"    ),
@@ -26,8 +25,4 @@ public enum Server {
     ILYZAELLE ("server.ilyzaelle" );
 
     private String key;
-
-    public String getLabel(Language lang){
-        return Translator.getLabel(lang, getKey());
-    }
 }

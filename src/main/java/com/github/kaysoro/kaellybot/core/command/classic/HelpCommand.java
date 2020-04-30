@@ -18,22 +18,22 @@ public class HelpCommand extends AbstractCommand {
 
     private List<Command> commands;
 
-    public HelpCommand(List<Command> commands){
-        super("help");
+    public HelpCommand(List<Command> commands, Translator translator){
+        super("help", translator);
         this.commands = commands;
         this.commands.add(this);
         this.commands.sort(Comparator.comparing(Command::getName));
 
-        getArguments().add(new BasicCommandArgument(this,
+        getArguments().add(new BasicCommandArgument(this, translator,
                 message -> message.getChannel().flatMap(chan -> chan.createMessage(
                         commands.stream()
                                 .filter(command -> command.isPublic() && ! command.isAdmin() && ! command.isHidden())
                                 .map(command -> command.help(Constants.DEFAULT_LANGUAGE, Constants.DEFAULT_PREFIX))
                                 .reduce((cmd1, cmd2) -> cmd1 + "\n" + cmd2)
-                                .orElse(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "help.empty"))))
+                                .orElse(translator.getLabel(Constants.DEFAULT_LANGUAGE, "help.empty"))))
                         .subscribe()
         ));
 
-        getArguments().add(new HelpArgument(this));
+        getArguments().add(new HelpArgument(this, translator));
     }
 }

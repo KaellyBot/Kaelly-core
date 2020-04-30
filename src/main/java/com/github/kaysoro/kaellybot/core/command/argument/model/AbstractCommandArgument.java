@@ -14,15 +14,17 @@ import java.util.regex.Pattern;
 public abstract class AbstractCommandArgument implements CommandArgument {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommandArgument.class);
+    protected Translator translator;
     private Command parent;
     private String pattern;
     private boolean isDescribed;
 
-    public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed){
+    public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Translator translator){
         super();
         this.parent = parent;
         this.pattern = Constants.DEFAULT_PREFIX + parent.getName() + subPattern;
         this.isDescribed = isDescribed;
+        this.translator = translator;
     }
 
     @Override
@@ -37,14 +39,14 @@ public abstract class AbstractCommandArgument implements CommandArgument {
             execute(message, matcher);
         else
             message.getChannel().flatMap(channel -> channel
-                .createMessage(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "exception.unknown")))
+                .createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, "exception.unknown")))
             .subscribe();
     }
 
     protected void manageUnknownException(Message message, Throwable error){
         LOG.error("Error with the following call: {}", message.getContent(), error);
         message.getChannel().flatMap(channel -> channel.createMessage(
-                Translator.getLabel(Constants.DEFAULT_LANGUAGE,"exception.unknown")))
+                translator.getLabel(Constants.DEFAULT_LANGUAGE,"exception.unknown")))
                 .subscribe();
     }
 

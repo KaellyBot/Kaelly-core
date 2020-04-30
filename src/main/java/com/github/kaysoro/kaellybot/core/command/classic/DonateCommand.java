@@ -12,25 +12,23 @@ import java.util.stream.Stream;
 @Component
 public class DonateCommand extends AbstractCommand {
 
-    public DonateCommand() {
-        super("donate");
+    public DonateCommand(Translator translator) {
+        super("donate", translator);
 
-        getArguments().add(new BasicCommandArgument(this,
+        getArguments().add(new BasicCommandArgument(this, translator,
                 message -> message.getChannel()
                         .flatMap(chan -> chan.createEmbed(spec -> {
-                            spec.setTitle(Translator
-                                    .getLabel(Constants.DEFAULT_LANGUAGE, "about.title")
-                                    .replace("{name}", Constants.NAME)
-                                    .replace("{version}", Constants.VERSION))
-                                    .setDescription(Translator
-                                            .getLabel(Constants.DEFAULT_LANGUAGE, "about.desc")
-                                            .replace("{game}", Constants.GAME.getName()))
-                                    .setColor(Constants.COLOR)
-                                    .setThumbnail(Constants.AVATAR);
+                            spec
+                                .setTitle(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.title",
+                                        Constants.NAME, Constants.VERSION))
+                                .setDescription(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.desc", Constants.GAME.getName()))
+                                .setColor(Constants.COLOR)
+                                .setThumbnail(Constants.AVATAR);
+
                             Stream.of(Donator.values())
-                                    .forEach(donator -> spec.addField(donator.getName(), Translator
-                                            .getLabel(Constants.DEFAULT_LANGUAGE, "donator."
-                                                    + donator.name().toLowerCase() + ".desc"), false));
+                                .forEach(donator -> spec.addField(donator.getName(), translator
+                                        .getLabel(Constants.DEFAULT_LANGUAGE, "donator."
+                                                + donator.name().toLowerCase() + ".desc"), false));
                         }))
                         .subscribe()));
     }

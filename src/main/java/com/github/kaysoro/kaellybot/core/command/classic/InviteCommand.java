@@ -9,30 +9,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class InviteCommand extends AbstractCommand {
 
-    private static final String NAME = "{name}";
+    public InviteCommand(Translator translator) {
+        super("invite", translator);
 
-    public InviteCommand() {
-        super("invite");
-
-        getArguments().add(new BasicCommandArgument(this,
+        getArguments().add(new BasicCommandArgument(this, translator,
                 message -> message.getChannel()
-                        .flatMap(chan -> chan.createEmbed(spec -> spec.setTitle(Translator
-                                .getLabel(Constants.DEFAULT_LANGUAGE, "about.title")
-                                .replace(NAME, Constants.NAME)
-                                .replace("{version}", Constants.VERSION))
-                                .setDescription(Translator
-                                        .getLabel(Constants.DEFAULT_LANGUAGE, "about.desc")
-                                        .replace("{game}", Constants.GAME.getName()))
+                        .flatMap(chan -> chan.createEmbed(spec -> spec
+                                .setTitle(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.title",
+                                        Constants.NAME, Constants.VERSION))
+                                .setDescription(translator
+                                        .getLabel(Constants.DEFAULT_LANGUAGE, "about.desc", Constants.GAME.getName()))
                                 .setColor(Constants.COLOR)
                                 .setThumbnail(Constants.AVATAR)
-                                .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.title"), 
-                                        Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.desc")
-                                                .replace(NAME, Constants.NAME)
-                                                .replace("{invite}", Constants.INVITE), true)
-                                .addField(Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.title"),
-                                        Translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.desc")
-                                                .replace(NAME, Constants.NAME)
-                                                .replace("{discordInvite}", Constants.DISCORD_INVITE), true)))
+                                .addField(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.title"), 
+                                        translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.invite.desc",
+                                                Constants.NAME, Constants.INVITE), true)
+                                .addField(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.title"),
+                                        translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.support.desc",
+                                                Constants.NAME, Constants.DISCORD_INVITE), true)))
                         .subscribe()));
     }
 }

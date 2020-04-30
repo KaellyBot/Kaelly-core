@@ -16,10 +16,12 @@ import java.util.regex.Matcher;
 public class AllPortalsArgument extends AbstractCommandArgument {
 
     private PortalService portalService;
+    private PortalMapper portalMapper;
 
-    public AllPortalsArgument(PortalCommand parent, PortalService portalService){
-        super(parent, "\\s+(\\w+)", true);
+    public AllPortalsArgument(PortalCommand parent, PortalService portalService, PortalMapper portalMapper, Translator translator){
+        super(parent, "\\s+(\\w+)", true, translator);
         this.portalService = portalService;
+        this.portalMapper = portalMapper;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class AllPortalsArgument extends AbstractCommandArgument {
                 .collectList()
                 .doOnSuccess(portals -> message.getChannel()
                         .flatMap(channel -> Flux.fromIterable(portals)
-                                .flatMap(portal -> channel.createEmbed(spec -> PortalMapper
+                                .flatMap(portal -> channel.createEmbed(spec -> portalMapper
                                         .decorateSpec(spec, portal, Constants.DEFAULT_LANGUAGE)))
                                 .collectList())
                         .subscribe())
@@ -42,6 +44,6 @@ public class AllPortalsArgument extends AbstractCommandArgument {
     @Override
     public String help(Language lg, String prefix){
         return prefix + "`" + getParent().getName() + " server` : "
-                + Translator.getLabel(lg, "pos.all_portals");
+                + translator.getLabel(lg, "pos.all_portals");
     }
 }
