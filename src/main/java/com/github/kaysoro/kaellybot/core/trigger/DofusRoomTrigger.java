@@ -2,7 +2,7 @@ package com.github.kaysoro.kaellybot.core.trigger;
 
 import com.github.kaysoro.kaellybot.core.mapper.DofusRoomPreviewMapper;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
-import com.github.kaysoro.kaellybot.core.payload.dofusroom.DofusRoomPreviewDto;
+import com.github.kaysoro.kaellybot.core.payload.dofusroom.PreviewDto;
 import com.github.kaysoro.kaellybot.core.service.DofusRoomService;
 import discord4j.core.object.entity.Message;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class DofusRoomTrigger implements Trigger {
         Set<String> ids = new HashSet<>();
         while(m.find()) ids.add(m.group(1));
 
-        Flux<DofusRoomPreviewDto> previews = Flux.fromIterable(ids)
+        Flux<PreviewDto> previews = Flux.fromIterable(ids)
                 .flatMap(id -> dofusRoomService.getDofusRoomPreview(id, Constants.DEFAULT_LANGUAGE));
 
         Flux.zip(previews, message.getAuthorAsMember(), message.getChannel())

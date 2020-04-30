@@ -12,9 +12,9 @@ import javax.validation.constraints.NotNull;
 @JsonDeserialize(builder = ExternalPortalDto.ExternalPortalDtoBuilder.class)
 @Builder(builderClassName = "ExternalPortalDtoBuilder", toBuilder = true)
 public class ExternalPortalDto {
-    private @NotNull @Valid PositionDto position;
-    private String author;
-    private int utilisation;
+    @NotNull @Valid PositionDto position;
+    String author;
+    int utilisation;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class ExternalPortalDtoBuilder {}

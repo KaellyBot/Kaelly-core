@@ -10,8 +10,8 @@ import lombok.Value;
 @Builder(builderClassName = "AuthorDtoBuilder", toBuilder = true)
 public class AuthorDto {
 
-    private String name;
-    private String platform;
+    String name;
+    String platform;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class AuthorDtoBuilder {}
