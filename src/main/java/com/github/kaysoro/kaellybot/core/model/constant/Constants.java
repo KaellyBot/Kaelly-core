@@ -38,4 +38,6 @@ public final class Constants {
     public static final List<String> DOFUS_ROOM_BUILD_URL = List.of(
             "https://www.dofusroom.com/buildroom/build/show/",
             "https://dofusroom.com/b-");
+
+    public static final String DOFUS_ROOM_BUILD_URL_REFERRER = "https://www.dofusroom.com/buildroom/build/show/{}?referrer=kaellybot";
 }
