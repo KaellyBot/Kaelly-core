@@ -1,6 +1,7 @@
 package com.github.kaysoro.kaellybot.core.model.constant;
 
 import java.awt.*;
+import java.util.List;
 
 public final class Constants {
 
@@ -34,5 +35,7 @@ public final class Constants {
 
     public static final String DISCORD_INVITE = "https://discord.gg/VsrbrYC";
 
-    public static final String DOFUS_ROOM_BUILD_URL = "https://www.dofusroom.com/buildroom/build/show/";
+    public static final List<String> DOFUS_ROOM_BUILD_URL = List.of(
+            "https://www.dofusroom.com/buildroom/build/show/",
+            "https://dofusroom.com/b-");
 }
