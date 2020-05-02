@@ -38,15 +38,15 @@ public class Translator {
         return getLabel(lang, enumeration.getKey());
     }
 
-    public String getLabel(Language lang, String property, String... arguments){
+    public String getLabel(Language lang, String property, Object... arguments){
         String value = labels.get(lang).getProperty(property);
         if (value == null || value.trim().isEmpty()) {
             LOG.error("Missing label in {} : {}", lang, property);
             return property;
         }
 
-        for(String arg : arguments)
-            value = value.replaceFirst("\\{}", arg);
+        for(Object arg : arguments)
+            value = value.replaceFirst("\\{}", arg.toString());
 
         return value;
     }

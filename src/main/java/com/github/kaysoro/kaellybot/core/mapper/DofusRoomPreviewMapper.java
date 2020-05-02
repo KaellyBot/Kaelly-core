@@ -8,12 +8,12 @@ import com.github.kaysoro.kaellybot.core.payload.dofusroom.StuffDto;
 import com.github.kaysoro.kaellybot.core.payload.dofusroom.TrophusDto;
 import com.github.kaysoro.kaellybot.core.util.ImageProcessor;
 import com.github.kaysoro.kaellybot.core.util.Translator;
-import discord4j.core.object.entity.Member;
 import discord4j.core.spec.MessageCreateSpec;
 import org.openimaj.image.ImageUtilities;
 import org.openimaj.image.MBFImage;
 import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.*;
 import java.util.Optional;
 
@@ -31,8 +31,11 @@ public class DofusRoomPreviewMapper {
 
     public void decorateSpec(MessageCreateSpec spec, PreviewDto preview, Language language){
         spec.setEmbed(embedSpec -> embedSpec.setTitle(preview.getData().getName())
-                .setDescription(translator.getLabel(language, "dofusroom.made_by", preview.getData().getAuthor()))
-                .setThumbnail("https://i.imgur.com/qLh0qRM.png")
+                .setDescription(translator.getLabel(language, "dofusroom.made_by",
+                        preview.getData().getLevel(), preview.getData().getAuthor()))
+                .setThumbnail("https://i.imgur.com/kwc2f0J.png")
+                .setColor(Color.decode("#fdb950"))
+                .setFooter(translator.getLabel(language, "dofusroom.generated"), null)
                 .setUrl(Constants.DOFUS_ROOM_BUILD_URL_REFERRER.replace("{}", preview.getId()))
                 .setImage("attachment://" + ATTACHMENT_FILENAME))
                 .addFile(ATTACHMENT_FILENAME, createBuild(preview));
