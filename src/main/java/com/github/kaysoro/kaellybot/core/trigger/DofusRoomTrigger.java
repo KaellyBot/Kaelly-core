@@ -5,11 +5,16 @@ import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.payload.dofusroom.StatusDto;
 import com.github.kaysoro.kaellybot.core.service.DofusRoomService;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.rest.util.Permission;
+import discord4j.rest.util.PermissionSet;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -33,16 +38,33 @@ public class DofusRoomTrigger implements Trigger {
     }
 
     @Override
-    public boolean isTriggered(Message message) {
+    public Mono<Boolean> isTriggered(Message message) {
+        return message.getChannel()
+                .filter(channel -> channel instanceof TextChannel)
+                .map(TextChannel.class::cast)
+                .zipWith(message.getClient().getSelfId())
+                .flatMap(tuple -> tuple.getT1().getEffectivePermissions(tuple.getT2()))
+                .map(permissions -> isBotHasPermissionsNeeded(permissions)
+                        && isDofusRoomPatternFound(message.getContent()));
+    }
+
+    private boolean isBotHasPermissionsNeeded(PermissionSet permissions){
+        return permissions.containsAll(Set.of(
+                Permission.SEND_MESSAGES,
+                Permission.ATTACH_FILES,
+                Permission.EMBED_LINKS));
+    }
+
+    private boolean isDofusRoomPatternFound(String content){
         return dofusRoomUrlPatterns.parallelStream()
-                .map(pattern -> pattern.matcher(message.getContent()).find())
+                .map(pattern -> pattern.matcher(content).find())
                 .reduce(Boolean::logicalOr)
                 .orElse(false);
     }
 
     @Override
-    public void execute(Message message) {
-        Flux.fromStream(dofusRoomUrlPatterns.parallelStream()
+    public Flux<?> execute(Message message) {
+        return Flux.fromStream(dofusRoomUrlPatterns.parallelStream()
                 .map(pattern -> pattern.matcher(message.getContent()))
                 .flatMap(this::findAllDofusRoomIds)
                 .distinct())
@@ -52,8 +74,7 @@ public class DofusRoomTrigger implements Trigger {
                 .zipWith(message.getChannel())
                 .flatMapMany(tuple -> Flux.fromIterable(tuple.getT1())
                         .flatMap(preview -> tuple.getT2().createMessage(spec -> dofusRoomPreviewMapper
-                                .decorateSpec(spec, preview, Constants.DEFAULT_LANGUAGE))))
-                .subscribe();
+                                .decorateSpec(spec, preview, Constants.DEFAULT_LANGUAGE))));
     }
 
     private Stream<String> findAllDofusRoomIds(Matcher m){

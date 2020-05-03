@@ -1,10 +1,12 @@
 package com.github.kaysoro.kaellybot.core.trigger;
 
 import discord4j.core.object.entity.Message;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface Trigger {
 
-    boolean isTriggered(Message message);
+    Mono<Boolean> isTriggered(Message message);
 
-    void execute(Message message);
+    Flux<?> execute(Message message);
 }

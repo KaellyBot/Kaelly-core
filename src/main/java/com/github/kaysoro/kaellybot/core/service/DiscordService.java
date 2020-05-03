@@ -5,11 +5,13 @@ import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.trigger.Trigger;
 import discord4j.core.DiscordClient;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
+import discord4j.core.event.domain.lifecycle.ReconnectEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -37,7 +39,7 @@ public class DiscordService {
 
             discordClient.withGateway(client -> {
                 Mono<Void> readyListener = client.getEventDispatcher().on(ReadyEvent.class)
-                        .doOnNext(event -> event.getSelf().getClient()
+                        .flatMap(event -> event.getSelf().getClient()
                                 .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName()))))
                         .then();
 
@@ -48,12 +50,17 @@ public class DiscordService {
 
                 Mono<Void> triggerListener = client.getEventDispatcher().on(MessageCreateEvent.class)
                         .map(MessageCreateEvent::getMessage)
-                        .doOnNext(msg -> triggers.stream()
-                                .filter(trigger -> trigger.isTriggered(msg))
-                                .forEach(trigger -> trigger.execute(msg)))
+                        .flatMap(msg -> Flux.fromIterable(triggers)
+                                .filterWhen(trigger -> trigger.isTriggered(msg))
+                                .flatMap(trigger -> trigger.execute(msg)))
                         .then();
 
-                return Mono.when(readyListener, commandListener, triggerListener);
+                Mono<Void> reconnectListener = client.getEventDispatcher().on(ReconnectEvent.class)
+                        .flatMap(event -> event.getClient()
+                                .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName()))))
+                        .then();
+
+                return Mono.when(readyListener, commandListener, triggerListener, reconnectListener);
             }).subscribe();
         }
     }
