@@ -3,6 +3,7 @@ package com.github.kaysoro.kaellybot.core.mapper;
 import com.github.kaysoro.kaellybot.core.model.constant.Dimension;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.payload.kaelly.portal.PortalDto;
+import com.github.kaysoro.kaellybot.core.service.DimensionService;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.spec.EmbedCreateSpec;
 import org.apache.commons.lang3.time.DateUtils;
@@ -16,12 +17,15 @@ public class PortalMapper {
 
     private Translator translator;
 
-    public PortalMapper(Translator translator){
+    private DimensionService dimensionService;
+
+    public PortalMapper(Translator translator, DimensionService dimensionService){
         this.translator = translator;
+        this.dimensionService = dimensionService;
     }
 
     public void decorateSpec(EmbedCreateSpec spec, PortalDto portal, Language language){
-        Dimension dimension = Dimension.valueOf(portal.getDimension());
+        Dimension dimension = dimensionService.findByName(portal.getDimension(), language).orElse(Dimension.ENUTROSOR);
         // TODO do a service to determine the dimension
 
         spec.setTitle(translator.getLabel(language, dimension))
@@ -46,8 +50,7 @@ public class PortalMapper {
             spec.addField(translator.getLabel(language, "pos.zaap"),
                     portal.getNearestZaap().toString(), false);
 
-            spec.setFooter(getDateInformation(portal, language),
-                    "http://image.noelshack.com/fichiers/2019/43/1/1571689446-zaap2.png");
+            spec.setFooter(getDateInformation(portal, language), "https://i.imgur.com/u2PUyt5.png");
         }
         else
             spec.setDescription(translator.getLabel(language, "pos.unknown"));
