@@ -26,12 +26,7 @@ public abstract class BasicCommandArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message){
-        return executor.apply(message);
-    }
-
-    @Override
     public Flux<Message> execute(Message message, Matcher matcher){
-        return execute(message);
+        return  executor.apply(message);
     }
 }

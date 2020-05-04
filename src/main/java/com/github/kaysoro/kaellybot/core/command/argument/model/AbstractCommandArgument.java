@@ -3,8 +3,10 @@ package com.github.kaysoro.kaellybot.core.command.argument.model;
 import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
+import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import reactor.core.publisher.Flux;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public abstract class AbstractCommandArgument implements CommandArgument<Message> {
 
@@ -35,22 +38,38 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     }
 
     @Override
-    public boolean isArgumentHasPermissionsNeeded(PermissionSet permissions){
-        return permissions.containsAll(this.permissions);
-    }
-
-    @Override
     public boolean triggerMessage(Message message) {
         return message.getContent().matches(pattern);
     }
 
     @Override
-    public Flux<Message> execute(Message message){
+    public boolean isArgumentHasPermissionsNeeded(PermissionSet permissions){
+        return permissions.containsAll(this.permissions);
+    }
+
+    @Override
+    public Flux<Message> tryExecute(Message message, PermissionSet permissions){
+        return isArgumentHasPermissionsNeeded(permissions) ? execute(message) :
+                message.getChannel()
+                        .filter(channel -> permissions.containsAll(PermissionScope.TEXT_PERMISSIONS))
+                        .flatMapMany(channel -> sendMissingPermissions(channel, Constants.DEFAULT_LANGUAGE));
+    }
+
+    private Flux<Message> execute(Message message){
         Matcher matcher = Pattern.compile(pattern).matcher(message.getContent());
         return matcher.matches() ? execute(message, matcher) : message.getChannel()
                 .flatMap(channel -> channel
                         .createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, "exception.unknown")))
                 .flatMapMany(Flux::just);
+    }
+
+    private Flux<Message> sendMissingPermissions(MessageChannel channel, Language language){
+        return channel.createMessage(permissions.stream()
+                .map(permission -> translator.getLabel(language, "permission." + permission.name().toLowerCase()))
+                .collect(Collectors.joining(", ", translator
+                        .getLabel(language, "exception.missing_permission", getParent().getName()) + " ", ".")))
+                .flatMapMany(Flux::just);
+
     }
 
     protected void manageUnknownException(Message message, Throwable error){

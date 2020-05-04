@@ -27,7 +27,6 @@ public abstract class AbstractCommand implements Command {
     protected String name;
     protected List<CommandArgument<Message>> arguments;
     private boolean isPublic;
-    private boolean isUsableInMP;
     private boolean isAdmin;
     private boolean isHidden;
     protected Translator translator;
@@ -36,7 +35,6 @@ public abstract class AbstractCommand implements Command {
         super();
         this.name = name;
         this.isPublic = true;
-        this.isUsableInMP = true;
         this.isAdmin = false;
         this.isHidden = false;
 
@@ -48,9 +46,9 @@ public abstract class AbstractCommand implements Command {
     @Override
     public final Flux<?> request(Message message) {
         return Flux.fromIterable(arguments)
-                .filterWhen(argument -> getPermissions(message).map(argument::isArgumentHasPermissionsNeeded))
                 .filter(argument -> argument.triggerMessage(message))
-                .flatMap(argument -> argument.execute(message));
+                .flatMap(argument -> getPermissions(message)
+                        .flatMapMany(permissions -> argument.tryExecute(message, permissions)));
     }
 
     private Mono<PermissionSet> getPermissions(Message message){

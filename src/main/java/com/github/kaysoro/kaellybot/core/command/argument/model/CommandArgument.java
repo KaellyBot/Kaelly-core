@@ -11,7 +11,7 @@ public interface CommandArgument<T> {
 
     boolean isArgumentHasPermissionsNeeded(PermissionSet permissions);
 
-    Flux<T> execute(Message message);
+    Flux<T> tryExecute(Message message, PermissionSet permissions);
 
     String help(Language lg, String prefix);
 
