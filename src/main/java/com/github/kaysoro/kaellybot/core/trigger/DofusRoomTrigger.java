@@ -5,12 +5,10 @@ import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.payload.dofusroom.StatusDto;
 import com.github.kaysoro.kaellybot.core.service.DofusRoomService;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +19,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class DofusRoomTrigger implements Trigger {
+public class DofusRoomTrigger extends AbstractTrigger {
+
+    private static final Set<Permission> PERMISSIONS_NEEDED = Set.of(
+            Permission.SEND_MESSAGES,
+            Permission.ATTACH_FILES,
+            Permission.EMBED_LINKS);
 
     private List<Pattern> dofusRoomUrlPatterns;
 
@@ -38,24 +41,12 @@ public class DofusRoomTrigger implements Trigger {
     }
 
     @Override
-    public Mono<Boolean> isTriggered(Message message) {
-        return message.getChannel()
-                .filter(channel -> channel instanceof TextChannel)
-                .map(TextChannel.class::cast)
-                .zipWith(message.getClient().getSelfId())
-                .flatMap(tuple -> tuple.getT1().getEffectivePermissions(tuple.getT2()))
-                .map(permissions -> isBotHasPermissionsNeeded(permissions)
-                        && isDofusRoomPatternFound(message.getContent()));
+    protected boolean isTriggerHasPermissionsNeeded(PermissionSet permissions){
+        return permissions.containsAll(PERMISSIONS_NEEDED);
     }
 
-    private boolean isBotHasPermissionsNeeded(PermissionSet permissions){
-        return permissions.containsAll(Set.of(
-                Permission.SEND_MESSAGES,
-                Permission.ATTACH_FILES,
-                Permission.EMBED_LINKS));
-    }
-
-    private boolean isDofusRoomPatternFound(String content){
+    @Override
+    protected boolean isPatternFound(String content){
         return dofusRoomUrlPatterns.parallelStream()
                 .map(pattern -> pattern.matcher(content).find())
                 .reduce(Boolean::logicalOr)
