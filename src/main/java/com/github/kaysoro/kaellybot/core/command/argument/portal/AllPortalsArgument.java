@@ -7,6 +7,7 @@ import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.model.constant.Server;
 import com.github.kaysoro.kaellybot.core.service.PortalService;
+import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
 import reactor.core.publisher.Flux;
@@ -19,7 +20,7 @@ public class AllPortalsArgument extends AbstractCommandArgument {
     private PortalMapper portalMapper;
 
     public AllPortalsArgument(PortalCommand parent, PortalService portalService, PortalMapper portalMapper, Translator translator){
-        super(parent, "\\s+(\\w+)", true, translator);
+        super(parent, "\\s+(\\w+)", true, PermissionScope.EMBED_PERMISSIONS, translator);
         this.portalService = portalService;
         this.portalMapper = portalMapper;
     }

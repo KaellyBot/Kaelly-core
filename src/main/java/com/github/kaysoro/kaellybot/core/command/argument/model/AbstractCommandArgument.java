@@ -5,9 +5,12 @@ import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
+import discord4j.rest.util.Permission;
+import discord4j.rest.util.PermissionSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,13 +21,21 @@ public abstract class AbstractCommandArgument implements CommandArgument {
     private Command parent;
     private String pattern;
     private boolean isDescribed;
+    private Set<Permission> permissions;
 
-    public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Translator translator){
+    public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Set<Permission> permissions,
+                                   Translator translator){
         super();
         this.parent = parent;
         this.pattern = Constants.DEFAULT_PREFIX + parent.getName() + subPattern;
         this.isDescribed = isDescribed;
+        this.permissions = permissions;
         this.translator = translator;
+    }
+
+    @Override
+    public boolean isArgumentHasPermissionsNeeded(PermissionSet permissions){
+        return permissions.containsAll(this.permissions);
     }
 
     @Override

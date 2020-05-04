@@ -1,6 +1,6 @@
 package com.github.kaysoro.kaellybot.core.command.classic;
 
-import com.github.kaysoro.kaellybot.core.command.argument.model.BasicCommandArgument;
+import com.github.kaysoro.kaellybot.core.command.argument.model.EmbedCommandArgument;
 import com.github.kaysoro.kaellybot.core.command.model.AbstractCommand;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Donator;
@@ -16,7 +16,7 @@ public class AboutCommand extends AbstractCommand {
     public AboutCommand(Translator translator) {
         super("about", translator);
 
-        getArguments().add(new BasicCommandArgument(this, translator,
+        getArguments().add(new EmbedCommandArgument(this, translator,
                 message -> message.getChannel()
                         .flatMap(chan -> chan.createEmbed(spec -> spec
                                 .setTitle(translator.getLabel(Constants.DEFAULT_LANGUAGE, "about.title",

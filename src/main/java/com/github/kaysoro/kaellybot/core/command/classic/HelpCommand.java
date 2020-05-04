@@ -1,8 +1,8 @@
 package com.github.kaysoro.kaellybot.core.command.classic;
 
 import com.github.kaysoro.kaellybot.core.command.argument.help.HelpArgument;
+import com.github.kaysoro.kaellybot.core.command.argument.model.TextCommandArgument;
 import com.github.kaysoro.kaellybot.core.command.model.AbstractCommand;
-import com.github.kaysoro.kaellybot.core.command.argument.model.BasicCommandArgument;
 import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.util.Translator;
@@ -24,7 +24,7 @@ public class HelpCommand extends AbstractCommand {
         this.commands.add(this);
         this.commands.sort(Comparator.comparing(Command::getName));
 
-        getArguments().add(new BasicCommandArgument(this, translator,
+        getArguments().add(new TextCommandArgument(this, translator,
                 message -> message.getChannel().flatMap(chan -> chan.createMessage(
                         commands.stream()
                                 .filter(command -> command.isPublic() && ! command.isAdmin() && ! command.isHidden())

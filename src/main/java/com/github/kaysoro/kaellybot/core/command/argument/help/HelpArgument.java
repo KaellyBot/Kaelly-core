@@ -4,6 +4,7 @@ import com.github.kaysoro.kaellybot.core.command.classic.HelpCommand;
 import com.github.kaysoro.kaellybot.core.command.argument.model.AbstractCommandArgument;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
+import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
 
@@ -12,7 +13,7 @@ import java.util.regex.Matcher;
 public class HelpArgument extends AbstractCommandArgument {
 
     public HelpArgument(HelpCommand parent, Translator translator){
-        super(parent, "\\s+(.+)", true, translator);
+        super(parent, "\\s+(.+)", true, PermissionScope.TEXT_PERMISSIONS, translator);
     }
 
     @Override

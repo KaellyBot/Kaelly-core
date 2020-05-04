@@ -1,6 +1,6 @@
 package com.github.kaysoro.kaellybot.core.command.hidden;
 
-import com.github.kaysoro.kaellybot.core.command.argument.model.BasicCommandArgument;
+import com.github.kaysoro.kaellybot.core.command.argument.model.EmbedCommandArgument;
 import com.github.kaysoro.kaellybot.core.command.model.AbstractCommand;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Nude;
@@ -17,7 +17,7 @@ public class SendNudeCommand extends AbstractCommand {
         super("sendnude", translator);
         setHidden(true);
 
-        getArguments().add(new BasicCommandArgument(this, translator,
+        getArguments().add(new EmbedCommandArgument(this, translator,
                 message -> message.getChannel()
                         .flatMap(chan -> {
                             if (isChannelAppropriate(chan))
