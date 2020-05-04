@@ -35,9 +35,10 @@ public abstract class AbstractTrigger implements Trigger {
         return permissions.containsAll(this.permissions);
     }
 
-    protected abstract boolean isPatternFound(String content);
-
-    protected void manageUnknownException(Message message, Throwable error){
+    protected Mono<Message> manageUnknownException(Message message, Throwable error){
         LOGGER.error("Error with the following trigger: {}", message.getContent(), error);
+        return Mono.empty();
     }
+
+    protected abstract boolean isPatternFound(String content);
 }

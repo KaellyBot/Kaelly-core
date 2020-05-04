@@ -11,7 +11,6 @@ import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.regex.Matcher;
 
@@ -33,8 +32,7 @@ public class AllPortalsArgument extends AbstractCommandArgument {
         return portalService.getPortals(server, Constants.DEFAULT_LANGUAGE)
                 .flatMap(portal -> message.getChannel().flatMap(channel -> channel
                         .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, Constants.DEFAULT_LANGUAGE))))
-                .doOnError(error -> manageUnknownException(message, error))
-                .onErrorResume(error -> Mono.empty());
+                .onErrorResume(error -> manageUnknownException(message, error));
     }
 
     @Override

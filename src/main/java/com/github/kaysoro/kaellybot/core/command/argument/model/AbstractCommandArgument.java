@@ -78,11 +78,10 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
 
     }
 
-    protected void manageUnknownException(Message message, Throwable error){
+    protected Mono<Message> manageUnknownException(Message message, Throwable error){
         LOG.error("Error with the following call: {}", message.getContent(), error);
-        message.getChannel().flatMap(channel -> channel.createMessage(
-                translator.getLabel(Constants.DEFAULT_LANGUAGE,"exception.unknown")))
-                .subscribe();
+        return message.getChannel().flatMap(channel -> channel.createMessage(
+                translator.getLabel(Constants.DEFAULT_LANGUAGE,"exception.unknown")));
     }
 
     public abstract Flux<Message> execute(Message message, Matcher matcher);

@@ -8,7 +8,6 @@ import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import discord4j.core.object.entity.Message;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,8 +55,7 @@ public class DofusRoomTrigger extends AbstractTrigger {
                 .flatMapMany(tuple -> Flux.fromIterable(tuple.getT1())
                         .flatMap(preview -> tuple.getT2().createMessage(spec -> dofusRoomPreviewMapper
                                 .decorateSpec(spec, preview, Constants.DEFAULT_LANGUAGE))))
-                .doOnError(error -> manageUnknownException(message, error))
-                .onErrorResume(error -> Mono.empty());
+                .onErrorResume(error -> manageUnknownException(message, error));
     }
 
     private Stream<String> findAllDofusRoomIds(Matcher m){
