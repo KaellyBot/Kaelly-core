@@ -5,10 +5,15 @@ import com.github.kaysoro.kaellybot.core.command.argument.model.CommandArgument;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.rest.util.PermissionSet;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +23,9 @@ import java.util.List;
 public abstract class AbstractCommand implements Command {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
-    protected static final String VOID_MESSAGE = "";
 
     protected String name;
-    protected List<CommandArgument> arguments;
+    protected List<CommandArgument<Message>> arguments;
     private boolean isPublic;
     private boolean isUsableInMP;
     private boolean isAdmin;
@@ -42,10 +46,19 @@ public abstract class AbstractCommand implements Command {
     }
 
     @Override
-    public final void request(Message message) {
-        arguments.stream()
-                .filter(arg -> arg.triggerMessage(message))
-                .forEach(arg -> arg.execute(message));
+    public final Flux<?> request(Message message) {
+        return Flux.fromIterable(arguments)
+                .filterWhen(argument -> getPermissions(message).map(argument::isArgumentHasPermissionsNeeded))
+                .filter(argument -> argument.triggerMessage(message))
+                .flatMap(argument -> argument.execute(message));
+    }
+
+    private Mono<PermissionSet> getPermissions(Message message){
+        return message.getChannel()
+                .filter(channel -> channel instanceof TextChannel)
+                .map(TextChannel.class::cast)
+                .zipWith(message.getClient().getSelfId())
+                .flatMap(tuple -> tuple.getT1().getEffectivePermissions(tuple.getT2()));
     }
 
     @Override
@@ -57,6 +70,6 @@ public abstract class AbstractCommand implements Command {
     public String moreHelp(Language lg, String prefix){
         return help(lg, prefix) + arguments.stream().filter(CommandArgument::isDescribed)
                 .map(arg -> "\n" + arg.help(lg, prefix))
-                .reduce(VOID_MESSAGE, (arg1, arg2) -> arg1 + arg2);
+                .reduce(StringUtils.EMPTY, (arg1, arg2) -> arg1 + arg2);
     }
 }

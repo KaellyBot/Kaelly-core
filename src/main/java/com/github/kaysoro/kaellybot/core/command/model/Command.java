@@ -2,17 +2,12 @@ package com.github.kaysoro.kaellybot.core.command.model;
 
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import discord4j.core.object.entity.Message;
+import reactor.core.publisher.Flux;
 
 public interface Command {
     String getName();
 
-    void request(Message message);
-
-    /**
-     * Is the command usable in MP?
-     * @return True if it can be used in MP, else false.
-     */
-    boolean isUsableInMP();
+    Flux<?> request(Message message);
 
     /**
      * Is the command only usable by admins ?
@@ -37,12 +32,6 @@ public interface Command {
      * @param isPublic is command available or not
      */
     void setPublic(boolean isPublic);
-
-    /**
-     * Change the command scope in MP
-     * @param isUsableInMP is command available in MP or not
-     */
-    void setUsableInMP(boolean isUsableInMP);
 
     /**
      * Change the command scope for admin user

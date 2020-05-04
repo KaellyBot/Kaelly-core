@@ -8,6 +8,7 @@ import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.Comparator;
 import java.util.List;
@@ -31,8 +32,9 @@ public class HelpCommand extends AbstractCommand {
                                 .map(command -> command.help(Constants.DEFAULT_LANGUAGE, Constants.DEFAULT_PREFIX))
                                 .reduce((cmd1, cmd2) -> cmd1 + "\n" + cmd2)
                                 .orElse(translator.getLabel(Constants.DEFAULT_LANGUAGE, "help.empty"))))
-                        .subscribe()
-        ));
+                        .flatMapMany(Flux::just)
+            )
+        );
 
         getArguments().add(new HelpArgument(this, translator));
     }

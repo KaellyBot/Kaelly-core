@@ -7,6 +7,7 @@ import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
+import reactor.core.publisher.Flux;
 
 import java.util.regex.Matcher;
 
@@ -17,10 +18,10 @@ public class HelpArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public void execute(Message message, Matcher matcher) {
-        message.getChannel().flatMap(channel -> channel
+    public Flux<Message> execute(Message message, Matcher matcher) {
+        return message.getChannel().flatMap(channel -> channel
                 .createMessage(getParent().moreHelp(Constants.DEFAULT_LANGUAGE, Constants.DEFAULT_PREFIX)))
-                .subscribe();
+                .flatMapMany(Flux::just);
     }
 
     @Override

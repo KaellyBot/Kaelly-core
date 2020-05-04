@@ -4,6 +4,7 @@ import com.github.kaysoro.kaellybot.core.command.argument.model.TextCommandArgum
 import com.github.kaysoro.kaellybot.core.command.model.AbstractCommand;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -18,6 +19,8 @@ public class PingCommand extends AbstractCommand {
                 message -> message.getChannel()
                         .flatMap(chan -> chan.createMessage(
                                 Math.abs(Duration.between(message.getTimestamp(), Instant.now()).toMillis()) + "ms!"))
-                        .subscribe()));
+                        .flatMapMany(Flux::just)
+                )
+        );
     }
 }

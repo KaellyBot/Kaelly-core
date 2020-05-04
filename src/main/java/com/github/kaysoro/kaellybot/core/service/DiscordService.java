@@ -9,6 +9,8 @@ import discord4j.core.event.domain.lifecycle.ReconnectEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -19,6 +21,7 @@ import java.util.List;
 @Service
 public class DiscordService {
 
+    private Logger LOGGER = LoggerFactory.getLogger(DiscordService.class);
     private DiscordClient discordClient;
 
     @Value("${discord.token}")
@@ -45,7 +48,8 @@ public class DiscordService {
 
                 Mono<Void> commandListener = client.getEventDispatcher().on(MessageCreateEvent.class)
                         .map(MessageCreateEvent::getMessage)
-                        .doOnNext(msg -> commands.forEach(cmd -> cmd.request(msg)))
+                        .filterWhen(message -> message.getAuthorAsMember().map(member -> ! member.isBot()))
+                        .flatMap(msg -> Flux.fromIterable(commands).flatMap(cmd -> cmd.request(msg)))
                         .then();
 
                 Mono<Void> triggerListener = client.getEventDispatcher().on(MessageCreateEvent.class)
@@ -61,7 +65,7 @@ public class DiscordService {
                         .then();
 
                 return Mono.when(readyListener, commandListener, triggerListener, reconnectListener);
-            }).subscribe();
+            }).onErrorContinue((error, object) -> LOGGER.error("Error not managed: ", error)).subscribe();
         }
     }
 }

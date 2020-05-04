@@ -11,6 +11,7 @@ import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.regex.Matcher;
 
@@ -26,20 +27,14 @@ public class AllPortalsArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public void execute(Message message, Matcher matcher) {
+    public Flux<Message> execute(Message message, Matcher matcher) {
        // TODO determine server in the message
         Server server = Server.MERIANA;
-
-        portalService.getPortals(server, Constants.DEFAULT_LANGUAGE)
-                .collectList()
-                .doOnSuccess(portals -> message.getChannel()
-                        .flatMap(channel -> Flux.fromIterable(portals)
-                                .flatMap(portal -> channel.createEmbed(spec -> portalMapper
-                                        .decorateSpec(spec, portal, Constants.DEFAULT_LANGUAGE)))
-                                .collectList())
-                        .subscribe())
+        return portalService.getPortals(server, Constants.DEFAULT_LANGUAGE)
+                .flatMap(portal -> message.getChannel().flatMap(channel -> channel
+                        .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, Constants.DEFAULT_LANGUAGE))))
                 .doOnError(error -> manageUnknownException(message, error))
-                .subscribe();
+                .onErrorResume(error -> Mono.empty());
     }
 
     @Override

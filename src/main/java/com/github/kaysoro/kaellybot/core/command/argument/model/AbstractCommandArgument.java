@@ -9,12 +9,13 @@ import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractCommandArgument implements CommandArgument {
+public abstract class AbstractCommandArgument implements CommandArgument<Message> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommandArgument.class);
     protected Translator translator;
@@ -44,14 +45,12 @@ public abstract class AbstractCommandArgument implements CommandArgument {
     }
 
     @Override
-    public void execute(Message message){
+    public Flux<Message> execute(Message message){
         Matcher matcher = Pattern.compile(pattern).matcher(message.getContent());
-        if (matcher.matches())
-            execute(message, matcher);
-        else
-            message.getChannel().flatMap(channel -> channel
-                .createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, "exception.unknown")))
-            .subscribe();
+        return matcher.matches() ? execute(message, matcher) : message.getChannel()
+                .flatMap(channel -> channel
+                        .createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, "exception.unknown")))
+                .flatMapMany(Flux::just);
     }
 
     protected void manageUnknownException(Message message, Throwable error){
@@ -61,7 +60,7 @@ public abstract class AbstractCommandArgument implements CommandArgument {
                 .subscribe();
     }
 
-    public abstract void execute(Message message, Matcher matcher);
+    public abstract Flux<Message> execute(Message message, Matcher matcher);
 
     @Override
     public String help(Language lg, String prefix){

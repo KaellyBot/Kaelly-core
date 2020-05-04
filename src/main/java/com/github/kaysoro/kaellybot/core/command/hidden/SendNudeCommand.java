@@ -9,6 +9,7 @@ import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.PrivateChannel;
 import discord4j.core.object.entity.channel.TextChannel;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 @Component
 public class SendNudeCommand extends AbstractCommand {
@@ -31,7 +32,7 @@ public class SendNudeCommand extends AbstractCommand {
                                 return chan.createMessage(translator
                                         .getLabel(Constants.DEFAULT_LANGUAGE, "sendnude.wrongChan"));
                         })
-                        .subscribe()));
+                        .flatMapMany(Flux::just)));
     }
 
     private boolean isChannelAppropriate(MessageChannel channel){

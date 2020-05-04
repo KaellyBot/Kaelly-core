@@ -7,6 +7,7 @@ import com.github.kaysoro.kaellybot.core.model.constant.Donator;
 import com.github.kaysoro.kaellybot.core.model.constant.Graphist;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.stream.Stream;
 
@@ -49,6 +50,8 @@ public class AboutCommand extends AbstractCommand {
                                                         .reduce((name1, name2) -> name1 + ", " + name2)
                                                         .orElse(translator.getLabel(Constants.DEFAULT_LANGUAGE,
                                                                 "about.donators.empty")), true)))
-                        .subscribe()));
+                        .flatMapMany(Flux::just)
+            )
+        );
     }
 }
