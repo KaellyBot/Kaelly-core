@@ -6,12 +6,15 @@ import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.rest.http.client.ClientException;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -52,7 +55,10 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
         return isArgumentHasPermissionsNeeded(permissions) ? execute(message) :
                 message.getChannel()
                         .filter(channel -> permissions.containsAll(PermissionScope.TEXT_PERMISSIONS))
-                        .flatMapMany(channel -> sendMissingPermissions(channel, Constants.DEFAULT_LANGUAGE));
+                        .flatMapMany(channel -> sendMissingPermissions(channel, Constants.DEFAULT_LANGUAGE))
+                        .switchIfEmpty(message.getAuthor().map(User::getPrivateChannel).orElseGet(Mono::empty)
+                                .flatMapMany(channel -> sendMissingPermissions(channel, Constants.DEFAULT_LANGUAGE)))
+                        .onErrorResume(ClientException.isStatusCode(403), err -> Mono.empty());
     }
 
     private Flux<Message> execute(Message message){
