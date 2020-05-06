@@ -77,7 +77,7 @@ public class DofusRoomPreviewProcessor {
         HAT        (424, 4  , "hat_placeholder"     ),
         CAPE       (424, 88 , "cape_placeholder"    ),
         BELT       (424, 172, "hat_placeholder"     ),
-        BOOTS      (424, 256, "hat_placeholder"     ),
+        BOOTS      (424, 256, "boots_placeholder"   ),
         TROPHUS_1  (4  , 340, "trophus_placeholder" ),
         TROPHUS_2  (88 , 340, "trophus_placeholder" ),
         TROPHUS_3  (172, 340, "trophus_placeholder" ),

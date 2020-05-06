@@ -3,7 +3,9 @@ package com.github.kaysoro.kaellybot.core.mapper;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.payload.dofusroom.PreviewDto;
+import com.github.kaysoro.kaellybot.core.payload.dofusroom.RingDto;
 import com.github.kaysoro.kaellybot.core.payload.dofusroom.StuffDto;
+import com.github.kaysoro.kaellybot.core.payload.dofusroom.TrophusDto;
 import com.github.kaysoro.kaellybot.core.util.DofusRoomPreviewProcessor;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.spec.MessageCreateSpec;
@@ -12,6 +14,7 @@ import org.openimaj.image.MBFImage;
 import org.springframework.stereotype.Component;
 import java.awt.*;
 import java.io.*;
+import java.util.Optional;
 
 @Component
 public class DofusRoomPreviewMapper {
@@ -39,10 +42,12 @@ public class DofusRoomPreviewMapper {
 
     private InputStream createBuild(PreviewDto preview){
         StuffDto stuff = preview.getData().getItems();
+        Optional<RingDto> rings = Optional.ofNullable(stuff.getRings());
+        Optional<TrophusDto> trophus = Optional.ofNullable(stuff.getTrophus());
         MBFImage template = dofusRoomPreviewProcessor.getTemplate(preview.getData().getCharacter());
         dofusRoomPreviewProcessor.drawItem(template, ItemPosition.AMULET, stuff.getAmulet());
-        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TOP_RING, stuff.getRings().getTop());
-        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.BOTTOM_RING, stuff.getRings().getBottom());
+        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TOP_RING, rings.map(RingDto::getTop).orElse(null));
+        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.BOTTOM_RING, rings.map(RingDto::getBottom).orElse(null));
         dofusRoomPreviewProcessor.drawItem(template, ItemPosition.SHIELD, stuff.getShield());
         dofusRoomPreviewProcessor.drawItem(template, ItemPosition.WEAPON, stuff.getWeapon());
         dofusRoomPreviewProcessor.drawItem(template, ItemPosition.CREATURE, stuff.getCreature());
@@ -50,12 +55,12 @@ public class DofusRoomPreviewMapper {
         dofusRoomPreviewProcessor.drawItem(template, ItemPosition.CAPE, stuff.getCape());
         dofusRoomPreviewProcessor.drawItem(template, ItemPosition.BELT, stuff.getBelt());
         dofusRoomPreviewProcessor.drawItem(template, ItemPosition.BOOTS, stuff.getBoots());
-        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_1, stuff.getTrophus().getFirst());
-        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_2, stuff.getTrophus().getSecond());
-        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_3, stuff.getTrophus().getThird());
-        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_4, stuff.getTrophus().getFourth());
-        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_5, stuff.getTrophus().getFifth());
-        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_6, stuff.getTrophus().getSixth());
+        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_1, trophus.map(TrophusDto::getFirst).orElse(null));
+        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_2, trophus.map(TrophusDto::getSecond).orElse(null));
+        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_3, trophus.map(TrophusDto::getThird).orElse(null));
+        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_4, trophus.map(TrophusDto::getFourth).orElse(null));
+        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_5, trophus.map(TrophusDto::getFifth).orElse(null));
+        dofusRoomPreviewProcessor.drawItem(template, ItemPosition.TROPHUS_6, trophus.map(TrophusDto::getSixth).orElse(null));
         return dofusRoomPreviewProcessor.getInputStream(template);
     }
 }
