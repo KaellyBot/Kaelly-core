@@ -152,7 +152,6 @@
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>2.2.0</version>
-                <configuration>
 				<configuration>
 				    <from>
 				    	<image>openjdk/openjdk:11-alpine</image>
