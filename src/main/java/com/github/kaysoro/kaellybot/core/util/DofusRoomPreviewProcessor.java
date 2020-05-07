@@ -3,6 +3,7 @@ package com.github.kaysoro.kaellybot.core.util;
 import com.github.kaysoro.kaellybot.core.payload.dofusroom.ItemDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openimaj.image.ImageUtilities;
@@ -56,7 +57,7 @@ public class DofusRoomPreviewProcessor {
     }
 
     public MBFImage getTemplate(String character){
-        return loadImage(templateDirectory, character, false);
+        return loadImage(templateDirectory, StringUtils.stripAccents(character.toLowerCase()).trim(), false);
     }
 
     public void drawItem(MBFImage template, ItemPosition itemPosition, ItemDto item){
