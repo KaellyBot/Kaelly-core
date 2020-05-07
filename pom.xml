@@ -155,6 +155,10 @@
 				<configuration>
 				    <from>
 				    	<image>openjdk/openjdk:11-alpine</image>
+                        <!--suppress MavenModelInspection -->
+                        <username>${env.REGISTRY_USERNAME}</username>
+                        <!--suppress MavenModelInspection -->
+                        <password>${env.REGISTRY_PASSWORD}</password>
 				    </from>
                     <to>
                         <!--suppress MavenModelInspection -->
