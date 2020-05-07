@@ -64,7 +64,7 @@ public class DiscordService {
                                 .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName()))))
                         .then();
 
-                return Mono.when(readyListener, commandListener, triggerListener, reconnectListener);
+                return Mono.when(triggerListener);
             }).onErrorContinue((error, object) -> LOGGER.error("Error not managed: ", error)).subscribe();
         }
     }
