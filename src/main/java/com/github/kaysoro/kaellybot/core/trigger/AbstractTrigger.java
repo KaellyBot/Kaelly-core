@@ -1,5 +1,6 @@
 package com.github.kaysoro.kaellybot.core.trigger;
 
+import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.rest.util.Permission;
@@ -14,9 +15,12 @@ public abstract class AbstractTrigger implements Trigger {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTrigger.class);
 
+    protected Translator translator;
+
     private Set<Permission> permissions;
 
-    public AbstractTrigger(Set<Permission> permissions){
+    public AbstractTrigger(Translator translator, Set<Permission> permissions){
+        this.translator = translator;
         this.permissions = permissions;
     }
 

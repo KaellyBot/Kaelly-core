@@ -5,6 +5,7 @@ import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.payload.dofusroom.StatusDto;
 import com.github.kaysoro.kaellybot.core.service.DofusRoomService;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
+import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -25,8 +26,9 @@ public class DofusRoomTrigger extends AbstractTrigger {
 
     private DofusRoomPreviewMapper dofusRoomPreviewMapper;
 
-    public DofusRoomTrigger(DofusRoomService dofusRoomService, DofusRoomPreviewMapper dofusRoomPreviewMapper){
-        super(PermissionScope.EMBED_PERMISSIONS);
+    public DofusRoomTrigger(Translator translator, DofusRoomService dofusRoomService,
+                            DofusRoomPreviewMapper dofusRoomPreviewMapper){
+        super(translator, PermissionScope.EMBED_PERMISSIONS);
         this.dofusRoomService = dofusRoomService;
         this.dofusRoomPreviewMapper = dofusRoomPreviewMapper;
         this.dofusRoomUrlPatterns = Constants.DOFUS_ROOM_BUILD_URL.parallelStream()
@@ -47,14 +49,16 @@ public class DofusRoomTrigger extends AbstractTrigger {
         return Flux.fromStream(dofusRoomUrlPatterns.parallelStream()
                 .map(pattern -> pattern.matcher(message.getContent()))
                 .flatMap(this::findAllDofusRoomIds)
-                .distinct())
-                .flatMap(id -> dofusRoomService.getDofusRoomPreview(id, Constants.DEFAULT_LANGUAGE))
-                .filter(preview -> StatusDto.SUCCESS.equals(preview.getStatus()))
-                .collectList()
-                .zipWith(message.getChannel())
+                .distinct()).collectList()
+                .zipWith(translator.getLanguage(message))
                 .flatMapMany(tuple -> Flux.fromIterable(tuple.getT1())
-                        .flatMap(preview -> tuple.getT2().createMessage(spec -> dofusRoomPreviewMapper
-                                .decorateSpec(spec, preview, Constants.DEFAULT_LANGUAGE))))
+                        .flatMap(id -> dofusRoomService.getDofusRoomPreview(id, tuple.getT2()))
+                        .filter(preview -> StatusDto.SUCCESS.equals(preview.getStatus()))
+                        .collectList()
+                        .zipWith(message.getChannel())
+                        .flatMapMany(tuple2 -> Flux.fromIterable(tuple2.getT1())
+                                .flatMap(preview -> tuple2.getT2().createMessage(spec -> dofusRoomPreviewMapper
+                                        .decorateSpec(spec, preview, tuple.getT2())))))
                 .onErrorResume(error -> manageUnknownException(message, error));
     }
 
