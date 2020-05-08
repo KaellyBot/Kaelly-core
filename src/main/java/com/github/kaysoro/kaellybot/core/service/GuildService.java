@@ -33,6 +33,10 @@ public class GuildService {
                 .build());
     }
 
+    public Mono<com.github.kaysoro.kaellybot.core.model.entity.Guild> findById(Snowflake id){
+        return guildRepository.findById(id.asString());
+    }
+
     public Mono<Void> deleteById(Snowflake id){
         LOGGER.info("Guild[id={}] removed", id.asString());
         return guildRepository.deleteById(id.asString());

@@ -21,13 +21,13 @@ public class HelpArgument extends AbstractCommandArgument {
     public Flux<Message> execute(Message message, Matcher matcher) {
         String argument = matcher.group(1);
         return (! argument.equals(getParent().getName())) ?
-                message.getChannel().flatMap(channel -> channel
-                    .createMessage(getParent().getCommands().stream()
-                            .filter(cmd -> cmd.getName().equals(argument))
-                            .findFirst().map(cmd ->
-                                    cmd.moreHelp(Constants.DEFAULT_LANGUAGE, Constants.DEFAULT_PREFIX))
-                            .orElse(translator.getLabel(Constants.DEFAULT_LANGUAGE, "help.cmd.empty"))))
-                    .flatMapMany(Flux::just)
+                message.getChannel()
+                        .zipWith(translator.getLanguage(message))
+                        .flatMap(tuple -> tuple.getT1().createMessage(getParent().getCommands().stream()
+                                .filter(cmd -> cmd.getName().equals(argument))
+                                .findFirst().map(cmd -> cmd.moreHelp(tuple.getT2(), Constants.DEFAULT_PREFIX))
+                                .orElse(translator.getLabel(tuple.getT2(), "help.cmd.empty"))))
+                        .flatMapMany(Flux::just)
                 : Flux.empty();
     }
 

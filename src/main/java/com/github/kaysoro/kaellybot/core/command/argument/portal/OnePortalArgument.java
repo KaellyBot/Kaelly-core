@@ -3,7 +3,6 @@ package com.github.kaysoro.kaellybot.core.command.argument.portal;
 import com.github.kaysoro.kaellybot.core.command.argument.model.AbstractCommandArgument;
 import com.github.kaysoro.kaellybot.core.command.classic.PortalCommand;
 import com.github.kaysoro.kaellybot.core.mapper.PortalMapper;
-import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Dimension;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.model.constant.Server;
@@ -32,9 +31,10 @@ public class OnePortalArgument extends AbstractCommandArgument {
         Server server = Server.MERIANA;
         Dimension dimension = Dimension.ENUTROSOR;
 
-        return portalService.getPortal(server, dimension, Constants.DEFAULT_LANGUAGE)
-                .flatMap(portal -> message.getChannel().flatMap(channel -> channel
-                        .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, Constants.DEFAULT_LANGUAGE))))
+        return translator.getLanguage(message)
+                .flatMap(language -> portalService.getPortal(server, dimension, language)
+                        .flatMap(portal -> message.getChannel().flatMap(channel -> channel
+                                .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language)))))
                 .flatMapMany(Flux::just)
                 .onErrorResume(error -> manageUnknownException(message, error));
     }

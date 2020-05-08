@@ -19,8 +19,10 @@ public class HelpArgument extends AbstractCommandArgument {
 
     @Override
     public Flux<Message> execute(Message message, Matcher matcher) {
-        return message.getChannel().flatMap(channel -> channel
-                .createMessage(getParent().moreHelp(Constants.DEFAULT_LANGUAGE, Constants.DEFAULT_PREFIX)))
+        return message.getChannel()
+                .zipWith(translator.getLanguage(message))
+                .flatMap(tuple -> tuple.getT1()
+                .createMessage(getParent().moreHelp(tuple.getT2(), Constants.DEFAULT_PREFIX)))
                 .flatMapMany(Flux::just);
     }
 

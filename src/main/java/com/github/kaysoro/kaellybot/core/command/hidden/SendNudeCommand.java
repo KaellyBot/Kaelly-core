@@ -20,17 +20,18 @@ public class SendNudeCommand extends AbstractCommand {
 
         getArguments().add(new EmbedCommandArgument(this, translator,
                 message -> message.getChannel()
-                        .flatMap(chan -> {
-                            if (isChannelAppropriate(chan))
-                                return chan.createEmbed(spec -> spec
-                                        .setTitle(translator.getLabel(Constants.DEFAULT_LANGUAGE, "sendnude.title"))
-                                        .setFooter(translator.getLabel(Constants.DEFAULT_LANGUAGE, "sendnude.author",
+                        .zipWith(translator.getLanguage(message))
+                        .flatMap(tuple -> {
+                            if (isChannelAppropriate(tuple.getT1()))
+                                return tuple.getT1().createEmbed(spec -> spec
+                                        .setTitle(translator.getLabel(tuple.getT2(), "sendnude.title"))
+                                        .setFooter(translator.getLabel(tuple.getT2(), "sendnude.author",
                                                 Nude.MOAM.getAuthor(), "1", "1"), null)
                                         .setImage(Nude.MOAM.getImage())
                                         .setColor(Constants.COLOR));
                             else
-                                return chan.createMessage(translator
-                                        .getLabel(Constants.DEFAULT_LANGUAGE, "sendnude.wrongChan"));
+                                return tuple.getT1().createMessage(translator
+                                        .getLabel(tuple.getT2(), "sendnude.wrongChan"));
                         })
                         .flatMapMany(Flux::just)));
     }

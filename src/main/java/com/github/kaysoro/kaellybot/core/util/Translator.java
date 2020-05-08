@@ -1,10 +1,15 @@
 package com.github.kaysoro.kaellybot.core.util;
 
+import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.model.constant.MultilingualEnum;
+import com.github.kaysoro.kaellybot.core.model.entity.Guild;
+import com.github.kaysoro.kaellybot.core.service.GuildService;
+import discord4j.core.object.entity.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,9 +24,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Translator {
 
     private static final Logger LOG = LoggerFactory.getLogger(Translator.class);
+
+    private GuildService guildService;
+
     private Map<Language, Properties> labels;
 
-    public Translator(){
+    public Translator(GuildService guildService){
+        this.guildService = guildService;
         labels = new ConcurrentHashMap<>();
 
         for(Language lg : Language.values())
@@ -49,5 +58,12 @@ public class Translator {
             value = value.replaceFirst("\\{}", arg.toString());
 
         return value;
+    }
+
+    public Mono<Language> getLanguage(Message message){
+        return message.getGuild()
+                .flatMap(guild -> guildService.findById(guild.getId()))
+                .map(Guild::getLanguage)
+                .defaultIfEmpty(Constants.DEFAULT_LANGUAGE);
     }
 }

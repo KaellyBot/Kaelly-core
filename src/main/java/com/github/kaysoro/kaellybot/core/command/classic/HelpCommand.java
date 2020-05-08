@@ -26,12 +26,13 @@ public class HelpCommand extends AbstractCommand {
         this.commands.sort(Comparator.comparing(Command::getName));
 
         getArguments().add(new TextCommandArgument(this, translator,
-                message -> message.getChannel().flatMap(chan -> chan.createMessage(
-                        commands.stream()
+                message -> message.getChannel()
+                        .zipWith(translator.getLanguage(message))
+                        .flatMap(tuple -> tuple.getT1().createMessage(commands.stream()
                                 .filter(command -> command.isPublic() && ! command.isAdmin() && ! command.isHidden())
-                                .map(command -> command.help(Constants.DEFAULT_LANGUAGE, Constants.DEFAULT_PREFIX))
+                                .map(command -> command.help(tuple.getT2(), Constants.DEFAULT_PREFIX))
                                 .reduce((cmd1, cmd2) -> cmd1 + "\n" + cmd2)
-                                .orElse(translator.getLabel(Constants.DEFAULT_LANGUAGE, "help.empty"))))
+                                .orElse(translator.getLabel(tuple.getT2(), "help.empty"))))
                         .flatMapMany(Flux::just)
             )
         );
