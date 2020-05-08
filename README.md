@@ -11,6 +11,10 @@ Ce micro-service est destiné aux intéractions avec Discord par le biais de la 
 
 Ce projet est sous licence GPL(v3).
 
+## Partenaires  
+[JetBrains](https://www.jetbrains.com/?from=KaellyBot) soutient ce projet depuis le début en nous fournissant gracieusement leurs produits !  
+[![Image](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/JetBrains_Logo_2016.svg/100px-JetBrains_Logo_2016.svg.png)](https://www.jetbrains.com/?from=KaellyBot)  
+
 ## Merci !  
 
 Le développement et l'accessibilité de Kaelly 24/7 génèrent des frais en continu. N'hésitez pas à participer à son maintien par le biais des dons !   

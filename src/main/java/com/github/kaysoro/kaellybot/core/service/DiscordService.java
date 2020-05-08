@@ -41,6 +41,16 @@ public class DiscordService {
             discordClient = DiscordClient.create(token);
 
             discordClient.withGateway(client -> {
+                Mono<Void> readyListener = client.getEventDispatcher().on(ReadyEvent.class)
+                        .flatMap(event -> event.getSelf().getClient()
+                                .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName()))))
+                        .then();
+
+                Mono<Void> commandListener = client.getEventDispatcher().on(MessageCreateEvent.class)
+                        .map(MessageCreateEvent::getMessage)
+                        .filterWhen(message -> message.getAuthorAsMember().map(member -> ! member.isBot()))
+                        .flatMap(msg -> Flux.fromIterable(commands).flatMap(cmd -> cmd.request(msg)))
+                        .then();
 
                 Mono<Void> triggerListener = client.getEventDispatcher().on(MessageCreateEvent.class)
                         .map(MessageCreateEvent::getMessage)
@@ -49,7 +59,12 @@ public class DiscordService {
                                 .flatMap(trigger -> trigger.execute(msg)))
                         .then();
 
-                return Mono.when(triggerListener);
+                Mono<Void> reconnectListener = client.getEventDispatcher().on(ReconnectEvent.class)
+                        .flatMap(event -> event.getClient()
+                                .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName()))))
+                        .then();
+
+                return Mono.when(readyListener, commandListener, triggerListener, reconnectListener);
             }).onErrorContinue((error, object) -> LOGGER.error("Error not managed: ", error)).subscribe();
         }
     }
