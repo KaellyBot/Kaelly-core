@@ -12,9 +12,9 @@ import reactor.core.publisher.Mono;
 @Service
 public class GuildService {
 
-    private Logger LOGGER = LoggerFactory.getLogger(GuildService.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(GuildService.class);
 
-    private GuildRepository guildRepository;
+    private final GuildRepository guildRepository;
 
     public GuildService(GuildRepository guildRepository){
         this.guildRepository = guildRepository;

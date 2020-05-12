@@ -8,8 +8,9 @@ import lombok.Getter;
 public enum Game {
 
     DOFUS("Dofus", Constants.INVITE),
-    DOFUS_TOUCH("Dofus Touch", "https://discordapp.com/oauth2/authorize?&client_id=393925392618094612&scope=bot");
+    DOFUS_TOUCH("Dofus Touch", "https://discordapp.com/oauth2/authorize?&client_id=393925392618094612&scope=bot"),
+    DOFUS_RETRO("Dofus Retro", "https://discordapp.com/oauth2/authorize?&client_id=393925392618094612&scope=bot");
 
-    private String name;
-    private String botInvite;
+    private final String name;
+    private final String botInvite;
 }

@@ -24,5 +24,5 @@ public enum Server implements MultilingualEnum {
     BRUMEN    ("server.brumen"    ),
     ILYZAELLE ("server.ilyzaelle" );
 
-    private String key;
+    private final String key;
 }

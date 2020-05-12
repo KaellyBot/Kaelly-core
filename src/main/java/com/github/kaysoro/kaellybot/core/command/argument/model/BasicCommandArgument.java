@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 public abstract class BasicCommandArgument extends AbstractCommandArgument {
 
     private static final String VOID_MESSAGE = "";
-    private Function<Message, Flux<Message>> executor;
+    private final Function<Message, Flux<Message>> executor;
 
     private BasicCommandArgument(Command parent, String subPattern, boolean isDescribed, Translator translator,
                                  Set<Permission> permissions, Function<Message, Flux<Message>> executor){

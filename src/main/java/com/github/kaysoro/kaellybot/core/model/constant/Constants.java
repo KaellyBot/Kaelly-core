@@ -21,8 +21,6 @@ public final class Constants {
 
     public static final Game GAME = Game.DOFUS;
 
-    public static final long AUTHOR_ID = 162842827183751169L;
-
     public static final String AVATAR = "https://avatars3.githubusercontent.com/u/44924023?s=400&u=7bc255b104084f0762db20e6aba4e9ff549de467&v=4";
 
     public static final String TWITTER = "https://twitter.com/KaellyBot";

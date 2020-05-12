@@ -15,9 +15,9 @@ import java.time.Instant;
 @Component
 public class PortalMapper {
 
-    private Translator translator;
+    private final Translator translator;
 
-    private DimensionService dimensionService;
+    private final DimensionService dimensionService;
 
     public PortalMapper(Translator translator, DimensionService dimensionService){
         this.translator = translator;

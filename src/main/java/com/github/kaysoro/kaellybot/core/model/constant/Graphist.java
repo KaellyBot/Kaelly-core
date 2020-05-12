@@ -9,8 +9,8 @@ public enum Graphist {
 
     ELYCANN("Elycann", "https://www.facebook.com/Elysdrawings/");
 
-    private String name;
-    private String link;
+    private final String name;
+    private final String link;
 
     public String toMarkdown(){
         return "[" + getName() + "](" + getLink() + ")";

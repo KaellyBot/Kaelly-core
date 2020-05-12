@@ -16,8 +16,8 @@ import java.util.regex.Matcher;
 
 public class OnePortalArgument extends AbstractCommandArgument {
 
-    private PortalService portalService;
-    private PortalMapper portalMapper;
+    private final PortalService portalService;
+    private final PortalMapper portalMapper;
 
     public OnePortalArgument(PortalCommand parent, PortalService portalService, PortalMapper portalMapper, Translator translator){
         super(parent, "\\s+(\\w+)\\s+(.+)", true, PermissionScope.EMBED_PERMISSIONS, translator);

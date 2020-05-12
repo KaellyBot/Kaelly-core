@@ -14,5 +14,5 @@ public enum Donator {
     SIID("! ༺ -Siid- ༻ !#0001"),
     ZEUB_AL("Zeub-Al");
 
-    private String name;
+    private final String name;
 }

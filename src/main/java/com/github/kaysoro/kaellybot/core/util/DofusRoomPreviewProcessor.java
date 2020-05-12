@@ -23,8 +23,8 @@ public class DofusRoomPreviewProcessor {
     private static final String TEMPLATE_PATH = "/dofusroom/templates/";
     private static final String ITEM_PATH = "/dofusroom/items/";
 
-    private String templateDirectory;
-    private String itemDirectory;
+    private final String templateDirectory;
+    private final String itemDirectory;
 
     public DofusRoomPreviewProcessor(@Value("${assets.directory}") String baseAssetsDirectory){
         templateDirectory = baseAssetsDirectory + TEMPLATE_PATH;
@@ -86,8 +86,8 @@ public class DofusRoomPreviewProcessor {
         TROPHUS_5  (340, 340, "trophus_placeholder" ),
         TROPHUS_6  (424, 340, "trophus_placeholder" );
 
-        private int x;
-        private int y;
-        private String placeholder;
+        private final int x;
+        private final int y;
+        private final String placeholder;
     }
 }

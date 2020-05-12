@@ -25,18 +25,18 @@ import java.util.function.Predicate;
 @Service
 public class DiscordService {
 
-    private Logger LOGGER = LoggerFactory.getLogger(DiscordService.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(DiscordService.class);
 
     private DiscordClient discordClient;
 
     @Value("${discord.token}")
     private String token;
 
-    private GuildService guildService;
+    private final GuildService guildService;
 
-    private List<Command> commands;
+    private final List<Command> commands;
 
-    private List<Trigger> triggers;
+    private final List<Trigger> triggers;
 
     public DiscordService(GuildService guildService, List<Command> commands, List<Trigger> triggers){
         this.guildService = guildService;

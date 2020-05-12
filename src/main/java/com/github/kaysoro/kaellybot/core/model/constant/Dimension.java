@@ -14,9 +14,9 @@ public enum Dimension implements MultilingualEnum {
     XELORIUM ("dimension.xelorium" , "https://i.imgur.com/vfQhS5D.png", new Color(110, 81, 105)),
     ECAFLIPUS("dimension.ecaflipus", "https://i.imgur.com/sLK4FmQ.png", new Color(205, 216, 158));
 
-    private String key;
+    private final String key;
 
-    private String image;
+    private final String image;
 
-    private Color color;
+    private final Color color;
 }

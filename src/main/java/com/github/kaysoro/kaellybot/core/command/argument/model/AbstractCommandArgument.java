@@ -24,11 +24,11 @@ import java.util.stream.Collectors;
 public abstract class AbstractCommandArgument implements CommandArgument<Message> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommandArgument.class);
-    protected Translator translator;
-    private Command parent;
-    private String pattern;
-    private boolean isDescribed;
-    private Set<Permission> permissions;
+    protected final Translator translator;
+    private final Command parent;
+    private final String pattern;
+    private final boolean isDescribed;
+    private final Set<Permission> permissions;
 
     public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Set<Permission> permissions,
                                    Translator translator){
@@ -55,7 +55,8 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
         return isArgumentHasPermissionsNeeded(permissions) ? execute(message) :
                 message.getChannel()
                         .filter(channel -> permissions.containsAll(PermissionScope.TEXT_PERMISSIONS))
-                        .flatMapMany(channel -> sendMissingPermissions(channel, Constants.DEFAULT_LANGUAGE))
+                        .zipWith(translator.getLanguage(message))
+                        .flatMapMany(tuple -> sendMissingPermissions(tuple.getT1(), tuple.getT2()))
                         .switchIfEmpty(message.getAuthor().map(User::getPrivateChannel).orElseGet(Mono::empty)
                                 .flatMapMany(channel -> sendMissingPermissions(channel, Constants.DEFAULT_LANGUAGE)))
                         .onErrorResume(ClientException.isStatusCode(403), err -> Mono.empty());
@@ -64,8 +65,8 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     private Flux<Message> execute(Message message){
         Matcher matcher = Pattern.compile(pattern).matcher(message.getContent());
         return matcher.matches() ? execute(message, matcher) : message.getChannel()
-                .flatMap(channel -> channel
-                        .createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, "exception.unknown")))
+                .zipWith(translator.getLanguage(message)).flatMap(tuple -> tuple.getT1()
+                        .createMessage(translator.getLabel(tuple.getT2(), "exception.unknown")))
                 .flatMapMany(Flux::just);
     }
 
@@ -80,8 +81,9 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
 
     protected Mono<Message> manageUnknownException(Message message, Throwable error){
         LOG.error("Error with the following call: {}", message.getContent(), error);
-        return message.getChannel().flatMap(channel -> channel.createMessage(
-                translator.getLabel(Constants.DEFAULT_LANGUAGE,"exception.unknown")));
+        return message.getChannel().zipWith(translator.getLanguage(message))
+                .flatMap(tuple -> tuple.getT1().createMessage(translator
+                        .getLabel(tuple.getT2(),"exception.unknown")));
     }
 
     public abstract Flux<Message> execute(Message message, Matcher matcher);

@@ -25,9 +25,9 @@ public class Translator {
 
     private static final Logger LOG = LoggerFactory.getLogger(Translator.class);
 
-    private GuildService guildService;
+    private final GuildService guildService;
 
-    private Map<Language, Properties> labels;
+    private final Map<Language, Properties> labels;
 
     public Translator(GuildService guildService){
         this.guildService = guildService;

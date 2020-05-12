@@ -15,9 +15,9 @@ public abstract class AbstractTrigger implements Trigger {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTrigger.class);
 
-    protected Translator translator;
+    protected final Translator translator;
 
-    private Set<Permission> permissions;
+    private final Set<Permission> permissions;
 
     public AbstractTrigger(Translator translator, Set<Permission> permissions){
         this.translator = translator;

@@ -20,11 +20,11 @@ import java.util.stream.Stream;
 @Component
 public class DofusRoomTrigger extends AbstractTrigger {
 
-    private List<Pattern> dofusRoomUrlPatterns;
+    private final List<Pattern> dofusRoomUrlPatterns;
 
-    private DofusRoomService dofusRoomService;
+    private final DofusRoomService dofusRoomService;
 
-    private DofusRoomPreviewMapper dofusRoomPreviewMapper;
+    private final DofusRoomPreviewMapper dofusRoomPreviewMapper;
 
     public DofusRoomTrigger(Translator translator, DofusRoomService dofusRoomService,
                             DofusRoomPreviewMapper dofusRoomPreviewMapper){

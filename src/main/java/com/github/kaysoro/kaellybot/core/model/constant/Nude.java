@@ -9,6 +9,6 @@ public enum Nude {
 
     MOAM("Moam#6449", "https://i.imgur.com/BPqxFKm.png");
 
-    private String author;
-    private String image;
+    private final String author;
+    private final String image;
 }

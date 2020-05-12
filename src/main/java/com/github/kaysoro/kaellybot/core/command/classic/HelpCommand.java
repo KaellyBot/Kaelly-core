@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 public class HelpCommand extends AbstractCommand {
 
-    private List<Command> commands;
+    private final List<Command> commands;
 
     public HelpCommand(List<Command> commands, Translator translator){
         super("help", translator);

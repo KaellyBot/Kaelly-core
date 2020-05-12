@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 @Service
 public class DimensionService {
 
-    private Translator translator;
+    private final Translator translator;
 
     public DimensionService(Translator translator){
         this.translator = translator;

@@ -20,8 +20,8 @@ import java.util.Optional;
 public class DofusRoomPreviewMapper {
 
     private static final String ATTACHMENT_FILENAME = Constants.NAME + "_" + "Dofusroom_Preview.png";
-    private Translator translator;
-    private DofusRoomPreviewProcessor dofusRoomPreviewProcessor;
+    private final Translator translator;
+    private final DofusRoomPreviewProcessor dofusRoomPreviewProcessor;
 
     public DofusRoomPreviewMapper(Translator translator, DofusRoomPreviewProcessor dofusRoomPreviewProcessor){
         this.translator = translator;
