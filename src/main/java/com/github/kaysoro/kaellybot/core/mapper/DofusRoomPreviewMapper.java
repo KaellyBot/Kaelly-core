@@ -12,7 +12,6 @@ import discord4j.core.spec.MessageCreateSpec;
 import static com.github.kaysoro.kaellybot.core.util.DofusRoomPreviewProcessor.ItemPosition;
 import org.openimaj.image.MBFImage;
 import org.springframework.stereotype.Component;
-import java.awt.*;
 import java.io.*;
 import java.util.Optional;
 
@@ -33,7 +32,7 @@ public class DofusRoomPreviewMapper {
                 .setDescription(translator.getLabel(language, "dofusroom.made_by",
                         preview.getData().getLevel(), preview.getData().getAuthor()))
                 .setThumbnail("https://i.imgur.com/kwc2f0J.png")
-                .setColor(Color.decode("#fdb950"))
+                .setColor(16628048)
                 .setFooter(translator.getLabel(language, "dofusroom.generated"), null)
                 .setUrl(Constants.DOFUS_ROOM_BUILD_URL_REFERRER.replace("{}", preview.getId()))
                 .setImage("attachment://" + ATTACHMENT_FILENAME))

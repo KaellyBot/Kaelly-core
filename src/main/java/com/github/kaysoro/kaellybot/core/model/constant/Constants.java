@@ -1,6 +1,5 @@
 package com.github.kaysoro.kaellybot.core.model.constant;
 
-import java.awt.*;
 import java.util.List;
 
 public final class Constants {
@@ -15,9 +14,9 @@ public final class Constants {
 
     public static final String VERSION = "2.0.0";
 
-    public static final String CHANGELOG = "https://i.imgur.com/0qQSOac.png";
+    public static final int COLOR = 8342666;
 
-    public static final Color COLOR = new Color(127, 76, 138);
+    public static final String CHANGELOG = "https://i.imgur.com/0qQSOac.png";
 
     public static final Game GAME = Game.DOFUS;
 
