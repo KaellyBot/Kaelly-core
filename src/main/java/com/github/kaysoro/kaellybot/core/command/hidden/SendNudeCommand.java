@@ -7,6 +7,7 @@ import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.PrivateChannel;
 import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.rest.util.Color;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -27,7 +28,7 @@ public class SendNudeCommand extends AbstractCommand {
                                         .setFooter(translator.getLabel(tuple.getT2(), "sendnude.author",
                                                 Nude.MOAM.getAuthor(), "1", "1"), null)
                                         .setImage(Nude.MOAM.getImage())
-                                        .setColor(16738740));
+                                        .setColor(Color.of(16738740)));
                             else
                                 return tuple.getT1().createMessage(translator
                                         .getLabel(tuple.getT2(), "sendnude.wrongChan"));

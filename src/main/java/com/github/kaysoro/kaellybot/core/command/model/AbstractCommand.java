@@ -55,8 +55,7 @@ public abstract class AbstractCommand implements Command {
         return message.getChannel()
                 .filter(channel -> channel instanceof TextChannel)
                 .map(TextChannel.class::cast)
-                .zipWith(message.getClient().getSelfId())
-                .flatMap(tuple -> tuple.getT1().getEffectivePermissions(tuple.getT2()));
+                .flatMap(channel -> channel.getEffectivePermissions(message.getClient().getSelfId()));
     }
 
     @Override

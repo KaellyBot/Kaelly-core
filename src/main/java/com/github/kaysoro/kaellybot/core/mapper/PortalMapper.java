@@ -6,6 +6,7 @@ import com.github.kaysoro.kaellybot.core.payload.kaelly.portal.PortalDto;
 import com.github.kaysoro.kaellybot.core.service.DimensionService;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.rest.util.Color;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,7 @@ public class PortalMapper {
 
         spec.setTitle(translator.getLabel(language, dimension))
                 .setThumbnail(dimension.getImage())
-                .setColor(dimension.getColor());
+                .setColor(Color.of(dimension.getColor()));
 
         if (Boolean.TRUE.equals(portal.getIsAvailable())){
             spec.addField(translator.getLabel(language, "pos.position"),

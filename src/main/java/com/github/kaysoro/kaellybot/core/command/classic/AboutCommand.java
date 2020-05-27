@@ -6,6 +6,7 @@ import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Donator;
 import com.github.kaysoro.kaellybot.core.model.constant.Graphist;
 import com.github.kaysoro.kaellybot.core.util.Translator;
+import discord4j.rest.util.Color;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -25,7 +26,7 @@ public class AboutCommand extends AbstractCommand {
                                         Constants.NAME, Constants.VERSION))
                                 .setDescription(translator.getLabel(tuple.getT2(), "about.desc",
                                         Constants.GAME.getName()))
-                                .setColor(Constants.COLOR)
+                                .setColor(Color.of(Constants.COLOR))
                                 .setThumbnail(Constants.AVATAR)
                                 .setImage(Constants.CHANGELOG)
                                 .addField(translator.getLabel(tuple.getT2(), "about.invite.title"),

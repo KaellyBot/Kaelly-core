@@ -2,8 +2,8 @@ package com.github.kaysoro.kaellybot.core.service;
 
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.repository.GuildRepository;
+import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Guild;
-import discord4j.rest.util.Snowflake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
