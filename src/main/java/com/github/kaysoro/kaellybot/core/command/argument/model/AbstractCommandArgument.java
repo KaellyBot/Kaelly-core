@@ -29,15 +29,22 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     private final String pattern;
     private final boolean isDescribed;
     private final Set<Permission> permissions;
+    private final Priority priority;
 
     public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Set<Permission> permissions,
-                                   Translator translator){
+                                   Translator translator, Priority priority){
         super();
         this.parent = parent;
         this.pattern = Constants.DEFAULT_PREFIX + parent.getName() + subPattern;
         this.isDescribed = isDescribed;
         this.permissions = permissions;
         this.translator = translator;
+        this.priority = priority;
+    }
+
+    public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Set<Permission> permissions,
+                                   Translator translator){
+        this(parent, subPattern, isDescribed, permissions, translator, Priority.NORMAL);
     }
 
     @Override
@@ -98,7 +105,17 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
         return isDescribed;
     }
 
+    @Override
+    public Priority getPriority(){
+        return priority;
+    }
+
     protected Command getParent(){
         return parent;
+    }
+
+    @Override
+    public int compareTo(CommandArgument<Message> argument){
+        return getPriority().compareTo(argument.getPriority());
     }
 }

@@ -47,6 +47,7 @@ public abstract class AbstractCommand implements Command {
     public final Flux<?> request(Message message) {
         return Flux.fromIterable(arguments)
                 .filter(argument -> argument.triggerMessage(message))
+                .sort().take(1)
                 .flatMap(argument -> getPermissions(message)
                         .flatMapMany(permissions -> argument.tryExecute(message, permissions)));
     }

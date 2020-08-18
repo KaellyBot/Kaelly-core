@@ -5,7 +5,7 @@ import discord4j.core.object.entity.Message;
 import discord4j.rest.util.PermissionSet;
 import reactor.core.publisher.Flux;
 
-public interface CommandArgument<T> {
+public interface CommandArgument<T> extends Comparable<CommandArgument<T>> {
 
     boolean triggerMessage(Message message);
 
@@ -16,4 +16,10 @@ public interface CommandArgument<T> {
     String help(Language lg, String prefix);
 
     boolean isDescribed();
+
+    Priority getPriority();
+
+    enum Priority {
+        IMMEDIATE, HIGH, MEDIUM, NORMAL, LOW
+    }
 }
