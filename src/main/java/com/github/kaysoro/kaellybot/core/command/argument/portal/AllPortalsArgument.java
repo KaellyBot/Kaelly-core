@@ -1,8 +1,10 @@
 package com.github.kaysoro.kaellybot.core.command.argument.portal;
 
+import com.github.kaysoro.kaellybot.core.command.argument.common.HelpArgument;
 import com.github.kaysoro.kaellybot.core.command.argument.model.AbstractCommandArgument;
 import com.github.kaysoro.kaellybot.core.command.classic.PortalCommand;
 import com.github.kaysoro.kaellybot.core.mapper.PortalMapper;
+import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.model.constant.Server;
 import com.github.kaysoro.kaellybot.core.service.PortalService;
@@ -17,11 +19,18 @@ public class AllPortalsArgument extends AbstractCommandArgument {
 
     private final PortalService portalService;
     private final PortalMapper portalMapper;
+    private final String patternHelpToAvoid;
 
     public AllPortalsArgument(PortalCommand parent, PortalService portalService, PortalMapper portalMapper, Translator translator){
         super(parent, "\\s+(\\w+)", true, PermissionScope.EMBED_PERMISSIONS, translator);
         this.portalService = portalService;
         this.portalMapper = portalMapper;
+        this.patternHelpToAvoid = Constants.DEFAULT_PREFIX + parent.getName() + HelpArgument.SUB_PATTERN;
+    }
+
+    @Override
+    public boolean triggerMessage(Message message) {
+        return super.triggerMessage(message) && ! message.getContent().matches(patternHelpToAvoid);
     }
 
     @Override

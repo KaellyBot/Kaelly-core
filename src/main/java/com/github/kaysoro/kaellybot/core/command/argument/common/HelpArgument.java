@@ -13,8 +13,10 @@ import java.util.regex.Matcher;
 
 public class HelpArgument extends AbstractCommandArgument {
 
+    public static final String SUB_PATTERN = "\\s+help";
+
     public HelpArgument(Command parent, Translator translator){
-        super(parent, "\\s+help", false, PermissionScope.TEXT_PERMISSIONS, translator);
+        super(parent, SUB_PATTERN, false, PermissionScope.TEXT_PERMISSIONS, translator);
     }
 
     @Override
