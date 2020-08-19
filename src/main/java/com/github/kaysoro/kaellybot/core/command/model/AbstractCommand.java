@@ -1,10 +1,10 @@
 package com.github.kaysoro.kaellybot.core.command.model;
 
-import com.github.kaysoro.kaellybot.core.command.argument.common.HelpArgument;
-import com.github.kaysoro.kaellybot.core.command.argument.model.CommandArgument;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.object.entity.channel.PrivateChannel;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.rest.util.PermissionSet;
 import lombok.Getter;
@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -29,17 +28,19 @@ public abstract class AbstractCommand implements Command {
     private boolean isPublic;
     private boolean isAdmin;
     private boolean isHidden;
+    private boolean isNSFW;
     protected Translator translator;
 
-    protected AbstractCommand(String name, Translator translator){
+    protected AbstractCommand(String name, List<CommandArgument<Message>> arguments, Translator translator){
         super();
         this.name = name;
         this.isPublic = true;
         this.isAdmin = false;
         this.isHidden = false;
+        this.isNSFW = false;
 
-        this.arguments = new ArrayList<>();
-        this.arguments.add(new HelpArgument(this, translator));
+        this.arguments = arguments;
+        //this.arguments.add(new CommonHelpArgument(this, translator));
         this.translator = translator;
     }
 
@@ -47,9 +48,13 @@ public abstract class AbstractCommand implements Command {
     public final Flux<?> request(Message message) {
         return Flux.fromIterable(arguments)
                 .filter(argument -> argument.triggerMessage(message))
-                .sort().take(1)
                 .flatMap(argument -> getPermissions(message)
                         .flatMapMany(permissions -> argument.tryExecute(message, permissions)));
+    }
+
+    protected boolean isChannelAppropriateForNSFW(MessageChannel channel){
+        return channel instanceof TextChannel && ((TextChannel) channel).isNsfw()
+                || channel instanceof PrivateChannel;
     }
 
     private Mono<PermissionSet> getPermissions(Message message){

@@ -28,6 +28,12 @@ public interface Command {
     boolean isHidden();
 
     /**
+     * is the command is NSFW ?
+     * @return True if the command is NSFW
+     */
+    boolean isNSFW();
+
+    /**
      * Change the command scope
      * @param isPublic is command available or not
      */
@@ -44,6 +50,12 @@ public interface Command {
      * @param isHidden is command hidden or not
      */
     void setHidden(boolean isHidden);
+
+    /**
+     * set the NSFW command ability
+     * @param isNSFW is command isNSFW or not
+     */
+    void setNSFW(boolean isNSFW);
 
     /**
      * @param prefix Prefix for command

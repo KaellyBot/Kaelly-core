@@ -1,6 +1,5 @@
-package com.github.kaysoro.kaellybot.core.command.argument.model;
+package com.github.kaysoro.kaellybot.core.command.model;
 
-import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;

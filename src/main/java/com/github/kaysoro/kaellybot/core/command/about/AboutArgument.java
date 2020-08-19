@@ -1,24 +1,24 @@
-package com.github.kaysoro.kaellybot.core.command.classic;
+package com.github.kaysoro.kaellybot.core.command.about;
 
-import com.github.kaysoro.kaellybot.core.command.argument.model.EmbedCommandArgument;
-import com.github.kaysoro.kaellybot.core.command.model.AbstractCommand;
+import com.github.kaysoro.kaellybot.core.command.model.Command;
+import com.github.kaysoro.kaellybot.core.command.model.EmbedCommandArgument;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Donator;
 import com.github.kaysoro.kaellybot.core.model.constant.Graphist;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.rest.util.Color;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import java.util.stream.Stream;
 
 @Component
-public class AboutCommand extends AbstractCommand {
+@Qualifier(AboutCommand.COMMAND_QUALIFIER)
+public class AboutArgument extends EmbedCommandArgument {
 
-    public AboutCommand(Translator translator) {
-        super("about", translator);
-
-        getArguments().add(new EmbedCommandArgument(this, translator,
+    public AboutArgument(@Qualifier(AboutCommand.COMMAND_QUALIFIER) Command parent, Translator translator) {
+        super(parent, translator,
                 message -> message.getChannel()
                         .zipWith(translator.getLanguage(message))
                         .flatMap(tuple -> tuple.getT1().createEmbed(spec -> spec
@@ -48,12 +48,11 @@ public class AboutCommand extends AbstractCommand {
                                         translator.getLabel(tuple.getT2(), "about.graphist.desc",
                                                 Graphist.ELYCANN.toMarkdown()), true)
                                 .addField(translator.getLabel(tuple.getT2(), "about.donators.title"),
-                                                Stream.of(Donator.values()).map(Donator::getName)
-                                                        .reduce((name1, name2) -> name1 + ", " + name2)
-                                                        .orElse(translator.getLabel(tuple.getT2(),
-                                                                "about.donators.empty")), true)))
+                                        Stream.of(Donator.values()).map(Donator::getName)
+                                                .reduce((name1, name2) -> name1 + ", " + name2)
+                                                .orElse(translator.getLabel(tuple.getT2(),
+                                                        "about.donators.empty")), true)))
                         .flatMapMany(Flux::just)
-            )
         );
     }
 }

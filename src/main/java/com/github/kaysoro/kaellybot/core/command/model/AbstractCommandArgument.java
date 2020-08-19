@@ -1,6 +1,5 @@
-package com.github.kaysoro.kaellybot.core.command.argument.model;
+package com.github.kaysoro.kaellybot.core.command.model;
 
-import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;

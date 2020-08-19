@@ -1,19 +1,23 @@
-package com.github.kaysoro.kaellybot.core.command.argument.help;
+package com.github.kaysoro.kaellybot.core.command.help;
 
-import com.github.kaysoro.kaellybot.core.command.classic.HelpCommand;
-import com.github.kaysoro.kaellybot.core.command.argument.model.AbstractCommandArgument;
+import com.github.kaysoro.kaellybot.core.command.model.Command;
+import com.github.kaysoro.kaellybot.core.command.model.AbstractCommandArgument;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import java.util.regex.Matcher;
 
+@Component
+@Qualifier(HelpCommand.COMMAND_QUALIFIER)
 public class HelpArgument extends AbstractCommandArgument {
 
-    public HelpArgument(HelpCommand parent, Translator translator){
+    public HelpArgument(@Qualifier(HelpCommand.COMMAND_QUALIFIER) Command parent, Translator translator){
         super(parent, "\\s+(.+)", true, PermissionScope.TEXT_PERMISSIONS, translator);
     }
 

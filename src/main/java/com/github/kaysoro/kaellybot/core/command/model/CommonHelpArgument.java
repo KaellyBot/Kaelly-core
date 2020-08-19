@@ -1,7 +1,5 @@
-package com.github.kaysoro.kaellybot.core.command.argument.common;
+package com.github.kaysoro.kaellybot.core.command.model;
 
-import com.github.kaysoro.kaellybot.core.command.argument.model.AbstractCommandArgument;
-import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
@@ -11,9 +9,9 @@ import reactor.core.publisher.Flux;
 
 import java.util.regex.Matcher;
 
-public class HelpArgument extends AbstractCommandArgument {
+public class CommonHelpArgument extends AbstractCommandArgument {
 
-    public HelpArgument(Command parent, Translator translator){
+    public CommonHelpArgument(Command parent, Translator translator){
         super(parent, "\\s+help", false, PermissionScope.TEXT_PERMISSIONS, translator, Priority.HIGH);
     }
 
