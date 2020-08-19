@@ -1,5 +1,7 @@
 package com.github.kaysoro.kaellybot.core.command.model;
 
+import com.github.kaysoro.kaellybot.core.exceptions.ExceptionFactory;
+import com.github.kaysoro.kaellybot.core.exceptions.Exception;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
@@ -7,9 +9,13 @@ import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.object.entity.channel.PrivateChannel;
+import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.rest.http.client.ClientException;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -18,8 +24,9 @@ import reactor.core.publisher.Mono;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public abstract class AbstractCommandArgument implements CommandArgument<Message> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommandArgument.class);
@@ -28,7 +35,8 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     private final String pattern;
     private final boolean isDescribed;
     private final Set<Permission> permissions;
-    private final Priority priority;
+    private Priority priority;
+    private boolean isNSFW;
 
     public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Set<Permission> permissions,
                                    Translator translator, Priority priority){
@@ -39,6 +47,7 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
         this.permissions = permissions;
         this.translator = translator;
         this.priority = priority;
+        this.isNSFW = false;
     }
 
     public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Set<Permission> permissions,
@@ -57,15 +66,19 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     }
 
     @Override
+    public boolean isChannelNSFWCompatible(MessageChannel channel){
+        return !isNSFW() || (channel instanceof TextChannel && ((TextChannel) channel).isNsfw()
+                || channel instanceof PrivateChannel);
+    }
+
+    @Override
     public Flux<Message> tryExecute(Message message, PermissionSet permissions){
-        return isArgumentHasPermissionsNeeded(permissions) ? execute(message) :
-                message.getChannel()
-                        .filter(channel -> permissions.containsAll(PermissionScope.TEXT_PERMISSIONS))
-                        .zipWith(translator.getLanguage(message))
-                        .flatMapMany(tuple -> sendMissingPermissions(tuple.getT1(), tuple.getT2()))
-                        .switchIfEmpty(message.getAuthor().map(User::getPrivateChannel).orElseGet(Mono::empty)
-                                .flatMapMany(channel -> sendMissingPermissions(channel, Constants.DEFAULT_LANGUAGE)))
-                        .onErrorResume(ClientException.isStatusCode(403), err -> Mono.empty());
+        return Mono.just(isArgumentHasPermissionsNeeded(permissions))
+                .flatMapMany(hasPermissions -> hasPermissions ?
+                        Flux.empty() : sendException(message, permissions, ExceptionFactory.createMissingPermissionException(getParent(), this.permissions)))
+                .switchIfEmpty(message.getChannel().flatMapMany(channel -> isChannelNSFWCompatible(channel) ?
+                        Flux.empty() : sendException(message, permissions, ExceptionFactory.createMissingNSFWOptionException())))
+                .switchIfEmpty(execute(message));
     }
 
     private Flux<Message> execute(Message message){
@@ -76,13 +89,14 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
                 .flatMapMany(Flux::just);
     }
 
-    private Flux<Message> sendMissingPermissions(MessageChannel channel, Language language){
-        return channel.createMessage(permissions.stream()
-                .map(permission -> translator.getLabel(language, "permission." + permission.name().toLowerCase()))
-                .collect(Collectors.joining(", ", translator
-                        .getLabel(language, "exception.missing_permission", getParent().getName()) + " ", ".")))
-                .flatMapMany(Flux::just);
-
+    private Flux<Message> sendException(Message message, PermissionSet permissions, Exception exception){
+        return message.getChannel()
+                .filter(channel -> permissions.containsAll(PermissionScope.TEXT_PERMISSIONS))
+                .zipWith(translator.getLanguage(message))
+                .flatMapMany(tuple -> tuple.getT1().createMessage(translator.getLabel(tuple.getT2(), exception)))
+                .switchIfEmpty(message.getAuthor().map(User::getPrivateChannel).orElseGet(Mono::empty)
+                        .flatMapMany(channel -> channel.createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, exception))))
+                .onErrorResume(ClientException.isStatusCode(403), err -> Mono.empty());
     }
 
     protected Mono<Message> manageUnknownException(Message message, Throwable error){

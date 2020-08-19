@@ -24,5 +24,6 @@ public class SendNudeArgument extends EmbedCommandArgument {
                                 .setColor(Color.of(16738740))))
                 .flatMapMany(Flux::just)
         );
+        setNSFW(true);
     }
 }

@@ -3,8 +3,6 @@ package com.github.kaysoro.kaellybot.core.command.model;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.channel.MessageChannel;
-import discord4j.core.object.entity.channel.PrivateChannel;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.rest.util.PermissionSet;
 import lombok.Getter;
@@ -28,7 +26,6 @@ public abstract class AbstractCommand implements Command {
     private boolean isPublic;
     private boolean isAdmin;
     private boolean isHidden;
-    private boolean isNSFW;
     protected Translator translator;
 
     protected AbstractCommand(String name, List<CommandArgument<Message>> arguments, Translator translator){
@@ -37,7 +34,6 @@ public abstract class AbstractCommand implements Command {
         this.isPublic = true;
         this.isAdmin = false;
         this.isHidden = false;
-        this.isNSFW = false;
 
         this.arguments = arguments;
         //this.arguments.add(new CommonHelpArgument(this, translator));
@@ -50,11 +46,6 @@ public abstract class AbstractCommand implements Command {
                 .filter(argument -> argument.triggerMessage(message))
                 .flatMap(argument -> getPermissions(message)
                         .flatMapMany(permissions -> argument.tryExecute(message, permissions)));
-    }
-
-    protected boolean isChannelAppropriateForNSFW(MessageChannel channel){
-        return channel instanceof TextChannel && ((TextChannel) channel).isNsfw()
-                || channel instanceof PrivateChannel;
     }
 
     private Mono<PermissionSet> getPermissions(Message message){

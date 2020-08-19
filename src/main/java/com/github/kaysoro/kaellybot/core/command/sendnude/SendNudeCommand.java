@@ -20,6 +20,5 @@ public class SendNudeCommand extends AbstractCommand {
     public SendNudeCommand(@Qualifier(COMMAND_QUALIFIER) @Lazy List<CommandArgument<Message>> arguments, Translator translator) {
         super(COMMAND_NAME, arguments, translator);
         setHidden(true);
-        setNSFW(true);
     }
 }
