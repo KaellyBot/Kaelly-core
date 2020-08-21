@@ -63,7 +63,7 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
 
     @Override
     public boolean triggerMessage(Message message, String prefix) {
-        return message.getContent().matches(prefix + pattern);
+        return message.getContent().matches(Pattern.quote(prefix) + pattern);
     }
 
     @Override
@@ -88,7 +88,7 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     }
 
     private Flux<Message> execute(Message message, String prefix){
-        Matcher matcher = Pattern.compile(prefix + pattern).matcher(message.getContent());
+        Matcher matcher = Pattern.compile(Pattern.quote(prefix) + pattern).matcher(message.getContent());
         return matcher.matches() ? execute(message, prefix, matcher) : message.getChannel()
                 .zipWith(translator.getLanguage(message)).flatMap(tuple -> tuple.getT1()
                         .createMessage(translator.getLabel(tuple.getT2(), "exception.unknown")))
