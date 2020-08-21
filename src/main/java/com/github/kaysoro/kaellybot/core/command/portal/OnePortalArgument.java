@@ -40,8 +40,7 @@ public class OnePortalArgument extends AbstractCommandArgument {
                 .flatMap(language -> portalService.getPortal(server, dimension, language)
                         .flatMap(portal -> message.getChannel().flatMap(channel -> channel
                                 .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language)))))
-                .flatMapMany(Flux::just)
-                .onErrorResume(error -> manageUnknownException(message, error));
+                .flatMapMany(Flux::just);
     }
 
     @Override

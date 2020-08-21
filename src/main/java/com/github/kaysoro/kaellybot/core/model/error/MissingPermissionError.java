@@ -19,6 +19,6 @@ public class MissingPermissionError implements Error {
         return permissions.stream()
                 .map(permission -> translator.getLabel(language, "permission." + permission.name().toLowerCase()))
                 .collect(Collectors.joining(", ", translator
-                        .getLabel(language, "exception.missing_permission", command.getName()) + " ", "."));
+                        .getLabel(language, "error.missing_permission", command.getName()) + " ", "."));
     }
 }

@@ -78,21 +78,24 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     }
 
     @Override
-    public Flux<Message> tryExecute(Message message, String prefix, PermissionSet permissions){
-        return Mono.just(isArgumentHasPermissionsNeeded(permissions))
+    public Flux<Message> tryExecute(Message message, String prefix, PermissionSet channelPermission){
+        return Mono.just(isArgumentHasPermissionsNeeded(channelPermission))
                 .flatMapMany(hasPermissions -> Boolean.TRUE.equals(hasPermissions) ?
-                        Flux.empty() : sendException(message, permissions, ErrorFactory.createMissingPermissionException(getParent(), this.permissions)))
+                        Flux.empty() : sendException(message, channelPermission, ErrorFactory.createMissingPermissionError(getParent(), permissions)))
                 .switchIfEmpty(message.getChannel().flatMapMany(channel -> isChannelNSFWCompatible(channel) ?
-                        Flux.empty() : sendException(message, permissions, ErrorFactory.createMissingNSFWOptionException())))
-                .switchIfEmpty(execute(message, prefix));
+                        Flux.empty() : sendException(message, channelPermission, ErrorFactory.createMissingNSFWOptionError())))
+                .switchIfEmpty(execute(message, prefix, channelPermission));
     }
 
-    private Flux<Message> execute(Message message, String prefix){
-        Matcher matcher = Pattern.compile(Pattern.quote(prefix) + pattern).matcher(message.getContent());
-        return matcher.matches() ? execute(message, prefix, matcher) : message.getChannel()
-                .zipWith(translator.getLanguage(message)).flatMap(tuple -> tuple.getT1()
-                        .createMessage(translator.getLabel(tuple.getT2(), "exception.unknown")))
-                .flatMapMany(Flux::just);
+    private Flux<Message> execute(Message message, String prefix, PermissionSet permissions){
+        return Mono.just(Pattern.compile(Pattern.quote(prefix) + pattern).matcher(message.getContent()))
+                .filter(Matcher::matches)
+                .flatMapMany(matcher -> execute(message, prefix, matcher))
+                .onErrorResume(error -> {
+                    LOG.error("Error not managed in commands", error);
+                    return Flux.empty();
+                })
+                .switchIfEmpty(sendException(message, permissions, ErrorFactory.createUnknownError()));
     }
 
     private Flux<Message> sendException(Message message, PermissionSet permissions, Error error){
@@ -103,13 +106,6 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
                 .switchIfEmpty(message.getAuthor().map(User::getPrivateChannel).orElseGet(Mono::empty)
                         .flatMapMany(channel -> channel.createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, error))))
                 .onErrorResume(ClientException.isStatusCode(403), err -> Mono.empty());
-    }
-
-    protected Mono<Message> manageUnknownException(Message message, Throwable error){
-        LOG.error("Error with the following call: {}", message.getContent(), error);
-        return message.getChannel().zipWith(translator.getLanguage(message))
-                .flatMap(tuple -> tuple.getT1().createMessage(translator
-                        .getLabel(tuple.getT2(),"exception.unknown")));
     }
 
     public abstract Flux<Message> execute(Message message, String prefix, Matcher matcher);

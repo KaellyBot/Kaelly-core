@@ -9,11 +9,15 @@ public final class ErrorFactory {
 
     private ErrorFactory(){}
 
-    public static Error createMissingPermissionException(Command command, Set<Permission> permissions){
+    public static Error createMissingPermissionError(Command command, Set<Permission> permissions){
         return new MissingPermissionError(command, permissions);
     }
 
-    public static Error createMissingNSFWOptionException(){
+    public static Error createMissingNSFWOptionError(){
         return new MissingNSFWOptionError();
+    }
+
+    public static Error createUnknownError(){
+        return new UnknownError();
     }
 }

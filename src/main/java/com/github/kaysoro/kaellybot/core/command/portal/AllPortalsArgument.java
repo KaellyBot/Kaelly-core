@@ -36,8 +36,7 @@ public class AllPortalsArgument extends AbstractCommandArgument {
         return translator.getLanguage(message)
                 .flatMapMany(language -> portalService.getPortals(server, language)
                         .flatMap(portal -> message.getChannel().flatMap(channel -> channel
-                                .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language)))))
-                .onErrorResume(error -> manageUnknownException(message, error));
+                                .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language)))));
     }
 
     @Override
