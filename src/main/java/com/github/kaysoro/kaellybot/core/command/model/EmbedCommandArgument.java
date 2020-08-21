@@ -2,14 +2,16 @@ package com.github.kaysoro.kaellybot.core.command.model;
 
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
-import discord4j.core.object.entity.Message;
-import reactor.core.publisher.Flux;
+import org.apache.commons.lang.StringUtils;
 
-import java.util.function.Function;
+public abstract class EmbedCommandArgument extends AbstractCommandArgument {
 
-public class EmbedCommandArgument extends BasicCommandArgument {
+    public EmbedCommandArgument(Command parent, String subPattern, boolean isDescribed,
+                                   Translator translator){
+        super(parent, subPattern, isDescribed, PermissionScope.EMBED_PERMISSIONS, translator, Priority.NORMAL);
+    }
 
-    public EmbedCommandArgument(Command parent, Translator translator, Function<Message, Flux<Message>> executor) {
-        super(parent, translator, PermissionScope.EMBED_PERMISSIONS, executor);
+    public EmbedCommandArgument(Command parent, Translator translator){
+        this(parent, StringUtils.EMPTY, false, translator);
     }
 }

@@ -2,14 +2,16 @@ package com.github.kaysoro.kaellybot.core.command.model;
 
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
-import discord4j.core.object.entity.Message;
-import reactor.core.publisher.Flux;
+import org.apache.commons.lang.StringUtils;
 
-import java.util.function.Function;
+public abstract class TextCommandArgument extends AbstractCommandArgument {
 
-public class TextCommandArgument extends BasicCommandArgument {
+    public TextCommandArgument(Command parent, String subPattern, boolean isDescribed,
+                                Translator translator){
+        super(parent, subPattern, isDescribed, PermissionScope.TEXT_PERMISSIONS, translator, Priority.NORMAL);
+    }
 
-    public TextCommandArgument(Command parent, Translator translator, Function<Message, Flux<Message>> executor) {
-        super(parent, translator, PermissionScope.TEXT_PERMISSIONS, executor);
+    public TextCommandArgument(Command parent, Translator translator){
+        this(parent, StringUtils.EMPTY, false, translator);
     }
 }

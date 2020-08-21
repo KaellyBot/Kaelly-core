@@ -1,6 +1,5 @@
 package com.github.kaysoro.kaellybot.core.command.model;
 
-import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
@@ -16,11 +15,11 @@ public class CommonHelpArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, Matcher matcher) {
+    public Flux<Message> execute(Message message, String prefix, Matcher matcher) {
         return message.getChannel()
                 .zipWith(translator.getLanguage(message))
                 .flatMap(tuple -> tuple.getT1()
-                .createMessage(getParent().moreHelp(tuple.getT2(), Constants.DEFAULT_PREFIX)))
+                .createMessage(getParent().moreHelp(tuple.getT2(), prefix)))
                 .flatMapMany(Flux::just);
     }
 

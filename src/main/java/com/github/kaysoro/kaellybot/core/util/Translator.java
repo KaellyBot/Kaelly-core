@@ -71,4 +71,11 @@ public class Translator {
                 .map(Guild::getLanguage)
                 .defaultIfEmpty(Constants.DEFAULT_LANGUAGE);
     }
+
+    public Mono<String> getPrefix(Message message){
+        return message.getGuild()
+                .flatMap(guild -> guildService.findById(guild.getId()))
+                .map(Guild::getPrefix)
+                .defaultIfEmpty(Constants.DEFAULT_PREFIX);
+    }
 }

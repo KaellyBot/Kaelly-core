@@ -30,7 +30,7 @@ public class AllPortalsArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, Matcher matcher) {
+    public Flux<Message> execute(Message message, String prefix, Matcher matcher) {
        // TODO determine server in the message
         Server server = Server.MERIANA;
         return translator.getLanguage(message)

@@ -16,6 +16,7 @@ import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -42,7 +43,7 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
                                    Translator translator, Priority priority){
         super();
         this.parent = parent;
-        this.pattern = Constants.DEFAULT_PREFIX + parent.getName() + subPattern;
+        this.pattern = parent.getName() + subPattern;
         this.isDescribed = isDescribed;
         this.permissions = permissions;
         this.translator = translator;
@@ -55,9 +56,14 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
         this(parent, subPattern, isDescribed, permissions, translator, Priority.NORMAL);
     }
 
+    public AbstractCommandArgument(Command parent, boolean isDescribed, Set<Permission> permissions,
+                                   Translator translator){
+        this(parent, StringUtils.EMPTY, isDescribed, permissions, translator, Priority.NORMAL);
+    }
+
     @Override
-    public boolean triggerMessage(Message message) {
-        return message.getContent().matches(pattern);
+    public boolean triggerMessage(Message message, String prefix) {
+        return message.getContent().matches(prefix + pattern);
     }
 
     @Override
@@ -72,18 +78,18 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     }
 
     @Override
-    public Flux<Message> tryExecute(Message message, PermissionSet permissions){
+    public Flux<Message> tryExecute(Message message, String prefix, PermissionSet permissions){
         return Mono.just(isArgumentHasPermissionsNeeded(permissions))
                 .flatMapMany(hasPermissions -> hasPermissions ?
                         Flux.empty() : sendException(message, permissions, ExceptionFactory.createMissingPermissionException(getParent(), this.permissions)))
                 .switchIfEmpty(message.getChannel().flatMapMany(channel -> isChannelNSFWCompatible(channel) ?
                         Flux.empty() : sendException(message, permissions, ExceptionFactory.createMissingNSFWOptionException())))
-                .switchIfEmpty(execute(message));
+                .switchIfEmpty(execute(message, prefix));
     }
 
-    private Flux<Message> execute(Message message){
-        Matcher matcher = Pattern.compile(pattern).matcher(message.getContent());
-        return matcher.matches() ? execute(message, matcher) : message.getChannel()
+    private Flux<Message> execute(Message message, String prefix){
+        Matcher matcher = Pattern.compile(prefix + pattern).matcher(message.getContent());
+        return matcher.matches() ? execute(message, prefix, matcher) : message.getChannel()
                 .zipWith(translator.getLanguage(message)).flatMap(tuple -> tuple.getT1()
                         .createMessage(translator.getLabel(tuple.getT2(), "exception.unknown")))
                 .flatMapMany(Flux::just);
@@ -106,7 +112,7 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
                         .getLabel(tuple.getT2(),"exception.unknown")));
     }
 
-    public abstract Flux<Message> execute(Message message, Matcher matcher);
+    public abstract Flux<Message> execute(Message message, String prefix, Matcher matcher);
 
     @Override
     public String help(Language lg, String prefix){
