@@ -1,7 +1,7 @@
 package com.github.kaysoro.kaellybot.core.command.model;
 
-import com.github.kaysoro.kaellybot.core.exceptions.ExceptionFactory;
-import com.github.kaysoro.kaellybot.core.exceptions.Exception;
+import com.github.kaysoro.kaellybot.core.model.error.Error;
+import com.github.kaysoro.kaellybot.core.model.error.ErrorFactory;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
@@ -80,10 +80,10 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     @Override
     public Flux<Message> tryExecute(Message message, String prefix, PermissionSet permissions){
         return Mono.just(isArgumentHasPermissionsNeeded(permissions))
-                .flatMapMany(hasPermissions -> hasPermissions ?
-                        Flux.empty() : sendException(message, permissions, ExceptionFactory.createMissingPermissionException(getParent(), this.permissions)))
+                .flatMapMany(hasPermissions -> Boolean.TRUE.equals(hasPermissions) ?
+                        Flux.empty() : sendException(message, permissions, ErrorFactory.createMissingPermissionException(getParent(), this.permissions)))
                 .switchIfEmpty(message.getChannel().flatMapMany(channel -> isChannelNSFWCompatible(channel) ?
-                        Flux.empty() : sendException(message, permissions, ExceptionFactory.createMissingNSFWOptionException())))
+                        Flux.empty() : sendException(message, permissions, ErrorFactory.createMissingNSFWOptionException())))
                 .switchIfEmpty(execute(message, prefix));
     }
 
@@ -95,13 +95,13 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
                 .flatMapMany(Flux::just);
     }
 
-    private Flux<Message> sendException(Message message, PermissionSet permissions, Exception exception){
+    private Flux<Message> sendException(Message message, PermissionSet permissions, Error error){
         return message.getChannel()
                 .filter(channel -> permissions.containsAll(PermissionScope.TEXT_PERMISSIONS))
                 .zipWith(translator.getLanguage(message))
-                .flatMapMany(tuple -> tuple.getT1().createMessage(translator.getLabel(tuple.getT2(), exception)))
+                .flatMapMany(tuple -> tuple.getT1().createMessage(translator.getLabel(tuple.getT2(), error)))
                 .switchIfEmpty(message.getAuthor().map(User::getPrivateChannel).orElseGet(Mono::empty)
-                        .flatMapMany(channel -> channel.createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, exception))))
+                        .flatMapMany(channel -> channel.createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, error))))
                 .onErrorResume(ClientException.isStatusCode(403), err -> Mono.empty());
     }
 

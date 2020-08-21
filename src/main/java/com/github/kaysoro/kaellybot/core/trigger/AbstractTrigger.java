@@ -30,7 +30,7 @@ public abstract class AbstractTrigger implements Trigger {
                 .filter(channel -> channel instanceof TextChannel)
                 .map(TextChannel.class::cast)
                 .flatMap(channel -> channel.getEffectivePermissions(message.getClient().getSelfId()))
-                .map(permissions -> isTriggerHasPermissionsNeeded(permissions)
+                .map(channelPermissions -> isTriggerHasPermissionsNeeded(channelPermissions)
                         && isPatternFound(message.getContent()));
     }
 

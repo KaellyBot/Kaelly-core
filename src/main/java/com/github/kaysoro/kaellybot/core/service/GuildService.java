@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 @Service
 public class GuildService {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(GuildService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuildService.class);
 
     private final GuildRepository guildRepository;
 
@@ -25,7 +25,7 @@ public class GuildService {
     }
 
     public Mono<com.github.kaysoro.kaellybot.core.model.entity.Guild> save(Guild guild){
-        LOGGER.info("Guild[id={}] added", guild.getId().asString());
+        LOGGER.info("Guild[id={}] added", guild.getId());
         return guildRepository.save(com.github.kaysoro.kaellybot.core.model.entity.Guild.builder()
                 .id(guild.getId().asString())
                 .language(Constants.DEFAULT_LANGUAGE)
@@ -38,7 +38,7 @@ public class GuildService {
     }
 
     public Mono<Void> deleteById(Snowflake id){
-        LOGGER.info("Guild[id={}] removed", id.asString());
+        LOGGER.info("Guild[id={}] removed", id);
         return guildRepository.deleteById(id.asString());
     }
 }

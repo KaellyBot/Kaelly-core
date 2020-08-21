@@ -23,6 +23,17 @@ public class DofusRoomPreviewProcessor {
     private static final String TEMPLATE_PATH = "/dofusroom/templates/";
     private static final String ITEM_PATH = "/dofusroom/items/";
 
+    private static final String AMULET_PLACEHOLDER   = "amulet_placeholder"  ;
+    private static final String RING_PLACEHOLDER     = "ring_placeholder"    ;
+    private static final String SHIELD_PLACEHOLDER   = "shield_placeholder"  ;
+    private static final String WEAPON_PLACEHOLDER   = "weapon_placeholder"  ;
+    private static final String CREATURE_PLACEHOLDER = "creature_placeholder";
+    private static final String HAT_PLACEHOLDER      = "hat_placeholder"     ;
+    private static final String CAPE_PLACEHOLDER     = "cape_placeholder"    ;
+    private static final String BELT_PLACEHOLDER     = "belt_placeholder"    ;
+    private static final String BOOTS_PLACEHOLDER    = "boots_placeholder"   ;
+    private static final String TROPHUS_PLACEHOLDER  = "trophus_placeholder" ;
+
     private final String templateDirectory;
     private final String itemDirectory;
 
@@ -69,22 +80,22 @@ public class DofusRoomPreviewProcessor {
     @Getter
     @AllArgsConstructor
     public enum ItemPosition {
-        AMULET     (4  , 4  , "amulet_placeholder"  ),
-        TOP_RING   (4  , 88 , "ring_placeholder"    ),
-        BOTTOM_RING(4  , 172, "ring_placeholder"    ),
-        SHIELD     (4  , 256, "shield_placeholder"  ),
-        WEAPON     (172, 256, "weapon_placeholder"  ),
-        CREATURE   (256, 256, "creature_placeholder"),
-        HAT        (424, 4  , "hat_placeholder"     ),
-        CAPE       (424, 88 , "cape_placeholder"    ),
-        BELT       (424, 172, "hat_placeholder"     ),
-        BOOTS      (424, 256, "boots_placeholder"   ),
-        TROPHUS_1  (4  , 340, "trophus_placeholder" ),
-        TROPHUS_2  (88 , 340, "trophus_placeholder" ),
-        TROPHUS_3  (172, 340, "trophus_placeholder" ),
-        TROPHUS_4  (256, 340, "trophus_placeholder" ),
-        TROPHUS_5  (340, 340, "trophus_placeholder" ),
-        TROPHUS_6  (424, 340, "trophus_placeholder" );
+        AMULET     (4  , 4  , AMULET_PLACEHOLDER  ),
+        TOP_RING   (4  , 88 , RING_PLACEHOLDER    ),
+        BOTTOM_RING(4  , 172, RING_PLACEHOLDER    ),
+        SHIELD     (4  , 256, SHIELD_PLACEHOLDER  ),
+        WEAPON     (172, 256, WEAPON_PLACEHOLDER  ),
+        CREATURE   (256, 256, CREATURE_PLACEHOLDER),
+        HAT        (424, 4  , HAT_PLACEHOLDER     ),
+        CAPE       (424, 88 , CAPE_PLACEHOLDER    ),
+        BELT       (424, 172, BELT_PLACEHOLDER    ),
+        BOOTS      (424, 256, BOOTS_PLACEHOLDER   ),
+        TROPHUS_1  (4  , 340, TROPHUS_PLACEHOLDER ),
+        TROPHUS_2  (88 , 340, TROPHUS_PLACEHOLDER ),
+        TROPHUS_3  (172, 340, TROPHUS_PLACEHOLDER ),
+        TROPHUS_4  (256, 340, TROPHUS_PLACEHOLDER ),
+        TROPHUS_5  (340, 340, TROPHUS_PLACEHOLDER ),
+        TROPHUS_6  (424, 340, TROPHUS_PLACEHOLDER );
 
         private final int x;
         private final int y;

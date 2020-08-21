@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 @Service
 public class DiscordService {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(DiscordService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DiscordService.class);
 
     private DiscordClient discordClient;
 

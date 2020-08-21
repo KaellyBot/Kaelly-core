@@ -1,4 +1,4 @@
-package com.github.kaysoro.kaellybot.core.exceptions;
+package com.github.kaysoro.kaellybot.core.model.error;
 
 import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class MissingPermissionException implements Exception {
+public class MissingPermissionError implements Error {
 
     private final Command command;
     private final Set<Permission> permissions;

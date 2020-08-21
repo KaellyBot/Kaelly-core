@@ -1,6 +1,6 @@
 package com.github.kaysoro.kaellybot.core.util;
 
-import com.github.kaysoro.kaellybot.core.exceptions.Exception;
+import com.github.kaysoro.kaellybot.core.model.error.Error;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.model.constant.MultilingualEnum;
@@ -48,8 +48,8 @@ public class Translator {
         return getLabel(lang, enumeration.getKey());
     }
 
-    public String getLabel(Language lang, Exception exception){
-        return exception.getLabel(this, lang);
+    public String getLabel(Language lang, Error error){
+        return error.getLabel(this, lang);
     }
 
     public String getLabel(Language lang, String property, Object... arguments){
