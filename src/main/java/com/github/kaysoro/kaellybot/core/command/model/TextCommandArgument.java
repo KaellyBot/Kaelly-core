@@ -14,4 +14,8 @@ public abstract class TextCommandArgument extends AbstractCommandArgument {
     public TextCommandArgument(Command parent, Translator translator){
         this(parent, StringUtils.EMPTY, false, translator);
     }
+
+    public TextCommandArgument(Command parent, boolean isDescribed, Translator translator){
+        this(parent, StringUtils.EMPTY, isDescribed, translator);
+    }
 }
