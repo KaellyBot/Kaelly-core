@@ -11,7 +11,9 @@ import discord4j.core.object.entity.channel.Channel;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -30,19 +32,26 @@ public class AlmanaxAutoListArgument extends TextCommandArgument {
     @Override
     public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
         return  message.getGuildId().map(almanaxWebhookService::findAllByGuildId).orElse(Flux.empty())
-                .flatMap(webhook -> message.getClient().getChannelById(Snowflake.of(webhook.getChannelId())))
-                .onErrorResume(e -> Flux.empty())
+                .flatMap(entity -> message.getClient().getWebhookById(Snowflake.of(entity.getWebhookId()))
+                        .onErrorResume(error -> Mono.empty()))
+                .flatMap(webhook -> message.getClient().getChannelById(webhook.getChannelId())
+                        .onErrorResume(error -> Mono.empty()))
                 .map(Channel::getMention)
                 .collectList()
-                .map(list -> translator.getLabel(language, "almanax-auto.list",
-                        list.stream().collect(Collectors.joining("\n- ", "\n- ", ""))))
+                .map(list -> getListLabel(language, list))
                 .zipWith(message.getChannel())
                 .flatMap(tuple -> tuple.getT2().createMessage(tuple.getT1()))
                 .flatMapMany(Flux::just);
     }
 
+    private String getListLabel(Language language, List<String> mentions){
+        return mentions.isEmpty() ? translator.getLabel(language, "almanax-auto.list_empty") :
+                translator.getLabel(language, "almanax-auto.list",
+                        mentions.stream().collect(Collectors.joining("\n- ", "\n- ", "")));
+    }
+
     @Override
     public String help(Language lg, String prefix) {
-        return prefix + "`" + getParent().getName() + "` : " + translator.getLabel(lg, "almanax-auto.list.help");
+        return prefix + "`" + getParent().getName() + "` : " + translator.getLabel(lg, "almanax-auto.help.list");
     }
 }

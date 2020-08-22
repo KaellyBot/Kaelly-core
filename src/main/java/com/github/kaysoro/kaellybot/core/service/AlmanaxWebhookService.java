@@ -20,8 +20,12 @@ public class AlmanaxWebhookService {
         this.almanaxWebhookRepository = almanaxWebhookRepository;
     }
 
+    public Mono<Boolean> existsById(Snowflake id){
+        return almanaxWebhookRepository.existsById(id.asString());
+    }
+
     public Mono<AlmanaxWebhook> save(AlmanaxWebhook almanaxWebhook){
-        LOGGER.info("AlmanaxWebhook[id={}] added", almanaxWebhook.getChannelId());
+        LOGGER.info("AlmanaxWebhook[id={}] added", almanaxWebhook.getWebhookId());
         return almanaxWebhookRepository.save(almanaxWebhook);
     }
 

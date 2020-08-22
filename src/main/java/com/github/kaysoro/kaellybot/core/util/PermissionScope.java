@@ -15,4 +15,8 @@ public final class PermissionScope {
 
     public static final Set<Permission> TEXT_PERMISSIONS = Set.of(
             Permission.SEND_MESSAGES);
+
+    public static final Set<Permission> WEBHOOK_PERMISSIONS = Set.of(
+            Permission.SEND_MESSAGES,
+            Permission.MANAGE_WEBHOOKS);
 }
