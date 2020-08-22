@@ -8,5 +8,5 @@ public interface Trigger {
 
     Mono<Boolean> isTriggered(Message message);
 
-    Flux<?> execute(Message message);
+    Flux<Message> execute(Message message);
 }

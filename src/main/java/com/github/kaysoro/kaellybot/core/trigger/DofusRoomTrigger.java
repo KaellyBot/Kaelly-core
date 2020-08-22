@@ -45,7 +45,7 @@ public class DofusRoomTrigger extends AbstractTrigger {
     }
 
     @Override
-    public Flux<?> execute(Message message) {
+    public Flux<Message> execute(Message message) {
         return Flux.fromStream(dofusRoomUrlPatterns.parallelStream()
                 .map(pattern -> pattern.matcher(message.getContent()))
                 .flatMap(this::findAllDofusRoomIds)
