@@ -1,17 +1,12 @@
 package com.github.kaysoro.kaellybot.core.command.model;
 
-import com.github.kaysoro.kaellybot.core.model.error.Error;
 import com.github.kaysoro.kaellybot.core.model.error.ErrorFactory;
-import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
-import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.PrivateChannel;
 import discord4j.core.object.entity.channel.TextChannel;
-import discord4j.rest.http.client.ClientException;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
 import lombok.Getter;
@@ -81,9 +76,11 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     public Flux<Message> tryExecute(Message message, String prefix, Language language, PermissionSet channelPermission){
         return Mono.just(isArgumentHasPermissionsNeeded(channelPermission))
                 .flatMapMany(hasPermissions -> Boolean.TRUE.equals(hasPermissions) ?
-                        Flux.empty() : sendException(message, language, channelPermission, ErrorFactory.createMissingPermissionError(getParent(), permissions)))
+                        Flux.empty() : getParent().sendException(message, language, channelPermission,
+                        ErrorFactory.createMissingPermissionError(getParent(), permissions)))
                 .switchIfEmpty(message.getChannel().flatMapMany(channel -> isChannelNSFWCompatible(channel) ?
-                        Flux.empty() : sendException(message, language, channelPermission, ErrorFactory.createMissingNSFWOptionError())))
+                        Flux.empty() : getParent().sendException(message, language, channelPermission,
+                        ErrorFactory.createMissingNSFWOptionError())))
                 .switchIfEmpty(execute(message, prefix, language, channelPermission));
     }
 
@@ -92,19 +89,10 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
                 .filter(Matcher::matches)
                 .flatMapMany(matcher -> execute(message, prefix, language, matcher))
                 .onErrorResume(error -> manageUnknownException(message, error))
-                .switchIfEmpty(sendException(message, language, permissions, ErrorFactory.createUnknownError()));
+                .switchIfEmpty(getParent().sendException(message, language, permissions, ErrorFactory.createUnknownError()));
     }
 
     public abstract Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher);
-
-    private Flux<Message> sendException(Message message, Language language, PermissionSet permissions, Error error){
-        return message.getChannel()
-                .filter(channel -> permissions.containsAll(PermissionScope.TEXT_PERMISSIONS))
-                .flatMapMany(channel -> channel.createMessage(translator.getLabel(language, error)))
-                .switchIfEmpty(message.getAuthor().map(User::getPrivateChannel).orElseGet(Mono::empty)
-                        .flatMapMany(channel -> channel.createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, error))))
-                .onErrorResume(ClientException.isStatusCode(403), err -> Mono.empty());
-    }
 
     protected Flux<Message> manageUnknownException(Message message, Throwable error){
         LOG.error("Error with the following command: {}", message.getContent(), error);

@@ -1,13 +1,18 @@
 package com.github.kaysoro.kaellybot.core.command.model;
 
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
+import com.github.kaysoro.kaellybot.core.model.error.Error;
 import discord4j.core.object.entity.Message;
+import discord4j.rest.util.PermissionSet;
 import reactor.core.publisher.Flux;
 
 public interface Command {
+
     String getName();
 
-    Flux<?> request(Message message, String prefix, Language language);
+    Flux<Message> request(Message message, String prefix, Language language);
+
+    Flux<Message> sendException(Message message, Language language, PermissionSet permissions, Error error);
 
     /**
      * Is the command only usable by admins ?

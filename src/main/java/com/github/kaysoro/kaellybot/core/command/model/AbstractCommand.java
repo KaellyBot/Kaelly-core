@@ -1,9 +1,15 @@
 package com.github.kaysoro.kaellybot.core.command.model;
 
+import com.github.kaysoro.kaellybot.core.model.constant.Constants;
+import com.github.kaysoro.kaellybot.core.model.error.Error;
+import com.github.kaysoro.kaellybot.core.model.error.ErrorFactory;
+import com.github.kaysoro.kaellybot.core.util.PermissionScope;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.rest.http.client.ClientException;
 import discord4j.rest.util.PermissionSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,14 +47,28 @@ public abstract class AbstractCommand implements Command {
     }
 
     @Override
-    public final Flux<?> request(Message message, String prefix, Language language) {
-        return Flux.fromIterable(arguments)
-                .filter(argument -> argument.triggerMessage(message, prefix))
-                .flatMap(argument -> getPermissions(message)
-                        .flatMapMany(permissions -> argument.tryExecute(message, prefix, language, permissions)))
-                //.switchIfEmpty());
-                ;
+    public final Flux<Message> request(Message message, String prefix, Language language) {
+        return getPermissions(message)
+                .flatMapMany(permissions -> Flux.fromIterable(arguments)
+                        .filter(argument -> argument.triggerMessage(message, prefix))
+                        .flatMap(argument -> argument.tryExecute(message, prefix, language, permissions))
+                        .switchIfEmpty(manageMisusedCommandError(message, prefix, language, permissions)));
+    }
 
+    private Flux<Message> manageMisusedCommandError(Message message, String prefix, Language language, PermissionSet permissions){
+        return Flux.just(message.getContent().startsWith(prefix + getName()))
+                .filter(Boolean.TRUE::equals)
+                .flatMap(result -> sendException(message, language, permissions,
+                        ErrorFactory.createMisusedCommandError(prefix, this)));
+    }
+
+    public Flux<Message> sendException(Message message, Language language, PermissionSet permissions, Error error){
+        return message.getChannel()
+                .filter(channel -> permissions.containsAll(PermissionScope.TEXT_PERMISSIONS))
+                .flatMapMany(channel -> channel.createMessage(translator.getLabel(language, error)))
+                .switchIfEmpty(message.getAuthor().map(User::getPrivateChannel).orElseGet(Mono::empty)
+                        .flatMapMany(channel -> channel.createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, error))))
+                .onErrorResume(ClientException.isStatusCode(403), err -> Mono.empty());
     }
 
     private Mono<PermissionSet> getPermissions(Message message){
