@@ -19,7 +19,10 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -40,10 +43,15 @@ public abstract class AbstractCommand implements Command {
         this.isPublic = true;
         this.isAdmin = false;
         this.isHidden = false;
-
         this.arguments = arguments;
-        //this.arguments.add(new CommonHelpArgument(this, translator));
         this.translator = translator;
+    }
+
+    @PostConstruct
+    public void init() {
+        this.arguments = Stream.concat(arguments.stream(),
+                Stream.of(new CommonHelpArgument(this, translator)))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -51,6 +59,7 @@ public abstract class AbstractCommand implements Command {
         return getPermissions(message)
                 .flatMapMany(permissions -> Flux.fromIterable(arguments)
                         .filter(argument -> argument.triggerMessage(message, prefix))
+                        .sort().take(1)
                         .flatMap(argument -> argument.tryExecute(message, prefix, language, permissions))
                         .switchIfEmpty(manageMisusedCommandError(message, prefix, language, permissions)));
     }
