@@ -20,15 +20,14 @@ public class HelpArgument extends TextCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Matcher matcher) {
+    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
         String argument = matcher.group(1);
         return (! argument.equals(getParent().getName())) ?
                 message.getChannel()
-                        .zipWith(translator.getLanguage(message))
-                        .flatMap(tuple -> tuple.getT1().createMessage(getParent().getCommands().stream()
+                        .flatMap(channel -> channel.createMessage(getParent().getCommands().stream()
                                 .filter(cmd -> cmd.getName().equals(argument))
-                                .findFirst().map(cmd -> cmd.moreHelp(tuple.getT2(), prefix))
-                                .orElse(translator.getLabel(tuple.getT2(), "help.cmd.empty"))))
+                                .findFirst().map(cmd -> cmd.moreHelp(language, prefix))
+                                .orElse(translator.getLabel(language, "help.cmd.empty"))))
                         .flatMapMany(Flux::just)
                 : Flux.empty();
     }

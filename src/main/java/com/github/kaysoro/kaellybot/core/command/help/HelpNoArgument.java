@@ -1,6 +1,7 @@
 package com.github.kaysoro.kaellybot.core.command.help;
 
 import com.github.kaysoro.kaellybot.core.command.model.TextCommandArgument;
+import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,14 +19,13 @@ public class HelpNoArgument extends TextCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Matcher matcher) {
+    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
         return message.getChannel()
-                .zipWith(translator.getLanguage(message))
-                .flatMap(tuple -> tuple.getT1().createMessage(((HelpCommand) getParent()).getCommands().stream()
+                .flatMap(channel -> channel.createMessage(((HelpCommand) getParent()).getCommands().stream()
                         .filter(command -> command.isPublic() && ! command.isAdmin() && ! command.isHidden())
-                        .map(command -> command.help(tuple.getT2(), prefix))
+                        .map(command -> command.help(language, prefix))
                         .reduce((cmd1, cmd2) -> cmd1 + "\n" + cmd2)
-                        .orElse(translator.getLabel(tuple.getT2(), "help.empty"))))
+                        .orElse(translator.getLabel(language, "help.empty"))))
                 .flatMapMany(Flux::just);
     }
 }

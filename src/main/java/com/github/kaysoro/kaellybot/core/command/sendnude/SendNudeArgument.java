@@ -2,6 +2,7 @@ package com.github.kaysoro.kaellybot.core.command.sendnude;
 
 import com.github.kaysoro.kaellybot.core.command.model.EmbedCommandArgument;
 import com.github.kaysoro.kaellybot.core.command.model.Command;
+import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.model.constant.Nude;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
@@ -22,12 +23,11 @@ public class SendNudeArgument extends EmbedCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Matcher matcher) {
+    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
         return message.getChannel()
-                .zipWith(translator.getLanguage(message))
-                .flatMap(tuple -> tuple.getT1().createEmbed(spec -> spec
-                        .setTitle(translator.getLabel(tuple.getT2(), "sendnude.title"))
-                        .setFooter(translator.getLabel(tuple.getT2(), "sendnude.author",
+                .flatMap(channel -> channel.createEmbed(spec -> spec
+                        .setTitle(translator.getLabel(language, "sendnude.title"))
+                        .setFooter(translator.getLabel(language, "sendnude.author",
                                 Nude.MOAM.getAuthor(), "1", "1"), null)
                         .setImage(Nude.MOAM.getImage())
                         .setColor(Color.of(16738740))))

@@ -41,12 +41,14 @@ public abstract class AbstractCommand implements Command {
     }
 
     @Override
-    public final Flux<?> request(Message message) {
-        return translator.getPrefix(message)
-                .flatMapMany(prefix -> Flux.fromIterable(arguments)
-                        .filter(argument -> argument.triggerMessage(message, prefix))
-                        .flatMap(argument -> getPermissions(message)
-                                .flatMapMany(permissions -> argument.tryExecute(message, prefix, permissions))));
+    public final Flux<?> request(Message message, String prefix, Language language) {
+        return Flux.fromIterable(arguments)
+                .filter(argument -> argument.triggerMessage(message, prefix))
+                .flatMap(argument -> getPermissions(message)
+                        .flatMapMany(permissions -> argument.tryExecute(message, prefix, language, permissions)))
+                //.switchIfEmpty());
+                ;
+
     }
 
     private Mono<PermissionSet> getPermissions(Message message){

@@ -2,6 +2,7 @@ package com.github.kaysoro.kaellybot.core.command.ping;
 
 import com.github.kaysoro.kaellybot.core.command.model.TextCommandArgument;
 import com.github.kaysoro.kaellybot.core.command.model.Command;
+import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +22,7 @@ public class PingArgument extends TextCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Matcher matcher) {
+    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
         return message.getChannel()
                 .flatMap(chan -> chan.createMessage(
                         Math.abs(Duration.between(message.getTimestamp(), Instant.now()).toMillis()) + "ms!"))

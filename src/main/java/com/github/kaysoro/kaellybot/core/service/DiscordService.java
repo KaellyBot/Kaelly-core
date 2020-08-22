@@ -3,6 +3,7 @@ package com.github.kaysoro.kaellybot.core.service;
 import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.trigger.Trigger;
+import com.github.kaysoro.kaellybot.core.util.Translator;
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
@@ -34,10 +35,13 @@ public class DiscordService {
 
     private final List<Trigger> triggers;
 
-    public DiscordService(GuildService guildService, List<Command> commands, List<Trigger> triggers){
+    private final Translator translator;
+
+    public DiscordService(GuildService guildService, List<Command> commands, List<Trigger> triggers, Translator translator){
         this.guildService = guildService;
         this.commands = commands;
         this.triggers = triggers;
+        this.translator = translator;
     }
 
     public void startBot(){
@@ -65,7 +69,10 @@ public class DiscordService {
         return client.getEventDispatcher().on(MessageCreateEvent.class)
                 .map(MessageCreateEvent::getMessage)
                 .filterWhen(message -> message.getAuthorAsMember().map(member -> ! member.isBot()))
-                .flatMap(msg -> Flux.fromIterable(commands).flatMap(cmd -> cmd.request(msg)))
+                .flatMap(msg -> translator.getPrefix(msg)
+                        .zipWith(translator.getLanguage(msg))
+                        .flatMapMany(tuple -> Flux.fromIterable(commands)
+                                .flatMap(cmd -> cmd.request(msg, tuple.getT1(), tuple.getT2()))))
                 .then();
     }
 

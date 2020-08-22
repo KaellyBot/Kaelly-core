@@ -14,7 +14,7 @@ public interface CommandArgument<T> extends Comparable<CommandArgument<T>> {
 
     boolean isChannelNSFWCompatible(MessageChannel channel);
 
-    Flux<T> tryExecute(Message message, String prefix, PermissionSet permissions);
+    Flux<T> tryExecute(Message message, String prefix, Language language, PermissionSet permissions);
 
     String help(Language lg, String prefix);
 

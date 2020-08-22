@@ -30,13 +30,12 @@ public class AllPortalsArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Matcher matcher) {
+    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
        // TODO determine server in the message
         Server server = Server.MERIANA;
-        return translator.getLanguage(message)
-                .flatMapMany(language -> portalService.getPortals(server, language)
-                        .flatMap(portal -> message.getChannel().flatMap(channel -> channel
-                                .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language)))));
+        return portalService.getPortals(server, language)
+                .flatMap(portal -> message.getChannel().flatMap(channel -> channel
+                        .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language))));
     }
 
     @Override

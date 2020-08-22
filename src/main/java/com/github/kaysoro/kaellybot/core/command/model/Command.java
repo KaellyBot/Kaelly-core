@@ -7,7 +7,7 @@ import reactor.core.publisher.Flux;
 public interface Command {
     String getName();
 
-    Flux<?> request(Message message);
+    Flux<?> request(Message message, String prefix, Language language);
 
     /**
      * Is the command only usable by admins ?

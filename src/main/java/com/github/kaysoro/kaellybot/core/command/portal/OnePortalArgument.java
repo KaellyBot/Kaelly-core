@@ -31,15 +31,14 @@ public class OnePortalArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Matcher matcher) {
+    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
        // TODO determine server & dimension in the message
         Server server = Server.MERIANA;
         Dimension dimension = Dimension.ENUTROSOR;
 
-        return translator.getLanguage(message)
-                .flatMap(language -> portalService.getPortal(server, dimension, language)
-                        .flatMap(portal -> message.getChannel().flatMap(channel -> channel
-                                .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language)))))
+        return portalService.getPortal(server, dimension, language)
+                .flatMap(portal -> message.getChannel().flatMap(channel -> channel
+                        .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language))))
                 .flatMapMany(Flux::just);
     }
 
