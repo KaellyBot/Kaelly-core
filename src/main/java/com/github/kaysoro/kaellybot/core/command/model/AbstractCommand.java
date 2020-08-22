@@ -21,6 +21,7 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -97,5 +98,24 @@ public abstract class AbstractCommand implements Command {
         return help(lg, prefix) + arguments.stream().filter(CommandArgument::isDescribed)
                 .map(arg -> "\n" + arg.help(lg, prefix))
                 .reduce(StringUtils.EMPTY, (arg1, arg2) -> arg1 + arg2);
+    }
+
+    private static class CommonHelpArgument extends AbstractCommandArgument {
+
+        public CommonHelpArgument(Command parent, Translator translator) {
+            super(parent, "\\s+help", false, PermissionScope.TEXT_PERMISSIONS, translator, Priority.HIGH);
+        }
+
+        @Override
+        public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
+            return message.getChannel()
+                    .flatMap(channel -> channel.createMessage(getParent().moreHelp(language, prefix)))
+                    .flatMapMany(Flux::just);
+        }
+
+        @Override
+        public String help(Language lg, String prefix) {
+            return prefix + "`" + getParent().getName() + " help` : " + translator.getLabel(lg, "lambda.help");
+        }
     }
 }
