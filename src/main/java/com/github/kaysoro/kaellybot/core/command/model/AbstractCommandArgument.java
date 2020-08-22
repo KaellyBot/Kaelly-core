@@ -91,12 +91,11 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
         return Mono.just(Pattern.compile(Pattern.quote(prefix) + pattern).matcher(message.getContent()))
                 .filter(Matcher::matches)
                 .flatMapMany(matcher -> execute(message, prefix, matcher))
-                .onErrorResume(error -> {
-                    LOG.error("Error not managed in commands", error);
-                    return Flux.empty();
-                })
+                .onErrorResume(error -> manageUnknownException(message, error))
                 .switchIfEmpty(sendException(message, permissions, ErrorFactory.createUnknownError()));
     }
+
+    public abstract Flux<Message> execute(Message message, String prefix, Matcher matcher);
 
     private Flux<Message> sendException(Message message, PermissionSet permissions, Error error){
         return message.getChannel()
@@ -108,7 +107,10 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
                 .onErrorResume(ClientException.isStatusCode(403), err -> Mono.empty());
     }
 
-    public abstract Flux<Message> execute(Message message, String prefix, Matcher matcher);
+    protected Flux<Message> manageUnknownException(Message message, Throwable error){
+        LOG.error("Error with the following command: {}", message.getContent(), error);
+        return Flux.empty();
+    }
 
     @Override
     public String help(Language lg, String prefix){
