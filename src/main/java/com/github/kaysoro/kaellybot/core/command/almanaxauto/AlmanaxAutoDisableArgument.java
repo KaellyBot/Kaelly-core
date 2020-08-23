@@ -37,6 +37,6 @@ public class AlmanaxAutoDisableArgument extends AbstractCommandArgument {
 
     @Override
     public String help(Language lg, String prefix) {
-        return prefix + "`" + getParent().getName() + " false` : " + translator.getLabel(lg, "almanax-auto.disable.help");
+        return prefix + "`" + getParent().getName() + " false` : " + translator.getLabel(lg, "almanax-auto.help.disable");
     }
 }

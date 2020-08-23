@@ -31,7 +31,7 @@ public abstract class AbstractTrigger implements Trigger {
                 .map(TextChannel.class::cast)
                 .flatMap(channel -> channel.getEffectivePermissions(message.getClient().getSelfId()))
                 .map(channelPermissions -> isTriggerHasPermissionsNeeded(channelPermissions)
-                        && isPatternFound(message.getContent()));
+                        && isPatternFound(message));
     }
 
     private boolean isTriggerHasPermissionsNeeded(PermissionSet permissions){
@@ -43,5 +43,5 @@ public abstract class AbstractTrigger implements Trigger {
         return Mono.empty();
     }
 
-    protected abstract boolean isPatternFound(String content);
+    protected abstract boolean isPatternFound(Message message);
 }

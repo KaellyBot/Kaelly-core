@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -30,9 +31,12 @@ public class Translator {
 
     private final Map<Language, Properties> labels;
 
+    private final Random random;
+
     public Translator(GuildService guildService){
         this.guildService = guildService;
         labels = new ConcurrentHashMap<>();
+        random = new Random();
 
         for(Language lg : Language.values())
             try(InputStream file = Translator.class.getResourceAsStream("/label_" + lg + ".properties")) {
@@ -58,6 +62,23 @@ public class Translator {
             LOG.error("Missing label in {} : {}", lang, property);
             return property;
         }
+
+        for(Object arg : arguments)
+            value = value.replaceFirst("\\{}", arg.toString());
+
+        return value;
+    }
+
+    public String getRandomLabel(Language lang, String property, Object... arguments){
+        String value = labels.get(lang).getProperty(property);
+
+        if (value == null || value.trim().isEmpty()) {
+            LOG.error("Missing label in {} : {}", lang, property);
+            return property;
+        }
+
+        String[] values = value.split(";");
+        value = values[random.nextInt(values.length)];
 
         for(Object arg : arguments)
             value = value.replaceFirst("\\{}", arg.toString());

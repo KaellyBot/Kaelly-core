@@ -37,9 +37,9 @@ public class DofusRoomTrigger extends AbstractTrigger {
     }
 
     @Override
-    protected boolean isPatternFound(String content){
+    protected boolean isPatternFound(Message message){
         return dofusRoomUrlPatterns.parallelStream()
-                .map(pattern -> pattern.matcher(content).find())
+                .map(pattern -> pattern.matcher(message.getContent()).find())
                 .reduce(Boolean::logicalOr)
                 .orElse(false);
     }
