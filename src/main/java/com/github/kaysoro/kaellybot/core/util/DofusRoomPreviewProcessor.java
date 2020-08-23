@@ -20,9 +20,6 @@ public class DofusRoomPreviewProcessor {
 
     private static final Log LOGGER = LogFactory.getLog(DofusRoomPreviewProcessor.class);
 
-    private static final String TEMPLATE_PATH = "/dofusroom/templates/";
-    private static final String ITEM_PATH = "/dofusroom/items/";
-
     private static final String AMULET_PLACEHOLDER   = "amulet_placeholder"  ;
     private static final String RING_PLACEHOLDER     = "ring_placeholder"    ;
     private static final String SHIELD_PLACEHOLDER   = "shield_placeholder"  ;
@@ -37,9 +34,11 @@ public class DofusRoomPreviewProcessor {
     private final String templateDirectory;
     private final String itemDirectory;
 
-    public DofusRoomPreviewProcessor(@Value("${assets.directory}") String baseAssetsDirectory){
-        templateDirectory = baseAssetsDirectory + TEMPLATE_PATH;
-        itemDirectory = baseAssetsDirectory + ITEM_PATH;
+    public DofusRoomPreviewProcessor(@Value("${assets.directory}") String baseAssetsDirectory,
+                                     @Value("${dofusroom.template.directory}") String templateDirectory,
+                                     @Value("${dofusroom.item.directory}") String itemDirectory){
+        this.templateDirectory = baseAssetsDirectory + templateDirectory;
+        this.itemDirectory = baseAssetsDirectory + itemDirectory;
     }
 
     private MBFImage loadImage(String basePath, String fileName, boolean isTransparent) {
