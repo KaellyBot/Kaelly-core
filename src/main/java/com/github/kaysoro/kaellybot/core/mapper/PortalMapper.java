@@ -4,7 +4,7 @@ import com.github.kaysoro.kaellybot.core.model.constant.Dimension;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.payload.kaelly.portal.PortalDto;
 import com.github.kaysoro.kaellybot.core.service.DimensionService;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.rest.util.Color;
 import org.apache.commons.lang3.time.DateUtils;
@@ -16,11 +16,11 @@ import java.time.Instant;
 @Component
 public class PortalMapper {
 
-    private final Translator translator;
+    private final DiscordTranslator translator;
 
     private final DimensionService dimensionService;
 
-    public PortalMapper(Translator translator, DimensionService dimensionService){
+    public PortalMapper(DiscordTranslator translator, DimensionService dimensionService){
         this.translator = translator;
         this.dimensionService = dimensionService;
     }

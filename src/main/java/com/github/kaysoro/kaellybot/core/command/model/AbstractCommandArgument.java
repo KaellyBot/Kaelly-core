@@ -2,7 +2,7 @@ package com.github.kaysoro.kaellybot.core.command.model;
 
 import com.github.kaysoro.kaellybot.core.model.error.ErrorFactory;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.PrivateChannel;
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 public abstract class AbstractCommandArgument implements CommandArgument<Message> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommandArgument.class);
-    protected final Translator translator;
+    protected final DiscordTranslator translator;
     private final Command parent;
     private final String pattern;
     private final boolean isDescribed;
@@ -35,7 +35,7 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     private boolean isNSFW;
 
     public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Set<Permission> permissions,
-                                   Translator translator, Priority priority){
+                                   DiscordTranslator translator, Priority priority){
         super();
         this.parent = parent;
         this.pattern = parent.getName() + subPattern;
@@ -47,12 +47,12 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     }
 
     public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Set<Permission> permissions,
-                                   Translator translator){
+                                   DiscordTranslator translator){
         this(parent, subPattern, isDescribed, permissions, translator, Priority.NORMAL);
     }
 
     public AbstractCommandArgument(Command parent, boolean isDescribed, Set<Permission> permissions,
-                                   Translator translator){
+                                   DiscordTranslator translator){
         this(parent, StringUtils.EMPTY, isDescribed, permissions, translator, Priority.NORMAL);
     }
 

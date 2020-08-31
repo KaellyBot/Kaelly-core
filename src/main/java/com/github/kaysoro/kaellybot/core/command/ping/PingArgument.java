@@ -3,7 +3,7 @@ package com.github.kaysoro.kaellybot.core.command.ping;
 import com.github.kaysoro.kaellybot.core.command.model.TextCommandArgument;
 import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 @Qualifier(PingCommand.COMMAND_QUALIFIER)
 public class PingArgument extends TextCommandArgument {
 
-    public PingArgument(@Qualifier(PingCommand.COMMAND_QUALIFIER) Command parent, Translator translator) {
+    public PingArgument(@Qualifier(PingCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator) {
         super(parent, translator);
     }
 

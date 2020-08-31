@@ -7,7 +7,7 @@ import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.model.constant.Server;
 import com.github.kaysoro.kaellybot.core.service.PortalService;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ public class AllPortalsArgument extends AbstractCommandArgument {
     private final PortalMapper portalMapper;
 
     public AllPortalsArgument(@Qualifier(PortalCommand.COMMAND_QUALIFIER) Command parent, PortalService portalService,
-                              PortalMapper portalMapper, Translator translator){
+                              PortalMapper portalMapper, DiscordTranslator translator){
         super(parent, "\\s+(\\w+)", true, PermissionScope.EMBED_PERMISSIONS, translator);
         this.portalService = portalService;
         this.portalMapper = portalMapper;

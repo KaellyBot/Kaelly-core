@@ -4,7 +4,7 @@ import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.command.model.TextCommandArgument;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.service.AlmanaxWebhookService;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.Channel;
@@ -23,7 +23,7 @@ public class AlmanaxAutoListArgument extends TextCommandArgument {
 
     private final AlmanaxWebhookService almanaxWebhookService;
 
-    public AlmanaxAutoListArgument(@Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER) Command parent, Translator translator,
+    public AlmanaxAutoListArgument(@Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator,
                                    AlmanaxWebhookService almanaxWebhookService) {
         super(parent, true, translator);
         this.almanaxWebhookService = almanaxWebhookService;

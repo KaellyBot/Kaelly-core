@@ -2,7 +2,7 @@ package com.github.kaysoro.kaellybot.core.service;
 
 import com.github.kaysoro.kaellybot.core.model.constant.Dimension;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +12,9 @@ import java.util.stream.Stream;
 @Service
 public class DimensionService {
 
-    private final Translator translator;
+    private final DiscordTranslator translator;
 
-    public DimensionService(Translator translator){
+    public DimensionService(DiscordTranslator translator){
         this.translator = translator;
     }
 

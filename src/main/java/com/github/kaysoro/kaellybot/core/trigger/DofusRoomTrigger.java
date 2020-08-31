@@ -5,7 +5,7 @@ import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.payload.dofusroom.StatusDto;
 import com.github.kaysoro.kaellybot.core.service.DofusRoomService;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -26,7 +26,7 @@ public class DofusRoomTrigger extends AbstractTrigger {
 
     private final DofusRoomPreviewMapper dofusRoomPreviewMapper;
 
-    public DofusRoomTrigger(Translator translator, DofusRoomService dofusRoomService,
+    public DofusRoomTrigger(DiscordTranslator translator, DofusRoomService dofusRoomService,
                             DofusRoomPreviewMapper dofusRoomPreviewMapper){
         super(translator, PermissionScope.EMBED_PERMISSIONS);
         this.dofusRoomService = dofusRoomService;

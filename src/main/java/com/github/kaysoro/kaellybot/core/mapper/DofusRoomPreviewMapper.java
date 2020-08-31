@@ -7,7 +7,7 @@ import com.github.kaysoro.kaellybot.core.payload.dofusroom.RingDto;
 import com.github.kaysoro.kaellybot.core.payload.dofusroom.StuffDto;
 import com.github.kaysoro.kaellybot.core.payload.dofusroom.TrophusDto;
 import com.github.kaysoro.kaellybot.core.util.DofusRoomPreviewProcessor;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.spec.MessageCreateSpec;
 import static com.github.kaysoro.kaellybot.core.util.DofusRoomPreviewProcessor.ItemPosition;
 
@@ -21,10 +21,10 @@ import java.util.Optional;
 public class DofusRoomPreviewMapper {
 
     private static final String ATTACHMENT_FILENAME = Constants.NAME + "_" + "Dofusroom_Preview.png";
-    private final Translator translator;
+    private final DiscordTranslator translator;
     private final DofusRoomPreviewProcessor dofusRoomPreviewProcessor;
 
-    public DofusRoomPreviewMapper(Translator translator, DofusRoomPreviewProcessor dofusRoomPreviewProcessor){
+    public DofusRoomPreviewMapper(DiscordTranslator translator, DofusRoomPreviewProcessor dofusRoomPreviewProcessor){
         this.translator = translator;
         this.dofusRoomPreviewProcessor = dofusRoomPreviewProcessor;
     }

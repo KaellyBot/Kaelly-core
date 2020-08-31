@@ -3,7 +3,7 @@ package com.github.kaysoro.kaellybot.core.service;
 import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.trigger.Trigger;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
@@ -35,9 +35,9 @@ public class DiscordService {
 
     private final List<Trigger> triggers;
 
-    private final Translator translator;
+    private final DiscordTranslator translator;
 
-    public DiscordService(GuildService guildService, List<Command> commands, List<Trigger> triggers, Translator translator){
+    public DiscordService(GuildService guildService, List<Command> commands, List<Trigger> triggers, DiscordTranslator translator){
         this.guildService = guildService;
         this.commands = commands;
         this.triggers = triggers;

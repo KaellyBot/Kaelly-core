@@ -3,7 +3,7 @@ package com.github.kaysoro.kaellybot.core.command.help;
 import com.github.kaysoro.kaellybot.core.command.model.CommandArgument;
 import com.github.kaysoro.kaellybot.core.command.model.AbstractCommand;
 import com.github.kaysoro.kaellybot.core.command.model.Command;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,7 +23,7 @@ public class HelpCommand extends AbstractCommand {
 
     private final List<Command> commands;
 
-    public HelpCommand(List<Command> commands, @Qualifier(COMMAND_QUALIFIER) @Lazy List<CommandArgument<Message>> arguments, Translator translator){
+    public HelpCommand(List<Command> commands, @Qualifier(COMMAND_QUALIFIER) @Lazy List<CommandArgument<Message>> arguments, DiscordTranslator translator){
         super(COMMAND_NAME, arguments, translator);
         this.commands = commands;
         this.commands.add(this);

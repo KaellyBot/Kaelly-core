@@ -23,9 +23,9 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class Translator {
+public class DiscordTranslator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Translator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DiscordTranslator.class);
 
     private final GuildService guildService;
 
@@ -33,13 +33,13 @@ public class Translator {
 
     private final Random random;
 
-    public Translator(GuildService guildService){
+    public DiscordTranslator(GuildService guildService){
         this.guildService = guildService;
         labels = new ConcurrentHashMap<>();
         random = new Random();
 
         for(Language lg : Language.values())
-            try(InputStream file = Translator.class.getResourceAsStream("/label_" + lg + ".properties")) {
+            try(InputStream file = DiscordTranslator.class.getResourceAsStream("/label_" + lg + ".properties")) {
                 Properties prop = new Properties();
                 prop.load(new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8)));
                 labels.put(lg, prop);

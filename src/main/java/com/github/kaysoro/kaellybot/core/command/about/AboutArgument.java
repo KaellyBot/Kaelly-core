@@ -6,7 +6,7 @@ import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.constant.Donator;
 import com.github.kaysoro.kaellybot.core.model.constant.Graphist;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import discord4j.rest.util.Color;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 @Qualifier(AboutCommand.COMMAND_QUALIFIER)
 public class AboutArgument extends EmbedCommandArgument {
 
-    public AboutArgument(@Qualifier(AboutCommand.COMMAND_QUALIFIER) Command parent, Translator translator) {
+    public AboutArgument(@Qualifier(AboutCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator) {
         super(parent, translator);
     }
 

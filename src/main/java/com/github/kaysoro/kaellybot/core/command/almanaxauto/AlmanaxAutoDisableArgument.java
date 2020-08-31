@@ -5,7 +5,7 @@ import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.service.AlmanaxWebhookService;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +20,7 @@ public class AlmanaxAutoDisableArgument extends AbstractCommandArgument {
 
     private final AlmanaxWebhookService almanaxWebhookService;
 
-    public AlmanaxAutoDisableArgument(@Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER) Command parent, Translator translator,
+    public AlmanaxAutoDisableArgument(@Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator,
                                       AlmanaxWebhookService almanaxWebhookService) {
         super(parent, "\\s+(false|off|1)", true, PermissionScope.WEBHOOK_PERMISSIONS, translator);
         this.almanaxWebhookService = almanaxWebhookService;

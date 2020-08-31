@@ -4,7 +4,7 @@ import com.github.kaysoro.kaellybot.core.model.constant.Constants;
 import com.github.kaysoro.kaellybot.core.model.error.Error;
 import com.github.kaysoro.kaellybot.core.model.error.ErrorFactory;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
@@ -36,9 +36,9 @@ public abstract class AbstractCommand implements Command {
     private boolean isPublic;
     private boolean isAdmin;
     private boolean isHidden;
-    protected Translator translator;
+    protected DiscordTranslator translator;
 
-    protected AbstractCommand(String name, List<CommandArgument<Message>> arguments, Translator translator){
+    protected AbstractCommand(String name, List<CommandArgument<Message>> arguments, DiscordTranslator translator){
         super();
         this.name = name;
         this.isPublic = true;
@@ -102,7 +102,7 @@ public abstract class AbstractCommand implements Command {
 
     private static class CommonHelpArgument extends AbstractCommandArgument {
 
-        public CommonHelpArgument(Command parent, Translator translator) {
+        public CommonHelpArgument(Command parent, DiscordTranslator translator) {
             super(parent, "\\s+help", false, PermissionScope.TEXT_PERMISSIONS, translator, Priority.HIGH);
         }
 

@@ -4,7 +4,7 @@ import com.github.kaysoro.kaellybot.core.command.model.EmbedCommandArgument;
 import com.github.kaysoro.kaellybot.core.command.model.Command;
 import com.github.kaysoro.kaellybot.core.model.constant.Language;
 import com.github.kaysoro.kaellybot.core.model.constant.Nude;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import discord4j.rest.util.Color;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 @Qualifier(SendNudeCommand.COMMAND_QUALIFIER)
 public class SendNudeArgument extends EmbedCommandArgument {
 
-    public SendNudeArgument(@Qualifier(SendNudeCommand.COMMAND_QUALIFIER) Command parent, Translator translator) {
+    public SendNudeArgument(@Qualifier(SendNudeCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator) {
         super(parent, translator);
         setNSFW(true);
     }

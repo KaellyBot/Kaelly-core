@@ -3,7 +3,7 @@ package com.github.kaysoro.kaellybot.core.trigger;
 import com.github.kaysoro.kaellybot.core.command.help.HelpCommand;
 import com.github.kaysoro.kaellybot.core.command.help.HelpNoArgument;
 import com.github.kaysoro.kaellybot.core.util.PermissionScope;
-import com.github.kaysoro.kaellybot.core.util.Translator;
+import com.github.kaysoro.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -13,7 +13,7 @@ public class MentionTrigger extends AbstractTrigger {
 
     private final HelpNoArgument helpNoArgument;
 
-    public MentionTrigger(Translator translator, HelpNoArgument helpNoArgument){
+    public MentionTrigger(DiscordTranslator translator, HelpNoArgument helpNoArgument){
         super(translator, PermissionScope.TEXT_PERMISSIONS);
         this.helpNoArgument = helpNoArgument;
     }
