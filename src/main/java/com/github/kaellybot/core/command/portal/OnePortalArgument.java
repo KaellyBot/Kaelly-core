@@ -3,6 +3,8 @@ package com.github.kaellybot.core.command.portal;
 import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.commons.model.entity.Dimension;
 import com.github.kaellybot.commons.model.entity.Server;
+import com.github.kaellybot.commons.service.DimensionService;
+import com.github.kaellybot.commons.service.ServerService;
 import com.github.kaellybot.core.command.model.Command;
 import com.github.kaellybot.core.util.PermissionScope;
 import com.github.kaellybot.core.command.model.AbstractCommandArgument;
@@ -23,12 +25,17 @@ public class OnePortalArgument extends AbstractCommandArgument {
 
     private final PortalService portalService;
     private final PortalMapper portalMapper;
+    private final ServerService serverService;
+    private final DimensionService dimensionService;
 
     public OnePortalArgument(@Qualifier(PortalCommand.COMMAND_QUALIFIER) Command parent, PortalService portalService,
+                             ServerService serverService, DimensionService dimensionService,
                              PortalMapper portalMapper, DiscordTranslator translator){
         super(parent, "\\s+(\\w+)\\s+(.+)", true, PermissionScope.EMBED_PERMISSIONS, translator);
         this.portalService = portalService;
         this.portalMapper = portalMapper;
+        this.serverService = serverService;
+        this.dimensionService= dimensionService;
     }
 
     @Override

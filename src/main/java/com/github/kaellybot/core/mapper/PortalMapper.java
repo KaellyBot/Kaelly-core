@@ -1,7 +1,6 @@
 package com.github.kaellybot.core.mapper;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.commons.model.entity.Dimension;
 import com.github.kaellybot.core.payload.kaelly.portal.PortalDto;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Map;
 
 @Component
 public class PortalMapper {
@@ -23,12 +21,9 @@ public class PortalMapper {
     }
 
     public void decorateSpec(EmbedCreateSpec spec, PortalDto portal, Language language){
-        Dimension dimension = Dimension.builder().urlImg("").labels(Map.of(language, "Enutrosor")).build();
-        // TODO do a service to determine the dimension
-
-        spec.setTitle(translator.getLabel(language, dimension))
-                .setThumbnail(dimension.getUrlImg())
-                .setColor(Color.of(dimension.getColor()));
+        spec.setTitle(portal.getDimension().getName())
+                .setThumbnail(portal.getDimension().getImage())
+                .setColor(Color.of(portal.getDimension().getColor()));
 
         if (Boolean.TRUE.equals(portal.getIsAvailable())){
             spec.addField(translator.getLabel(language, "pos.position"),

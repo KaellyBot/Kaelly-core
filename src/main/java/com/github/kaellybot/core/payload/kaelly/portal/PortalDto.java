@@ -11,7 +11,9 @@ import java.time.Instant;
 @JsonDeserialize(builder = PortalDto.PortalDtoBuilder.class)
 @Builder(builderClassName = "PortalDtoBuilder", toBuilder = true)
 public class PortalDto {
-    String dimension;
+
+    ServerDto server;
+    DimensionDto dimension;
     PositionDto position;
     Boolean isAvailable;
     Integer utilisation;
