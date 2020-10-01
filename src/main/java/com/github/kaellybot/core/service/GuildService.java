@@ -1,9 +1,9 @@
 package com.github.kaellybot.core.service;
 
+import com.github.kaellybot.core.model.entity.Guild;
 import com.github.kaellybot.core.repository.GuildRepository;
 import com.github.kaellybot.core.model.constant.Constants;
 import discord4j.common.util.Snowflake;
-import discord4j.core.object.entity.Guild;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +24,9 @@ public class GuildService {
         return guildRepository.existsById(id.asString());
     }
 
-    public Mono<com.github.kaellybot.core.model.entity.Guild> save(Guild guild){
+    public Mono<Guild> save(discord4j.core.object.entity.Guild guild){
         LOGGER.info("Guild[id={}] added", guild.getId());
-        return guildRepository.save(com.github.kaellybot.core.model.entity.Guild.builder()
+        return guildRepository.save(Guild.builder()
                 .id(guild.getId().asString())
                 .language(Constants.DEFAULT_LANGUAGE)
                 .prefix(Constants.DEFAULT_PREFIX)
@@ -36,8 +36,12 @@ public class GuildService {
                 .build());
     }
 
-    public Mono<com.github.kaellybot.core.model.entity.Guild> findById(Snowflake id){
+    public Mono<Guild> findById(Snowflake id){
         return guildRepository.findById(id.asString());
+    }
+
+    public Mono<Guild> update(Guild guild){
+        return guildRepository.save(guild);
     }
 
     public Mono<Void> deleteById(Snowflake id){

@@ -61,7 +61,7 @@ public class DiscordService {
     private Mono<Void> readyListener(GatewayDiscordClient client){
         return client.getEventDispatcher().on(ReadyEvent.class)
                 .flatMap(event -> event.getSelf().getClient()
-                        .updatePresence(Presence.online(Activity.playing(Constants.GAME.name()))))
+                        .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName().toUpperCase()))))
                 .then();
     }
 
@@ -88,7 +88,7 @@ public class DiscordService {
     private Mono<Void> reconnectListener(GatewayDiscordClient client){
         return client.getEventDispatcher().on(ReconnectEvent.class)
                 .flatMap(event -> event.getClient()
-                        .updatePresence(Presence.online(Activity.playing(Constants.GAME.name()))))
+                        .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName().toUpperCase()))))
                 .then();
     }
 

@@ -30,7 +30,6 @@ public class Guild {
     @Data
     @Builder
     public static class ChannelLanguage {
-        @Id
         private String id;
         private Language language;
     }
