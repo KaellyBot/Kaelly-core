@@ -2,6 +2,7 @@ package com.github.kaellybot.core.model.constant;
 
 import com.github.kaellybot.commons.model.constants.Game;
 import com.github.kaellybot.commons.model.constants.Language;
+import com.github.kaellybot.commons.model.entity.Server;
 
 import java.util.List;
 
@@ -13,15 +14,20 @@ public final class Constants {
 
     public static final Language DEFAULT_LANGUAGE = Language.FR;
 
+    public static final Server UNKNOWN_SERVER = Server.builder()
+            .id("UNKNOWN_SERVER")
+            .imgUrl("https://i.imgur.com/xz8jzK0.png")
+            .build();
+
     public static final String NAME = "Kaelly";
 
     public static final String VERSION = "2.0.0";
 
     public static final int COLOR = 8342666;
 
-    public static final String CHANGELOG = "https://i.imgur.com/0qQSOac.png";
-
     public static final Game GAME = Game.DOFUS;
+
+    public static final String CHANGELOG = "https://i.imgur.com/0qQSOac.png";
 
     public static final String AVATAR = "https://avatars3.githubusercontent.com/u/44924023?s=400&u=7bc255b104084f0762db20e6aba4e9ff549de467&v=4";
 

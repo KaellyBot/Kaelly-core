@@ -1,6 +1,7 @@
 package com.github.kaellybot.core.util;
 
 import com.github.kaellybot.commons.model.constants.Language;
+import com.github.kaellybot.commons.model.entity.Server;
 import com.github.kaellybot.core.model.entity.Guild;
 import com.github.kaellybot.commons.util.Translator;
 import com.github.kaellybot.core.service.GuildService;
@@ -8,8 +9,9 @@ import discord4j.core.object.entity.Message;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import static com.github.kaellybot.core.model.constant.Constants.DEFAULT_LANGUAGE;
-import static com.github.kaellybot.core.model.constant.Constants.DEFAULT_PREFIX;
+import java.util.Optional;
+
+import static com.github.kaellybot.core.model.constant.Constants.*;
 
 @Component
 public class DiscordTranslator extends Translator {
@@ -33,5 +35,15 @@ public class DiscordTranslator extends Translator {
                 .flatMap(guild -> guildService.findById(guild.getId()))
                 .map(Guild::getPrefix)
                 .defaultIfEmpty(DEFAULT_PREFIX);
+    }
+
+    public Mono<Server> getServer(Message message){
+        return message.getGuild()
+                .flatMap(guild -> guildService.findById(guild.getId()))
+                .map(guild -> guild.getChannelServersList().stream()
+                        .filter(channelServer -> channelServer.getId().equals(message.getChannelId().asString()))
+                        .findFirst()
+                        .map(Guild.ChannelServer::getServer)
+                        .orElse(Optional.ofNullable(guild.getServer()).orElse(UNKNOWN_SERVER)));
     }
 }
