@@ -7,6 +7,7 @@ import com.github.kaellybot.core.model.entity.Guild;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.channel.GuildChannel;
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.rest.util.Color;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,7 @@ public class ServerSnapshotMapper {
                              List<GuildChannel> channels, Guild guild, Server currentServer,
                              List<Server> serverList, Language language){
         spec.setTitle(translator.getLabel(language, "server.status_title", GAME.getName().toUpperCase()))
+                .setColor(Color.of(Constants.COLOR))
                 .setThumbnail(currentServer.getImgUrl())
                 .setFooter(Constants.GAME.getName(), Constants.GAME.getIcon());
 
@@ -42,7 +44,7 @@ public class ServerSnapshotMapper {
             spec.setDescription(translator.getLabel(language, "server.unknown_server", GAME.getName()));
 
         spec.addField(translator.getLabel(language, "server.available_servers"),
-                getAvailableServers(serverList, language), true);
+                getAvailableServers(serverList, language), false);
     }
 
     private String getUsedServerListing(discord4j.core.object.entity.Guild guild, Server guildServer,

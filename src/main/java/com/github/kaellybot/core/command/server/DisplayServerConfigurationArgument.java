@@ -19,7 +19,7 @@ import java.util.regex.Matcher;
 
 @Component
 @Qualifier(ServerCommand.COMMAND_QUALIFIER)
-public class ServerArgument extends EmbedCommandArgument {
+public class DisplayServerConfigurationArgument extends EmbedCommandArgument {
 
     private final GuildService guildService;
 
@@ -27,9 +27,9 @@ public class ServerArgument extends EmbedCommandArgument {
 
     private final ServerSnapshotMapper serverSnapshotMapper;
 
-    public ServerArgument(@Qualifier(ServerCommand.COMMAND_QUALIFIER) Command parent, GuildService guildService,
-                          ServerService serverService, ServerSnapshotMapper serverSnapshotMapper,
-                          DiscordTranslator translator) {
+    public DisplayServerConfigurationArgument(@Qualifier(ServerCommand.COMMAND_QUALIFIER) Command parent,
+                                              GuildService guildService, ServerService serverService,
+                                              ServerSnapshotMapper serverSnapshotMapper, DiscordTranslator translator) {
         super(parent, true, translator);
         this.guildService = guildService;
         this.serverService = serverService;
