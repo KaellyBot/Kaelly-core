@@ -49,4 +49,9 @@ public class DisplayServerConfigurationArgument extends EmbedCommandArgument {
                                         tuple.getT5(), language))))
                 .flatMapMany(Flux::just);
     }
+
+    @Override
+    public String help(Language lg, String prefix){
+        return prefix + "`" + getParent().getName() + "` : " + translator.getLabel(lg, "server.display_config");
+    }
 }

@@ -41,4 +41,9 @@ public class DisplayLanguageConfigurationArgument extends EmbedCommandArgument {
                         .decorateSpec(spec, tuple.getT1(), tuple.getT2(), tuple.getT3(), language)))
                 .flatMapMany(Flux::just);
     }
+
+    @Override
+    public String help(Language lg, String prefix){
+        return prefix + "`" + getParent().getName() + "` : " + translator.getLabel(lg, "lang.display_config");
+    }
 }
