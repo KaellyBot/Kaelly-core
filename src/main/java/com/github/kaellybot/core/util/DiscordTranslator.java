@@ -1,7 +1,7 @@
 package com.github.kaellybot.core.util;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.commons.model.entity.Guild;
+import com.github.kaellybot.core.model.entity.Guild;
 import com.github.kaellybot.commons.util.Translator;
 import com.github.kaellybot.core.service.GuildService;
 import discord4j.core.object.entity.Message;

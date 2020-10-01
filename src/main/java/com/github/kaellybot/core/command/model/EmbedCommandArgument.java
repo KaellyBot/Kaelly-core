@@ -11,6 +11,10 @@ public abstract class EmbedCommandArgument extends AbstractCommandArgument {
         super(parent, subPattern, isDescribed, PermissionScope.EMBED_PERMISSIONS, translator, Priority.NORMAL);
     }
 
+    public EmbedCommandArgument(Command parent, boolean isDescribed, DiscordTranslator translator){
+        this(parent, StringUtils.EMPTY, isDescribed, translator);
+    }
+
     public EmbedCommandArgument(Command parent, DiscordTranslator translator){
         this(parent, StringUtils.EMPTY, false, translator);
     }
