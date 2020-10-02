@@ -17,42 +17,43 @@ import java.util.regex.Matcher;
 
 @Component
 @Qualifier(LanguageCommand.COMMAND_QUALIFIER)
-public class ChangeGuildLanguageArgument extends EmbedCommandArgument {
+public class ChangeChannelLanguageArgument extends EmbedCommandArgument {
 
     private final GuildService guildService;
 
     private final LanguageService languageService;
 
-    public ChangeGuildLanguageArgument(@Qualifier(LanguageCommand.COMMAND_QUALIFIER) Command parent,
-                                       GuildService guildService, LanguageService languageService,
-                                       DiscordTranslator translator) {
-        super(parent, "\\s+(\\w+)", true, translator);
+    public ChangeChannelLanguageArgument(@Qualifier(LanguageCommand.COMMAND_QUALIFIER) Command parent,
+                                         GuildService guildService, LanguageService languageService,
+                                         DiscordTranslator translator) {
+        super(parent, "\\s+-(c|chan|channel)\\s+(\\w+)", true, translator);
         this.guildService = guildService;
         this.languageService = languageService;
     }
 
     @Override
     public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-        return languageService.findByAbbreviation(matcher.group(1))
+        return languageService.findByAbbreviation(matcher.group(2))
                 .map(newLanguage -> message.getGuildId()
                         .map(guildService::findById)
                         .orElse(Mono.empty())
-                        .map(guild -> changeLanguage(guild, newLanguage))
+                        .map(guild -> changeChannelLanguage(guild, message.getChannelId().asString(), newLanguage))
                         .flatMap(guildService::update)
                         .flatMap(guild -> message.getChannel().flatMap(channel -> channel.createMessage(translator
                                 .getLabel(newLanguage, "lang.updated")))))
                 .orElse(message.getChannel().flatMap(channel -> channel.createMessage(translator
-                        .getLabel(language, "lang.not_found", matcher.group(1)))))
+                        .getLabel(language, "lang.not_found", matcher.group(2)))))
                 .flatMapMany(Flux::just);
     }
 
-    private Guild changeLanguage(Guild guild, Language language){
-        guild.setLanguage(language);
+    private Guild changeChannelLanguage(Guild guild, String channelId, Language language){
+        guild.getChannelLanguageList().removeIf(channelLanguage -> channelLanguage.getId().equals(channelId));
+        guild.getChannelLanguageList().add(Guild.ChannelLanguage.builder().id(channelId).language(language).build());
         return guild;
     }
 
     @Override
     public String help(Language lg, String prefix){
-        return prefix + "`" + getParent().getName() + " FR` : " + translator.getLabel(lg, "lang.change_config");
+        return prefix + "`" + getParent().getName() + " -channel FR` : " + translator.getLabel(lg, "lang.change_channel_config");
     }
 }

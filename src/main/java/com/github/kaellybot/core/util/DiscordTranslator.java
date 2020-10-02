@@ -26,7 +26,11 @@ public class DiscordTranslator extends Translator {
     public Mono<Language> getLanguage(Message message){
         return message.getGuild()
                 .flatMap(guild -> guildService.findById(guild.getId()))
-                .map(Guild::getLanguage)
+                .map(guild -> guild.getChannelLanguageList().stream()
+                        .filter(channelLanguage -> channelLanguage.getId().equals(message.getChannelId().asString()))
+                        .findFirst()
+                        .map(Guild.ChannelLanguage::getLanguage)
+                        .orElse(guild.getLanguage()))
                 .defaultIfEmpty(DEFAULT_LANGUAGE);
     }
 
