@@ -1,10 +1,11 @@
 package com.github.kaellybot.core.command.lang;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.core.command.model.Command;
-import com.github.kaellybot.core.command.model.EmbedCommandArgument;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.mapper.LanguageSnapshotMapper;
 import com.github.kaellybot.core.service.GuildService;
+import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
@@ -15,9 +16,12 @@ import reactor.core.publisher.Mono;
 
 import java.util.regex.Matcher;
 
+import static com.github.kaellybot.core.model.constant.PermissionScope.EMBED_PERMISSIONS;
+
 @Component
 @Qualifier(LanguageCommand.COMMAND_QUALIFIER)
-public class DisplayLanguageConfigurationArgument extends EmbedCommandArgument {
+@BotPermissions(EMBED_PERMISSIONS)
+public class DisplayLanguageConfigurationArgument extends AbstractCommandArgument {
 
     private final GuildService guildService;
 

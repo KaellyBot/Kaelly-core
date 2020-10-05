@@ -3,7 +3,7 @@ package com.github.kaellybot.core.model.error;
 import com.github.kaellybot.commons.model.constants.Error;
 import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.commons.util.Translator;
-import com.github.kaellybot.core.command.model.Command;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.command.help.HelpCommand;
 import lombok.AllArgsConstructor;
 

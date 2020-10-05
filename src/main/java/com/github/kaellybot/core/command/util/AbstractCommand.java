@@ -1,11 +1,13 @@
-package com.github.kaellybot.core.command.model;
+package com.github.kaellybot.core.command.util;
 
 import com.github.kaellybot.commons.model.constants.Error;
 import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.core.model.constant.Constants;
 import com.github.kaellybot.core.model.error.ErrorFactory;
-import com.github.kaellybot.core.util.PermissionScope;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.model.constant.PermissionScope;
+import com.github.kaellybot.core.model.constant.Priority;
+import com.github.kaellybot.core.util.annotation.PriorityProcessing;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.TextChannel;
@@ -74,7 +76,7 @@ public abstract class AbstractCommand implements Command {
 
     public Flux<Message> sendException(Message message, Language language, PermissionSet permissions, Error error){
         return message.getChannel()
-                .filter(channel -> permissions.containsAll(PermissionScope.TEXT_PERMISSIONS))
+                .filter(channel -> permissions.containsAll(PermissionScope.TEXT_PERMISSIONS.getPermissions()))
                 .flatMapMany(channel -> channel.createMessage(translator.getLabel(language, error)))
                 .switchIfEmpty(message.getAuthor().map(User::getPrivateChannel).orElseGet(Mono::empty)
                         .flatMapMany(channel -> channel.createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, error))))
@@ -100,10 +102,11 @@ public abstract class AbstractCommand implements Command {
                 .reduce(StringUtils.EMPTY, (arg1, arg2) -> arg1 + arg2);
     }
 
+    @PriorityProcessing(Priority.HIGH)
     private static class CommonHelpArgument extends AbstractCommandArgument {
 
         public CommonHelpArgument(Command parent, DiscordTranslator translator) {
-            super(parent, "\\s+help", false, PermissionScope.TEXT_PERMISSIONS, translator, Priority.HIGH);
+            super(parent, "\\s+help", false, translator);
         }
 
         @Override

@@ -1,6 +1,6 @@
 package com.github.kaellybot.core.service;
 
-import com.github.kaellybot.core.command.model.Command;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.model.constant.Constants;
 import com.github.kaellybot.core.trigger.Trigger;
 import com.github.kaellybot.core.util.DiscordTranslator;

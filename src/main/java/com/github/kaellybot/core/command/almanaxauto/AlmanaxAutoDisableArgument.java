@@ -1,11 +1,12 @@
 package com.github.kaellybot.core.command.almanaxauto;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.core.command.model.Command;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.service.AlmanaxWebhookService;
-import com.github.kaellybot.core.util.PermissionScope;
-import com.github.kaellybot.core.command.model.AbstractCommandArgument;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
+import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,15 +15,20 @@ import reactor.core.publisher.Flux;
 
 import java.util.regex.Matcher;
 
+import static com.github.kaellybot.core.model.constant.PermissionScope.ADMINISTRATOR_PERMISSIONS;
+import static com.github.kaellybot.core.model.constant.PermissionScope.WEBHOOK_PERMISSIONS;
+
 @Component
 @Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER)
+@BotPermissions(WEBHOOK_PERMISSIONS)
+@UserPermissions(ADMINISTRATOR_PERMISSIONS)
 public class AlmanaxAutoDisableArgument extends AbstractCommandArgument {
 
     private final AlmanaxWebhookService almanaxWebhookService;
 
     public AlmanaxAutoDisableArgument(@Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator,
                                       AlmanaxWebhookService almanaxWebhookService) {
-        super(parent, "\\s+(false|off|1)", true, PermissionScope.WEBHOOK_PERMISSIONS, translator);
+        super(parent, "\\s+(false|off|1)", true, translator);
         this.almanaxWebhookService = almanaxWebhookService;
     }
 

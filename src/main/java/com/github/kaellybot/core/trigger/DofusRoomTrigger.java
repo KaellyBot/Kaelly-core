@@ -4,8 +4,9 @@ import com.github.kaellybot.core.mapper.DofusRoomPreviewMapper;
 import com.github.kaellybot.core.model.constant.Constants;
 import com.github.kaellybot.core.payload.dofusroom.StatusDto;
 import com.github.kaellybot.core.service.DofusRoomService;
+import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
-import com.github.kaellybot.core.util.PermissionScope;
+import com.github.kaellybot.core.model.constant.PermissionScope;
 import discord4j.core.object.entity.Message;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
+@BotPermissions(PermissionScope.EMBED_PERMISSIONS)
 public class DofusRoomTrigger extends AbstractTrigger {
 
     private final List<Pattern> dofusRoomUrlPatterns;
@@ -28,7 +30,7 @@ public class DofusRoomTrigger extends AbstractTrigger {
 
     public DofusRoomTrigger(DiscordTranslator translator, DofusRoomService dofusRoomService,
                             DofusRoomPreviewMapper dofusRoomPreviewMapper){
-        super(translator, PermissionScope.EMBED_PERMISSIONS);
+        super(translator);
         this.dofusRoomService = dofusRoomService;
         this.dofusRoomPreviewMapper = dofusRoomPreviewMapper;
         this.dofusRoomUrlPatterns = Constants.DOFUS_ROOM_BUILD_URL.parallelStream()

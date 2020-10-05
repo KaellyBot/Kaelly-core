@@ -1,8 +1,8 @@
 package com.github.kaellybot.core.command.ping;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.core.command.model.Command;
-import com.github.kaellybot.core.command.model.TextCommandArgument;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 
 @Component
 @Qualifier(PingCommand.COMMAND_QUALIFIER)
-public class PingArgument extends TextCommandArgument {
+public class PingArgument extends AbstractCommandArgument {
 
     public PingArgument(@Qualifier(PingCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator) {
         super(parent, translator);

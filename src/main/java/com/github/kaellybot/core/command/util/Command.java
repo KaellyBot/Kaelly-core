@@ -1,4 +1,4 @@
-package com.github.kaellybot.core.command.model;
+package com.github.kaellybot.core.command.util;
 
 import com.github.kaellybot.commons.model.constants.Error;
 import com.github.kaellybot.commons.model.constants.Language;

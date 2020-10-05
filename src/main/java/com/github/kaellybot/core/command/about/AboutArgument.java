@@ -1,11 +1,12 @@
 package com.github.kaellybot.core.command.about;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.core.command.model.Command;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.model.constant.Constants;
 import com.github.kaellybot.core.model.constant.Donator;
 import com.github.kaellybot.core.model.constant.Graphist;
-import com.github.kaellybot.core.command.model.EmbedCommandArgument;
+import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import discord4j.rest.util.Color;
@@ -16,9 +17,12 @@ import reactor.core.publisher.Flux;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
 
+import static com.github.kaellybot.core.model.constant.PermissionScope.EMBED_PERMISSIONS;
+
 @Component
 @Qualifier(AboutCommand.COMMAND_QUALIFIER)
-public class AboutArgument extends EmbedCommandArgument {
+@BotPermissions(EMBED_PERMISSIONS)
+public class AboutArgument extends AbstractCommandArgument {
 
     public AboutArgument(@Qualifier(AboutCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator) {
         super(parent, translator);

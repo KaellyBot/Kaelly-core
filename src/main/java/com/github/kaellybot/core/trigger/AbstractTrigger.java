@@ -1,5 +1,6 @@
 package com.github.kaellybot.core.trigger;
 
+import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
@@ -11,6 +12,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
+import static com.github.kaellybot.core.model.constant.PermissionScope.TEXT_PERMISSIONS;
+
+@BotPermissions(TEXT_PERMISSIONS)
 public abstract class AbstractTrigger implements Trigger {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTrigger.class);
@@ -19,9 +23,9 @@ public abstract class AbstractTrigger implements Trigger {
 
     private final Set<Permission> permissions;
 
-    public AbstractTrigger(DiscordTranslator translator, Set<Permission> permissions){
+    public AbstractTrigger(DiscordTranslator translator){
         this.translator = translator;
-        this.permissions = permissions;
+        this.permissions = this.getClass().getAnnotation(BotPermissions.class).value().getPermissions();
     }
 
     @Override

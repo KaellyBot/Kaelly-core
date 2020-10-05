@@ -1,7 +1,9 @@
-package com.github.kaellybot.core.command.model;
+package com.github.kaellybot.core.command.util;
 
 import com.github.kaellybot.commons.model.constants.Language;
+import com.github.kaellybot.core.model.constant.Priority;
 import com.github.kaellybot.core.model.error.ErrorFactory;
+import com.github.kaellybot.core.util.annotation.*;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
@@ -10,7 +12,6 @@ import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,14 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.github.kaellybot.core.model.constant.PermissionScope.*;
+import static com.github.kaellybot.core.model.constant.Priority.NORMAL;
+
 @Getter
-@Setter
+@NSFW(false)
+@PriorityProcessing(NORMAL)
+@BotPermissions(TEXT_PERMISSIONS)
+@UserPermissions(MEMBER_PERMISSIONS)
 public abstract class AbstractCommandArgument implements CommandArgument<Message> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommandArgument.class);
@@ -30,30 +37,27 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     private final Command parent;
     private final String pattern;
     private final boolean isDescribed;
-    private final Set<Permission> permissions;
-    private Priority priority;
-    private boolean isNSFW;
+    private final Set<Permission> botPermissions;
+    private final Priority priority;
+    private final boolean isNSFW;
 
-    public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Set<Permission> permissions,
-                                   DiscordTranslator translator, Priority priority){
+    public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, DiscordTranslator translator){
         super();
         this.parent = parent;
         this.pattern = parent.getName() + subPattern;
         this.isDescribed = isDescribed;
-        this.permissions = permissions;
         this.translator = translator;
-        this.priority = priority;
-        this.isNSFW = false;
+        this.botPermissions = this.getClass().getAnnotation(BotPermissions.class).value().getPermissions();
+        this.priority = this.getClass().getAnnotation(PriorityProcessing.class).value();
+        this.isNSFW = this.getClass().getAnnotation(NSFW.class).value();
     }
 
-    public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, Set<Permission> permissions,
-                                   DiscordTranslator translator){
-        this(parent, subPattern, isDescribed, permissions, translator, Priority.NORMAL);
+    public AbstractCommandArgument(Command parent, boolean isDescribed, DiscordTranslator translator){
+        this(parent, StringUtils.EMPTY, isDescribed, translator);
     }
 
-    public AbstractCommandArgument(Command parent, boolean isDescribed, Set<Permission> permissions,
-                                   DiscordTranslator translator){
-        this(parent, StringUtils.EMPTY, isDescribed, permissions, translator, Priority.NORMAL);
+    public AbstractCommandArgument(Command parent, DiscordTranslator translator){
+        this(parent, StringUtils.EMPTY, false, translator);
     }
 
     @Override
@@ -63,7 +67,7 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
 
     @Override
     public boolean isArgumentHasPermissionsNeeded(PermissionSet permissions){
-        return permissions.containsAll(this.permissions);
+        return permissions.containsAll(this.botPermissions);
     }
 
     @Override
@@ -77,7 +81,7 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
         return Mono.just(isArgumentHasPermissionsNeeded(channelPermission))
                 .flatMapMany(hasPermissions -> Boolean.TRUE.equals(hasPermissions) ?
                         Flux.empty() : getParent().sendException(message, language, channelPermission,
-                        ErrorFactory.createMissingPermissionError(getParent(), permissions)))
+                        ErrorFactory.createMissingPermissionError(getParent(), botPermissions)))
                 .switchIfEmpty(message.getChannel().flatMapMany(channel -> isChannelNSFWCompatible(channel) ?
                         Flux.empty() : getParent().sendException(message, language, channelPermission,
                         ErrorFactory.createMissingNSFWOptionError())))

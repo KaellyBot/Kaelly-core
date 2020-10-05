@@ -4,12 +4,11 @@ import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.commons.model.entity.Dimension;
 import com.github.kaellybot.commons.model.entity.Server;
 import com.github.kaellybot.commons.service.DimensionService;
-import com.github.kaellybot.commons.service.ServerService;
-import com.github.kaellybot.core.command.model.Command;
-import com.github.kaellybot.core.util.PermissionScope;
-import com.github.kaellybot.core.command.model.AbstractCommandArgument;
+import com.github.kaellybot.core.command.util.Command;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.mapper.PortalMapper;
 import com.github.kaellybot.core.service.PortalService;
+import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,22 +18,23 @@ import reactor.core.publisher.Flux;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import static com.github.kaellybot.core.model.constant.PermissionScope.EMBED_PERMISSIONS;
+
+
 @Component
 @Qualifier(PortalCommand.COMMAND_QUALIFIER)
+@BotPermissions(EMBED_PERMISSIONS)
 public class OnePortalArgument extends AbstractCommandArgument {
 
     private final PortalService portalService;
     private final PortalMapper portalMapper;
-    private final ServerService serverService;
     private final DimensionService dimensionService;
 
     public OnePortalArgument(@Qualifier(PortalCommand.COMMAND_QUALIFIER) Command parent, PortalService portalService,
-                             ServerService serverService, DimensionService dimensionService,
-                             PortalMapper portalMapper, DiscordTranslator translator){
-        super(parent, "\\s+(\\w+)\\s+(.+)", true, PermissionScope.EMBED_PERMISSIONS, translator);
+                             DimensionService dimensionService, PortalMapper portalMapper, DiscordTranslator translator){
+        super(parent, "\\s+(\\w+)\\s+(.+)", true, translator);
         this.portalService = portalService;
         this.portalMapper = portalMapper;
-        this.serverService = serverService;
         this.dimensionService= dimensionService;
     }
 

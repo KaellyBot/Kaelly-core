@@ -1,8 +1,8 @@
 package com.github.kaellybot.core.command.about;
 
-import com.github.kaellybot.core.command.model.AbstractCommand;
+import com.github.kaellybot.core.command.util.AbstractCommand;
 import com.github.kaellybot.core.util.DiscordTranslator;
-import com.github.kaellybot.core.command.model.CommandArgument;
+import com.github.kaellybot.core.command.util.CommandArgument;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;

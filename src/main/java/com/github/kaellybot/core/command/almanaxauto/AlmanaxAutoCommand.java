@@ -1,7 +1,7 @@
 package com.github.kaellybot.core.command.almanaxauto;
 
-import com.github.kaellybot.core.command.model.AbstractCommand;
-import com.github.kaellybot.core.command.model.CommandArgument;
+import com.github.kaellybot.core.command.util.AbstractCommand;
+import com.github.kaellybot.core.command.util.CommandArgument;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;

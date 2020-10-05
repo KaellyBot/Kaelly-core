@@ -1,7 +1,7 @@
 package com.github.kaellybot.core.command.help;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.core.command.model.TextCommandArgument;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 
 @Component
 @Qualifier(HelpCommand.COMMAND_QUALIFIER)
-public class HelpNoArgument extends TextCommandArgument {
+public class HelpNoArgument extends AbstractCommandArgument {
 
     public HelpNoArgument(HelpCommand parent, DiscordTranslator translator) {
         super(parent, translator);

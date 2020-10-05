@@ -1,9 +1,9 @@
 package com.github.kaellybot.core.command.help;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.core.command.model.Command;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.util.DiscordTranslator;
-import com.github.kaellybot.core.command.model.TextCommandArgument;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 
 @Component
 @Qualifier(HelpCommand.COMMAND_QUALIFIER)
-public class HelpArgument extends TextCommandArgument {
+public class HelpArgument extends AbstractCommandArgument {
 
     public HelpArgument(@Qualifier(HelpCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator){
         super(parent, "\\s+(.+)", true, translator);

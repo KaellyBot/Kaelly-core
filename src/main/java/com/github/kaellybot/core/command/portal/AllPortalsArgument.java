@@ -1,13 +1,13 @@
 package com.github.kaellybot.core.command.portal;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.core.command.model.AbstractCommandArgument;
-import com.github.kaellybot.core.command.model.Command;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.mapper.PortalMapper;
 import com.github.kaellybot.core.model.constant.Constants;
 import com.github.kaellybot.core.service.PortalService;
+import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
-import com.github.kaellybot.core.util.PermissionScope;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -16,8 +16,11 @@ import reactor.core.publisher.Flux;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 
+import static com.github.kaellybot.core.model.constant.PermissionScope.EMBED_PERMISSIONS;
+
 @Component
 @Qualifier(PortalCommand.COMMAND_QUALIFIER)
+@BotPermissions(EMBED_PERMISSIONS)
 public class AllPortalsArgument extends AbstractCommandArgument {
 
     private final PortalService portalService;
@@ -25,7 +28,7 @@ public class AllPortalsArgument extends AbstractCommandArgument {
 
     public AllPortalsArgument(@Qualifier(PortalCommand.COMMAND_QUALIFIER) Command parent, PortalService portalService,
                               PortalMapper portalMapper, DiscordTranslator translator){
-        super(parent,true, PermissionScope.EMBED_PERMISSIONS, translator);
+        super(parent,true, translator);
         this.portalService = portalService;
         this.portalMapper = portalMapper;
     }

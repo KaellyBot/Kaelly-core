@@ -2,11 +2,12 @@ package com.github.kaellybot.core.command.server;
 
 import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.commons.service.ServerService;
-import com.github.kaellybot.core.command.model.Command;
-import com.github.kaellybot.core.command.model.EmbedCommandArgument;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.mapper.ServerSnapshotMapper;
 import com.github.kaellybot.core.model.constant.Constants;
 import com.github.kaellybot.core.service.GuildService;
+import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
@@ -17,9 +18,12 @@ import reactor.core.publisher.Mono;
 
 import java.util.regex.Matcher;
 
+import static com.github.kaellybot.core.model.constant.PermissionScope.EMBED_PERMISSIONS;
+
 @Component
 @Qualifier(ServerCommand.COMMAND_QUALIFIER)
-public class DisplayServerConfigurationArgument extends EmbedCommandArgument {
+@BotPermissions(EMBED_PERMISSIONS)
+public class DisplayServerConfigurationArgument extends AbstractCommandArgument {
 
     private final GuildService guildService;
 

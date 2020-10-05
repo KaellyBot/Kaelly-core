@@ -1,11 +1,12 @@
 package com.github.kaellybot.core.command.server;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.core.command.model.Command;
-import com.github.kaellybot.core.command.model.EmbedCommandArgument;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.model.entity.Guild;
 import com.github.kaellybot.core.service.GuildService;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -14,9 +15,12 @@ import reactor.core.publisher.Mono;
 
 import java.util.regex.Matcher;
 
+import static com.github.kaellybot.core.model.constant.PermissionScope.ADMINISTRATOR_PERMISSIONS;
+
 @Component
 @Qualifier(ServerCommand.COMMAND_QUALIFIER)
-public class ResetChannelServerArgument extends EmbedCommandArgument {
+@UserPermissions(ADMINISTRATOR_PERMISSIONS)
+public class ResetChannelServerArgument extends AbstractCommandArgument {
 
     private final GuildService guildService;
 

@@ -1,9 +1,9 @@
 package com.github.kaellybot.core.command.almanaxauto;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.core.command.model.Command;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.service.AlmanaxWebhookService;
-import com.github.kaellybot.core.command.model.TextCommandArgument;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER)
-public class AlmanaxAutoListArgument extends TextCommandArgument {
+public class AlmanaxAutoListArgument extends AbstractCommandArgument {
 
     private final AlmanaxWebhookService almanaxWebhookService;
 

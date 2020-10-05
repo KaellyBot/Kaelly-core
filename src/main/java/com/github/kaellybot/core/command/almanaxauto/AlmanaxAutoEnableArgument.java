@@ -1,14 +1,15 @@
 package com.github.kaellybot.core.command.almanaxauto;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.core.command.model.Command;
+import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.mapper.WebhookMapper;
 import com.github.kaellybot.core.model.constant.Constants;
 import com.github.kaellybot.core.model.entity.AlmanaxWebhook;
 import com.github.kaellybot.core.service.AlmanaxWebhookService;
-import com.github.kaellybot.core.util.PermissionScope;
-import com.github.kaellybot.core.command.model.AbstractCommandArgument;
+import com.github.kaellybot.core.command.util.AbstractCommandArgument;
+import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
@@ -18,8 +19,13 @@ import reactor.core.publisher.Flux;
 
 import java.util.regex.Matcher;
 
+import static com.github.kaellybot.core.model.constant.PermissionScope.ADMINISTRATOR_PERMISSIONS;
+import static com.github.kaellybot.core.model.constant.PermissionScope.WEBHOOK_PERMISSIONS;
+
 @Component
 @Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER)
+@BotPermissions(WEBHOOK_PERMISSIONS)
+@UserPermissions(ADMINISTRATOR_PERMISSIONS)
 public class AlmanaxAutoEnableArgument extends AbstractCommandArgument {
 
     private final AlmanaxWebhookService almanaxWebhookService;
@@ -28,7 +34,7 @@ public class AlmanaxAutoEnableArgument extends AbstractCommandArgument {
 
     public AlmanaxAutoEnableArgument(@Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator,
                                      AlmanaxWebhookService almanaxWebhookService, WebhookMapper webhookMapper) {
-        super(parent, "\\s+(true|on|0)", true, PermissionScope.WEBHOOK_PERMISSIONS, translator);
+        super(parent, "\\s+(true|on|0)", true, translator);
         this.almanaxWebhookService = almanaxWebhookService;
         this.webhookMapper = webhookMapper;
     }

@@ -1,6 +1,7 @@
-package com.github.kaellybot.core.command.model;
+package com.github.kaellybot.core.command.util;
 
 import com.github.kaellybot.commons.model.constants.Language;
+import com.github.kaellybot.core.model.constant.Priority;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.rest.util.PermissionSet;
@@ -21,8 +22,4 @@ public interface CommandArgument<T> extends Comparable<CommandArgument<T>> {
     boolean isDescribed();
 
     Priority getPriority();
-
-    enum Priority {
-        IMMEDIATE, HIGH, MEDIUM, NORMAL, LOW
-    }
 }
