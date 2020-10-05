@@ -3,6 +3,7 @@ package com.github.kaellybot.core.command.sendnude;
 import com.github.kaellybot.core.command.util.AbstractCommand;
 import com.github.kaellybot.core.command.util.CommandArgument;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.Hidden;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Component
 @Qualifier(SendNudeCommand.COMMAND_QUALIFIER)
+@Hidden
 public class SendNudeCommand extends AbstractCommand {
 
     public static final String COMMAND_QUALIFIER = "SendNudeCommand";
@@ -19,6 +21,5 @@ public class SendNudeCommand extends AbstractCommand {
 
     public SendNudeCommand(@Qualifier(COMMAND_QUALIFIER) @Lazy List<CommandArgument<Message>> arguments, DiscordTranslator translator) {
         super(COMMAND_NAME, arguments, translator);
-        setHidden(true);
     }
 }

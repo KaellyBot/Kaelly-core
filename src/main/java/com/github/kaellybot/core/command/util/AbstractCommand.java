@@ -7,14 +7,15 @@ import com.github.kaellybot.core.model.error.ErrorFactory;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.model.constant.PermissionScope;
 import com.github.kaellybot.core.model.constant.Priority;
+import com.github.kaellybot.core.util.annotation.Hidden;
 import com.github.kaellybot.core.util.annotation.PriorityProcessing;
+import com.github.kaellybot.core.util.annotation.SuperAdministrator;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.rest.http.client.ClientException;
 import discord4j.rest.util.PermissionSet;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,24 +30,23 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Getter
-@Setter
+@Hidden(false)
+@SuperAdministrator(false)
 public abstract class AbstractCommand implements Command {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
 
-    protected String name;
+    protected final String name;
     protected List<CommandArgument<Message>> arguments;
-    private boolean isPublic;
-    private boolean isAdmin;
-    private boolean isHidden;
-    protected DiscordTranslator translator;
+    private final boolean isAdmin;
+    private final boolean isHidden;
+    protected final DiscordTranslator translator;
 
     protected AbstractCommand(String name, List<CommandArgument<Message>> arguments, DiscordTranslator translator){
         super();
         this.name = name;
-        this.isPublic = true;
-        this.isAdmin = false;
-        this.isHidden = false;
+        this.isAdmin = this.getClass().getAnnotation(SuperAdministrator.class).value();
+        this.isHidden = this.getClass().getAnnotation(Hidden.class).value();
         this.arguments = arguments;
         this.translator = translator;
     }

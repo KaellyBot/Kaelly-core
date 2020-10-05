@@ -27,7 +27,7 @@ public class HelpNoArgument extends AbstractCommandArgument {
 
     public String getCommandList(Language language, String prefix){
         return ((HelpCommand) getParent()).getCommands().stream()
-                .filter(command -> command.isPublic() && ! command.isAdmin() && ! command.isHidden())
+                .filter(command -> ! command.isAdmin() && ! command.isHidden())
                 .map(command -> command.help(language, prefix))
                 .reduce((cmd1, cmd2) -> cmd1 + "\n" + cmd2)
                 .orElse(translator.getLabel(language, "help.empty"));
