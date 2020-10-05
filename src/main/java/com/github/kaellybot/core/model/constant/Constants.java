@@ -37,6 +37,10 @@ public final class Constants {
 
     public static final String INVITE = "https://discordapp.com/oauth2/authorize?&client_id=202916641414184960&scope=bot";
 
+    public static final String KAELLY_TOUCH_INVITE = "https://discordapp.com/oauth2/authorize?&client_id=393925392618094612&scope=bot";
+
+    public static final String KAELLY_RETRO_INVITE = "https://discordapp.com/oauth2/authorize?&client_id=393925392618094612&scope=bot";
+
     public static final String PAYPAL = "https://paypal.me/kaysoro";
 
     public static final String DISCORD_INVITE = "https://discord.gg/VsrbrYC";

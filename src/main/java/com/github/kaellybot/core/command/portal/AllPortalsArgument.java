@@ -1,11 +1,10 @@
 package com.github.kaellybot.core.command.portal;
 
 import com.github.kaellybot.commons.model.constants.Language;
-import com.github.kaellybot.commons.model.entity.Server;
-import com.github.kaellybot.commons.service.ServerService;
 import com.github.kaellybot.core.command.model.AbstractCommandArgument;
 import com.github.kaellybot.core.command.model.Command;
 import com.github.kaellybot.core.mapper.PortalMapper;
+import com.github.kaellybot.core.model.constant.Constants;
 import com.github.kaellybot.core.service.PortalService;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.util.PermissionScope;
@@ -14,7 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
-import java.util.Map;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 
 @Component
@@ -23,30 +22,27 @@ public class AllPortalsArgument extends AbstractCommandArgument {
 
     private final PortalService portalService;
     private final PortalMapper portalMapper;
-    private final ServerService serverService;
 
     public AllPortalsArgument(@Qualifier(PortalCommand.COMMAND_QUALIFIER) Command parent, PortalService portalService,
-                              ServerService serverService, PortalMapper portalMapper, DiscordTranslator translator){
-        super(parent, "\\s+(\\w+)", true, PermissionScope.EMBED_PERMISSIONS, translator);
+                              PortalMapper portalMapper, DiscordTranslator translator){
+        super(parent,true, PermissionScope.EMBED_PERMISSIONS, translator);
         this.portalService = portalService;
         this.portalMapper = portalMapper;
-        this.serverService = serverService;
     }
 
     @Override
     public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-        // TODO determine server in the message
-        Server server = Server.builder().labels(Map.of(language, "Mériana")).build();
-        serverService.findAllForName(matcher.group(1), language);
-
-        return portalService.getPortals(server, language)
+        return translator.getServer(message)
+                .filter(Predicate.not(Constants.UNKNOWN_SERVER::equals))
+                .flatMapMany(server -> portalService.getPortals(server, language))
                 .flatMap(portal -> message.getChannel().flatMap(channel -> channel
-                        .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language))));
+                        .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language))))
+                .switchIfEmpty(message.getChannel().flatMap(channel -> channel
+                        .createMessage(translator.getLabel(language, "pos.default_server_not_found"))));
     }
 
     @Override
     public String help(Language lg, String prefix){
-        return prefix + "`" + getParent().getName() + " server` : "
-                + translator.getLabel(lg, "pos.all_portals");
+        return prefix + "`" + getParent().getName() + "` : " + translator.getLabel(lg, "pos.all_portals");
     }
 }

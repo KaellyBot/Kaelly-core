@@ -52,7 +52,6 @@ public class OnePortalArgument extends AbstractCommandArgument {
 
     @Override
     public String help(Language lg, String prefix){
-        return prefix + "`" + getParent().getName() + " dimension server` : "
-                + translator.getLabel(lg, "pos.one_portal");
+        return prefix + "`" + getParent().getName() + " Srambad` : " + translator.getLabel(lg, "pos.one_portal");
     }
 }
