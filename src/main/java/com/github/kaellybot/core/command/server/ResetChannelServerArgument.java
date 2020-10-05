@@ -3,9 +3,11 @@ package com.github.kaellybot.core.command.server;
 import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.command.util.Command;
+import com.github.kaellybot.core.model.constant.Order;
 import com.github.kaellybot.core.model.entity.Guild;
 import com.github.kaellybot.core.service.GuildService;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,6 +22,7 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.ADMINISTR
 @Component
 @Qualifier(ServerCommand.COMMAND_QUALIFIER)
 @UserPermissions(ADMINISTRATOR_PERMISSIONS)
+@DisplayOrder(Order.FOURTH)
 public class ResetChannelServerArgument extends AbstractCommandArgument {
 
     private final GuildService guildService;

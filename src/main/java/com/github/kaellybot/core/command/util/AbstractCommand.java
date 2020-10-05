@@ -22,6 +22,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -62,7 +63,7 @@ public abstract class AbstractCommand implements Command {
         return getPermissions(message)
                 .flatMapMany(permissions -> Flux.fromIterable(arguments)
                         .filter(argument -> argument.triggerMessage(message, prefix))
-                        .sort().take(1)
+                        .sort(Comparator.comparing(CommandArgument::getPriority)).take(1)
                         .flatMap(argument -> argument.tryExecute(message, prefix, language, permissions))
                         .switchIfEmpty(manageMisusedCommandError(message, prefix, language, permissions)));
     }
@@ -97,7 +98,9 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public String moreHelp(Language lg, String prefix){
-        return help(lg, prefix) + arguments.stream().filter(CommandArgument::isDescribed)
+        return help(lg, prefix) + arguments.stream()
+                .filter(CommandArgument::isDescribed)
+                .sorted(Comparator.comparing(CommandArgument::getOrder))
                 .map(arg -> "\n" + arg.help(lg, prefix))
                 .reduce(StringUtils.EMPTY, (arg1, arg2) -> arg1 + arg2);
     }

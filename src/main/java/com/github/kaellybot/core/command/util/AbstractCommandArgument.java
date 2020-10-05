@@ -1,6 +1,7 @@
 package com.github.kaellybot.core.command.util;
 
 import com.github.kaellybot.commons.model.constants.Language;
+import com.github.kaellybot.core.model.constant.Order;
 import com.github.kaellybot.core.model.constant.Priority;
 import com.github.kaellybot.core.model.error.ErrorFactory;
 import com.github.kaellybot.core.util.annotation.*;
@@ -22,11 +23,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.github.kaellybot.core.model.constant.Order.FIRST;
 import static com.github.kaellybot.core.model.constant.PermissionScope.*;
 import static com.github.kaellybot.core.model.constant.Priority.NORMAL;
 
 @Getter
 @NSFW(false)
+@DisplayOrder(FIRST)
 @PriorityProcessing(NORMAL)
 @BotPermissions(TEXT_PERMISSIONS)
 @UserPermissions(MEMBER_PERMISSIONS)
@@ -38,6 +41,8 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     private final String pattern;
     private final boolean isDescribed;
     private final Set<Permission> botPermissions;
+    private final Set<Permission> userPermissions;
+    private final Order order;
     private final Priority priority;
     private final boolean isNSFW;
 
@@ -48,6 +53,8 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
         this.isDescribed = isDescribed;
         this.translator = translator;
         this.botPermissions = this.getClass().getAnnotation(BotPermissions.class).value().getPermissions();
+        this.userPermissions = this.getClass().getAnnotation(UserPermissions.class).value().getPermissions();
+        this.order = this.getClass().getAnnotation(DisplayOrder.class).value();
         this.priority = this.getClass().getAnnotation(PriorityProcessing.class).value();
         this.isNSFW = this.getClass().getAnnotation(NSFW.class).value();
     }
@@ -118,12 +125,12 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
         return priority;
     }
 
-    protected Command getParent(){
-        return parent;
+    @Override
+    public Order getOrder(){
+        return order;
     }
 
-    @Override
-    public int compareTo(CommandArgument<Message> argument){
-        return getPriority().compareTo(argument.getPriority());
+    protected Command getParent(){
+        return parent;
     }
 }

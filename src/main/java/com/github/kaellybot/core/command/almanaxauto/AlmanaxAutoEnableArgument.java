@@ -4,11 +4,13 @@ import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.mapper.WebhookMapper;
 import com.github.kaellybot.core.model.constant.Constants;
+import com.github.kaellybot.core.model.constant.Order;
 import com.github.kaellybot.core.model.entity.AlmanaxWebhook;
 import com.github.kaellybot.core.service.AlmanaxWebhookService;
 import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
@@ -26,6 +28,7 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.WEBHOOK_P
 @Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER)
 @BotPermissions(WEBHOOK_PERMISSIONS)
 @UserPermissions(ADMINISTRATOR_PERMISSIONS)
+@DisplayOrder(Order.SECOND)
 public class AlmanaxAutoEnableArgument extends AbstractCommandArgument {
 
     private final AlmanaxWebhookService almanaxWebhookService;

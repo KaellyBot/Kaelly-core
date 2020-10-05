@@ -7,9 +7,11 @@ import com.github.kaellybot.commons.service.DimensionService;
 import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.mapper.PortalMapper;
+import com.github.kaellybot.core.model.constant.Order;
 import com.github.kaellybot.core.service.PortalService;
 import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,7 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.EMBED_PER
 @Component
 @Qualifier(PortalCommand.COMMAND_QUALIFIER)
 @BotPermissions(EMBED_PERMISSIONS)
+@DisplayOrder(Order.SECOND)
 public class OnePortalArgument extends AbstractCommandArgument {
 
     private final PortalService portalService;
@@ -32,7 +35,7 @@ public class OnePortalArgument extends AbstractCommandArgument {
 
     public OnePortalArgument(@Qualifier(PortalCommand.COMMAND_QUALIFIER) Command parent, PortalService portalService,
                              DimensionService dimensionService, PortalMapper portalMapper, DiscordTranslator translator){
-        super(parent, "\\s+(\\w+)\\s+(.+)", true, translator);
+        super(parent, "\\s+(\\w+)", true, translator);
         this.portalService = portalService;
         this.portalMapper = portalMapper;
         this.dimensionService= dimensionService;

@@ -4,9 +4,11 @@ import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.commons.service.LanguageService;
 import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.command.util.Command;
+import com.github.kaellybot.core.model.constant.Order;
 import com.github.kaellybot.core.model.entity.Guild;
 import com.github.kaellybot.core.service.GuildService;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +23,7 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.ADMINISTR
 @Component
 @Qualifier(LanguageCommand.COMMAND_QUALIFIER)
 @UserPermissions(ADMINISTRATOR_PERMISSIONS)
+@DisplayOrder(Order.SECOND)
 public class ChangeGuildLanguageArgument extends AbstractCommandArgument {
 
     private final GuildService guildService;

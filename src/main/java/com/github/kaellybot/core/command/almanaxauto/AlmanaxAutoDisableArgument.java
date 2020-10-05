@@ -2,10 +2,12 @@ package com.github.kaellybot.core.command.almanaxauto;
 
 import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.core.command.util.Command;
+import com.github.kaellybot.core.model.constant.Order;
 import com.github.kaellybot.core.service.AlmanaxWebhookService;
 import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
@@ -22,6 +24,7 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.WEBHOOK_P
 @Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER)
 @BotPermissions(WEBHOOK_PERMISSIONS)
 @UserPermissions(ADMINISTRATOR_PERMISSIONS)
+@DisplayOrder(Order.THIRD)
 public class AlmanaxAutoDisableArgument extends AbstractCommandArgument {
 
     private final AlmanaxWebhookService almanaxWebhookService;
