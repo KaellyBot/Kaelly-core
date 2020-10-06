@@ -28,7 +28,6 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.*;
 import static com.github.kaellybot.core.model.constant.Priority.NORMAL;
 
 @Getter
-@NSFW(false)
 @DisplayOrder(FIRST)
 @PriorityProcessing(NORMAL)
 @BotPermissions(TEXT_PERMISSIONS)
@@ -56,7 +55,7 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
         this.userPermissions = this.getClass().getAnnotation(UserPermissions.class).value().getPermissions();
         this.order = this.getClass().getAnnotation(DisplayOrder.class).value();
         this.priority = this.getClass().getAnnotation(PriorityProcessing.class).value();
-        this.isNSFW = this.getClass().getAnnotation(NSFW.class).value();
+        this.isNSFW = this.getClass().isAnnotationPresent(NSFW.class);
     }
 
     public AbstractCommandArgument(Command parent, boolean isDescribed, DiscordTranslator translator){

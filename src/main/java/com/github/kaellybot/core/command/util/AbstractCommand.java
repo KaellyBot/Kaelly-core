@@ -30,8 +30,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Getter
-@Hidden(false)
-@SuperAdministrator(false)
 public abstract class AbstractCommand implements Command {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCommand.class);
@@ -45,8 +43,8 @@ public abstract class AbstractCommand implements Command {
     protected AbstractCommand(String name, List<CommandArgument<Message>> arguments, DiscordTranslator translator){
         super();
         this.name = name;
-        this.isAdmin = this.getClass().getAnnotation(SuperAdministrator.class).value();
-        this.isHidden = this.getClass().getAnnotation(Hidden.class).value();
+        this.isAdmin = this.getClass().isAnnotationPresent(SuperAdministrator.class);
+        this.isHidden = this.getClass().isAnnotationPresent(Hidden.class);
         this.arguments = arguments;
         this.translator = translator;
     }

@@ -10,5 +10,4 @@ import java.lang.annotation.*;
 @Inherited
 @Documented
 public @interface SuperAdministrator {
-    boolean value() default true;
 }

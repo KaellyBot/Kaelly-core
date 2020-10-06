@@ -10,5 +10,4 @@ import java.lang.annotation.*;
 @Inherited
 @Documented
 public @interface Hidden {
-    boolean value() default true;
 }
