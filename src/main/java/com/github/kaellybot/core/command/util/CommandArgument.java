@@ -14,9 +14,12 @@ public interface CommandArgument<T> {
 
     boolean isArgumentHasPermissionsNeeded(PermissionSet permissions);
 
+    boolean isUserHasPermissionsNeeded(PermissionSet permissions);
+
     boolean isChannelNSFWCompatible(MessageChannel channel);
 
-    Flux<T> tryExecute(Message message, String prefix, Language language, PermissionSet permissions);
+    Flux<T> tryExecute(Message message, String prefix, Language language, PermissionSet botPermissions,
+                       PermissionSet userPermissions);
 
     String help(Language lg, String prefix);
 

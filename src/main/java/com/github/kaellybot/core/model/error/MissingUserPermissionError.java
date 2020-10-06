@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class MissingPermissionError implements Error {
+public class MissingUserPermissionError implements Error {
 
     private final Command command;
     private final Set<Permission> permissions;
@@ -21,6 +21,6 @@ public class MissingPermissionError implements Error {
         return permissions.stream()
                 .map(permission -> translator.getLabel(language, "permission." + permission.name().toLowerCase()))
                 .collect(Collectors.joining(", ", translator
-                        .getLabel(language, "error.missing_permission", command.getName()) + " ", "."));
+                        .getLabel(language, "error.missing_user_permission", command.getName()) + " ", "."));
     }
 }

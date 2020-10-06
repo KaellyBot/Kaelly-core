@@ -77,21 +77,30 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     }
 
     @Override
+    public boolean isUserHasPermissionsNeeded(PermissionSet permissions){
+        return permissions.containsAll(this.userPermissions);
+    }
+
+    @Override
     public boolean isChannelNSFWCompatible(MessageChannel channel){
         return !isNSFW() || (channel instanceof TextChannel && ((TextChannel) channel).isNsfw()
                 || channel instanceof PrivateChannel);
     }
 
     @Override
-    public Flux<Message> tryExecute(Message message, String prefix, Language language, PermissionSet channelPermission){
-        return Mono.just(isArgumentHasPermissionsNeeded(channelPermission))
+    public Flux<Message> tryExecute(Message message, String prefix, Language language, PermissionSet botPermission,
+                                    PermissionSet userPermission){
+        return Mono.just(isArgumentHasPermissionsNeeded(botPermission))
                 .flatMapMany(hasPermissions -> Boolean.TRUE.equals(hasPermissions) ?
-                        Flux.empty() : getParent().sendException(message, language, channelPermission,
-                        ErrorFactory.createMissingPermissionError(getParent(), botPermissions)))
+                        Flux.empty() : getParent().sendException(message, language, botPermission,
+                        ErrorFactory.createMissingBotPermissionError(getParent(), botPermissions)))
+                .switchIfEmpty(message.getChannel().flatMapMany(channel -> isUserHasPermissionsNeeded(userPermission) ?
+                        Flux.empty() : getParent().sendException(message, language, botPermission,
+                        ErrorFactory.createMissingUserPermissionError(getParent(), userPermissions))))
                 .switchIfEmpty(message.getChannel().flatMapMany(channel -> isChannelNSFWCompatible(channel) ?
-                        Flux.empty() : getParent().sendException(message, language, channelPermission,
+                        Flux.empty() : getParent().sendException(message, language, botPermission,
                         ErrorFactory.createMissingNSFWOptionError())))
-                .switchIfEmpty(execute(message, prefix, language, channelPermission));
+                .switchIfEmpty(execute(message, prefix, language, botPermission));
     }
 
     private Flux<Message> execute(Message message, String prefix, Language language, PermissionSet permissions){

@@ -10,6 +10,7 @@ import com.github.kaellybot.core.model.constant.Priority;
 import com.github.kaellybot.core.util.annotation.Hidden;
 import com.github.kaellybot.core.util.annotation.PriorityProcessing;
 import com.github.kaellybot.core.util.annotation.SuperAdministrator;
+import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.TextChannel;
@@ -58,12 +59,13 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public final Flux<Message> request(Message message, String prefix, Language language) {
-        return getPermissions(message)
-                .flatMapMany(permissions -> Flux.fromIterable(arguments)
+        return getBotPermissions(message)
+                .zipWith(getUserPermissions(message))
+                .flatMapMany(tuple -> Flux.fromIterable(arguments)
                         .filter(argument -> argument.triggerMessage(message, prefix))
                         .sort(Comparator.comparing(CommandArgument::getPriority)).take(1)
-                        .flatMap(argument -> argument.tryExecute(message, prefix, language, permissions))
-                        .switchIfEmpty(manageMisusedCommandError(message, prefix, language, permissions)));
+                        .flatMap(argument -> argument.tryExecute(message, prefix, language, tuple.getT1(), tuple.getT2()))
+                        .switchIfEmpty(manageMisusedCommandError(message, prefix, language, tuple.getT1())));
     }
 
     private Flux<Message> manageMisusedCommandError(Message message, String prefix, Language language, PermissionSet permissions){
@@ -82,11 +84,15 @@ public abstract class AbstractCommand implements Command {
                 .onErrorResume(ClientException.isStatusCode(403), err -> Mono.empty());
     }
 
-    private Mono<PermissionSet> getPermissions(Message message){
+    private Mono<PermissionSet> getBotPermissions(Message message){
         return message.getChannel()
                 .filter(channel -> channel instanceof TextChannel)
                 .map(TextChannel.class::cast)
                 .flatMap(channel -> channel.getEffectivePermissions(message.getClient().getSelfId()));
+    }
+
+    private Mono<PermissionSet> getUserPermissions(Message message){
+        return message.getAuthorAsMember().flatMap(Member::getBasePermissions);
     }
 
     @Override

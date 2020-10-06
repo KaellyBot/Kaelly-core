@@ -18,8 +18,12 @@ public final class ErrorFactory {
         return new MissingNSFWOptionError();
     }
 
-    public static Error createMissingPermissionError(Command command, Set<Permission> permissions){
-        return new MissingPermissionError(command, permissions);
+    public static Error createMissingBotPermissionError(Command command, Set<Permission> permissions){
+        return new MissingBotPermissionError(command, permissions);
+    }
+
+    public static Error createMissingUserPermissionError(Command command, Set<Permission> permissions){
+        return new MissingUserPermissionError(command, permissions);
     }
 
     public static Error createUnknownError(){
