@@ -27,6 +27,8 @@ public final class Constants {
 
     public static final Game GAME = Game.DOFUS;
 
+    public static final int PREFIX_MAXIMUM_LENGTH = 3;
+
     public static final String CHANGELOG = "https://i.imgur.com/0qQSOac.png";
 
     public static final String AVATAR = "https://avatars3.githubusercontent.com/u/44924023?s=400&u=7bc255b104084f0762db20e6aba4e9ff549de467&v=4";
