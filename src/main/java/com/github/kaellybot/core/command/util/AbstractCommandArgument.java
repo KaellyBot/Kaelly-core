@@ -45,25 +45,21 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     private final Priority priority;
     private final boolean isNSFW;
 
-    public AbstractCommandArgument(Command parent, String subPattern, boolean isDescribed, DiscordTranslator translator){
+    public AbstractCommandArgument(Command parent, String subPattern, DiscordTranslator translator) {
         super();
         this.parent = parent;
         this.pattern = parent.getName() + subPattern;
-        this.isDescribed = isDescribed;
         this.translator = translator;
         this.botPermissions = this.getClass().getAnnotation(BotPermissions.class).value().getPermissions();
         this.userPermissions = this.getClass().getAnnotation(UserPermissions.class).value().getPermissions();
         this.order = this.getClass().getAnnotation(DisplayOrder.class).value();
         this.priority = this.getClass().getAnnotation(PriorityProcessing.class).value();
+        this.isDescribed = this.getClass().isAnnotationPresent(Described.class);
         this.isNSFW = this.getClass().isAnnotationPresent(NSFW.class);
     }
 
-    public AbstractCommandArgument(Command parent, boolean isDescribed, DiscordTranslator translator){
-        this(parent, StringUtils.EMPTY, isDescribed, translator);
-    }
-
-    public AbstractCommandArgument(Command parent, DiscordTranslator translator){
-        this(parent, StringUtils.EMPTY, false, translator);
+    public AbstractCommandArgument(Command parent, DiscordTranslator translator) {
+        this(parent, StringUtils.EMPTY, translator);
     }
 
     @Override
@@ -72,24 +68,24 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     }
 
     @Override
-    public boolean isArgumentHasPermissionsNeeded(PermissionSet permissions){
+    public boolean isArgumentHasPermissionsNeeded(PermissionSet permissions) {
         return permissions.containsAll(this.botPermissions);
     }
 
     @Override
-    public boolean isUserHasPermissionsNeeded(PermissionSet permissions){
+    public boolean isUserHasPermissionsNeeded(PermissionSet permissions) {
         return permissions.containsAll(this.userPermissions);
     }
 
     @Override
-    public boolean isChannelNSFWCompatible(MessageChannel channel){
+    public boolean isChannelNSFWCompatible(MessageChannel channel) {
         return !isNSFW() || (channel instanceof TextChannel && ((TextChannel) channel).isNsfw()
                 || channel instanceof PrivateChannel);
     }
 
     @Override
     public Flux<Message> tryExecute(Message message, String prefix, Language language, PermissionSet botPermission,
-                                    PermissionSet userPermission){
+                                    PermissionSet userPermission) {
         return Mono.just(isArgumentHasPermissionsNeeded(botPermission))
                 .flatMapMany(hasPermissions -> Boolean.TRUE.equals(hasPermissions) ?
                         Flux.empty() : getParent().sendException(message, language, botPermission,
@@ -103,7 +99,7 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
                 .switchIfEmpty(execute(message, prefix, language, botPermission));
     }
 
-    private Flux<Message> execute(Message message, String prefix, Language language, PermissionSet permissions){
+    private Flux<Message> execute(Message message, String prefix, Language language, PermissionSet permissions) {
         return Mono.just(Pattern.compile(Pattern.quote(prefix) + pattern).matcher(message.getContent()))
                 .filter(Matcher::matches)
                 .flatMapMany(matcher -> execute(message, prefix, language, matcher))
@@ -113,32 +109,13 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
 
     public abstract Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher);
 
-    protected Flux<Message> manageUnknownException(Message message, Throwable error){
+    protected Flux<Message> manageUnknownException(Message message, Throwable error) {
         LOG.error("Error with the following command: {}", message.getContent(), error);
         return Flux.empty();
     }
 
     @Override
-    public String help(Language lg, String prefix){
+    public String help(Language lg, String prefix) {
         return prefix + parent.getName();
-    }
-
-    @Override
-    public boolean isDescribed(){
-        return isDescribed;
-    }
-
-    @Override
-    public Priority getPriority(){
-        return priority;
-    }
-
-    @Override
-    public Order getOrder(){
-        return order;
-    }
-
-    protected Command getParent(){
-        return parent;
     }
 }

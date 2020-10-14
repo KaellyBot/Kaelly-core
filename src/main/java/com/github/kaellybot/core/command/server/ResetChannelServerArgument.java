@@ -7,6 +7,7 @@ import com.github.kaellybot.core.model.constant.Order;
 import com.github.kaellybot.core.model.entity.Guild;
 import com.github.kaellybot.core.service.GuildService;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.Described;
 import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.core.object.entity.Message;
@@ -23,13 +24,14 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.ADMINISTR
 @Qualifier(ServerCommand.COMMAND_QUALIFIER)
 @UserPermissions(ADMINISTRATOR_PERMISSIONS)
 @DisplayOrder(Order.FOURTH)
+@Described
 public class ResetChannelServerArgument extends AbstractCommandArgument {
 
     private final GuildService guildService;
 
     public ResetChannelServerArgument(@Qualifier(ServerCommand.COMMAND_QUALIFIER) Command parent,
                                       GuildService guildService, DiscordTranslator translator) {
-        super(parent, "\\s+-(c|chan|channel)\\s+-(r|reset)", true, translator);
+        super(parent, "\\s+-(c|chan|channel)\\s+-(r|reset)", translator);
         this.guildService = guildService;
     }
 

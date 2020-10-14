@@ -8,6 +8,7 @@ import com.github.kaellybot.core.model.constant.Constants;
 import com.github.kaellybot.core.service.PortalService;
 import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.Described;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.EMBED_PER
 @Component
 @Qualifier(PortalCommand.COMMAND_QUALIFIER)
 @BotPermissions(EMBED_PERMISSIONS)
+@Described
 public class AllPortalsArgument extends AbstractCommandArgument {
 
     private final PortalService portalService;
@@ -28,7 +30,7 @@ public class AllPortalsArgument extends AbstractCommandArgument {
 
     public AllPortalsArgument(@Qualifier(PortalCommand.COMMAND_QUALIFIER) Command parent, PortalService portalService,
                               PortalMapper portalMapper, DiscordTranslator translator){
-        super(parent,true, translator);
+        super(parent, translator);
         this.portalService = portalService;
         this.portalMapper = portalMapper;
     }

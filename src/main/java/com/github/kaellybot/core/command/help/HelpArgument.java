@@ -4,6 +4,7 @@ import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.Described;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -11,12 +12,13 @@ import reactor.core.publisher.Flux;
 
 import java.util.regex.Matcher;
 
+@Described
 @Component
 @Qualifier(HelpCommand.COMMAND_QUALIFIER)
 public class HelpArgument extends AbstractCommandArgument {
 
     public HelpArgument(@Qualifier(HelpCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator){
-        super(parent, "\\s+(.+)", true, translator);
+        super(parent, "\\s+(.+)", translator);
     }
 
     @Override
@@ -39,7 +41,7 @@ public class HelpArgument extends AbstractCommandArgument {
     }
 
     @Override
-    protected HelpCommand getParent(){
+    public HelpCommand getParent(){
         return (HelpCommand) super.getParent();
     }
 }

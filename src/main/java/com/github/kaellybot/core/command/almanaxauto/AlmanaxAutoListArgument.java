@@ -5,6 +5,7 @@ import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.service.AlmanaxWebhookService;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.Described;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.Channel;
@@ -19,13 +20,14 @@ import java.util.stream.Collectors;
 
 @Component
 @Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER)
+@Described
 public class AlmanaxAutoListArgument extends AbstractCommandArgument {
 
     private final AlmanaxWebhookService almanaxWebhookService;
 
     public AlmanaxAutoListArgument(@Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator,
                                    AlmanaxWebhookService almanaxWebhookService) {
-        super(parent, true, translator);
+        super(parent, translator);
         this.almanaxWebhookService = almanaxWebhookService;
     }
 

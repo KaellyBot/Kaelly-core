@@ -10,6 +10,7 @@ import com.github.kaellybot.core.service.AlmanaxWebhookService;
 import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.Described;
 import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.common.util.Snowflake;
@@ -29,6 +30,7 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.WEBHOOK_P
 @BotPermissions(WEBHOOK_PERMISSIONS)
 @UserPermissions(ADMINISTRATOR_PERMISSIONS)
 @DisplayOrder(Order.SECOND)
+@Described
 public class AlmanaxAutoEnableArgument extends AbstractCommandArgument {
 
     private final AlmanaxWebhookService almanaxWebhookService;
@@ -37,7 +39,7 @@ public class AlmanaxAutoEnableArgument extends AbstractCommandArgument {
 
     public AlmanaxAutoEnableArgument(@Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator,
                                      AlmanaxWebhookService almanaxWebhookService, WebhookMapper webhookMapper) {
-        super(parent, "\\s+(true|on|0)", true, translator);
+        super(parent, "\\s+(true|on|0)", translator);
         this.almanaxWebhookService = almanaxWebhookService;
         this.webhookMapper = webhookMapper;
     }

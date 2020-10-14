@@ -9,6 +9,7 @@ import com.github.kaellybot.core.model.constant.Constants;
 import com.github.kaellybot.core.service.GuildService;
 import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.Described;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +24,7 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.EMBED_PER
 @Component
 @Qualifier(ServerCommand.COMMAND_QUALIFIER)
 @BotPermissions(EMBED_PERMISSIONS)
+@Described
 public class DisplayServerConfigurationArgument extends AbstractCommandArgument {
 
     private final GuildService guildService;
@@ -34,7 +36,7 @@ public class DisplayServerConfigurationArgument extends AbstractCommandArgument 
     public DisplayServerConfigurationArgument(@Qualifier(ServerCommand.COMMAND_QUALIFIER) Command parent,
                                               GuildService guildService, ServerService serverService,
                                               ServerSnapshotMapper serverSnapshotMapper, DiscordTranslator translator) {
-        super(parent, true, translator);
+        super(parent, translator);
         this.guildService = guildService;
         this.serverService = serverService;
         this.serverSnapshotMapper = serverSnapshotMapper;

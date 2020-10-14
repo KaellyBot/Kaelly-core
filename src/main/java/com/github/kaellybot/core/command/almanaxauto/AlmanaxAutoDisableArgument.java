@@ -7,6 +7,7 @@ import com.github.kaellybot.core.service.AlmanaxWebhookService;
 import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.Described;
 import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.core.object.entity.Message;
@@ -25,13 +26,14 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.WEBHOOK_P
 @BotPermissions(WEBHOOK_PERMISSIONS)
 @UserPermissions(ADMINISTRATOR_PERMISSIONS)
 @DisplayOrder(Order.THIRD)
+@Described
 public class AlmanaxAutoDisableArgument extends AbstractCommandArgument {
 
     private final AlmanaxWebhookService almanaxWebhookService;
 
     public AlmanaxAutoDisableArgument(@Qualifier(AlmanaxAutoCommand.COMMAND_QUALIFIER) Command parent, DiscordTranslator translator,
                                       AlmanaxWebhookService almanaxWebhookService) {
-        super(parent, "\\s+(false|off|1)", true, translator);
+        super(parent, "\\s+(false|off|1)", translator);
         this.almanaxWebhookService = almanaxWebhookService;
     }
 

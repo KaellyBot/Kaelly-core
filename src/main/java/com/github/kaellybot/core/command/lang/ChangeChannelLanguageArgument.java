@@ -8,6 +8,7 @@ import com.github.kaellybot.core.model.constant.Order;
 import com.github.kaellybot.core.model.entity.Guild;
 import com.github.kaellybot.core.service.GuildService;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import com.github.kaellybot.core.util.annotation.Described;
 import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.core.object.entity.Message;
@@ -24,6 +25,7 @@ import static com.github.kaellybot.core.model.constant.PermissionScope.ADMINISTR
 @Qualifier(LanguageCommand.COMMAND_QUALIFIER)
 @UserPermissions(ADMINISTRATOR_PERMISSIONS)
 @DisplayOrder(Order.THIRD)
+@Described
 public class ChangeChannelLanguageArgument extends AbstractCommandArgument {
 
     private final GuildService guildService;
@@ -33,7 +35,7 @@ public class ChangeChannelLanguageArgument extends AbstractCommandArgument {
     public ChangeChannelLanguageArgument(@Qualifier(LanguageCommand.COMMAND_QUALIFIER) Command parent,
                                          GuildService guildService, LanguageService languageService,
                                          DiscordTranslator translator) {
-        super(parent, "\\s+-(c|chan|channel)\\s+(\\w+)", true, translator);
+        super(parent, "\\s+-(c|chan|channel)\\s+(\\w+)", translator);
         this.guildService = guildService;
         this.languageService = languageService;
     }

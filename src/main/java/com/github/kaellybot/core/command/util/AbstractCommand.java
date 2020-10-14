@@ -113,7 +113,7 @@ public abstract class AbstractCommand implements Command {
     private static class CommonHelpArgument extends AbstractCommandArgument {
 
         public CommonHelpArgument(Command parent, DiscordTranslator translator) {
-            super(parent, "\\s+help", false, translator);
+            super(parent, "\\s+help", translator);
         }
 
         @Override
