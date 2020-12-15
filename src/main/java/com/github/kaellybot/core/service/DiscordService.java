@@ -8,11 +8,13 @@ import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.event.domain.guild.GuildDeleteEvent;
-import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.lifecycle.ReconnectEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
+import discord4j.core.shard.MemberRequestFilter;
+import discord4j.gateway.intent.Intent;
+import discord4j.gateway.intent.IntentSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -47,22 +49,23 @@ public class DiscordService {
     public void startBot(){
         if (discordClient == null){
             discordClient = DiscordClient.create(token);
-            discordClient.withGateway(client -> Mono.when(
-                    readyListener(client),
-                    reconnectListener(client),
-                    guildCreateListener(client),
-                    guildDeleteListener(client),
-                    commandListener(client),
-                    triggerListener(client)))
+            discordClient.gateway()
+                    .setEnabledIntents(IntentSet.of(
+                            Intent.GUILDS,
+                            Intent.GUILD_MEMBERS,
+                            Intent.GUILD_MESSAGES,
+                            Intent.GUILD_MESSAGE_REACTIONS,
+                            Intent.DIRECT_MESSAGES))
+                    .setInitialStatus(ignored -> Presence.online(Activity.playing(Constants.GAME.getName().toUpperCase())))
+                    .setMemberRequestFilter(MemberRequestFilter.none())
+                    .withGateway(client -> Mono.when(
+                        reconnectListener(client),
+                        guildCreateListener(client),
+                        guildDeleteListener(client),
+                        commandListener(client),
+                        triggerListener(client)))
                     .subscribe();
         }
-    }
-
-    private Mono<Void> readyListener(GatewayDiscordClient client){
-        return client.getEventDispatcher().on(ReadyEvent.class)
-                .flatMap(event -> event.getSelf().getClient()
-                        .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName().toUpperCase()))))
-                .then();
     }
 
     private Mono<Void> commandListener(GatewayDiscordClient client){
