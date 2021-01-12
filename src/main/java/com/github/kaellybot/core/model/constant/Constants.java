@@ -48,8 +48,10 @@ public final class Constants {
     public static final String DISCORD_INVITE = "https://discord.gg/VsrbrYC";
 
     public static final List<String> DOFUS_ROOM_BUILD_URL = List.of(
-            "https://www.dofusroom.com/buildroom/build/show/",
-            "https://dofusroom.com/b-");
+            "https:\\/\\/www\\.dofusroom\\.com\\/buildroom\\/build\\/show\\/(\\d+)",
+            "https:\\/\\/dofusroom\\.com\\/b-(\\d+)",
+            "https:\\/\\/dofusroom\\.com\\/p-(\\w+)-(\\d+)");
 
-    public static final String DOFUS_ROOM_BUILD_URL_REFERRER = "https://www.dofusroom.com/buildroom/build/show/{}?referrer=kaellybot";
+    public static final String DOFUS_ROOM_BUILD_PUBLIC_URL_REFERRER = "https://www.dofusroom.com/buildroom/build/show/{}?referrer=kaellybot";
+    public static final String DOFUS_ROOM_BUILD_PRIVATE_URL_REFERRER = "https://dofusroom.com/p-{}-{}?referrer=kaellybot";
 }

@@ -2,6 +2,7 @@ package com.github.kaellybot.core.service;
 
 import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.core.payload.dofusroom.PreviewDto;
+import com.github.kaellybot.core.payload.dofusroom.TokenDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,12 +33,13 @@ public class DofusRoomService extends AbstractRestClientService {
                 .build();
     }
 
-    public Mono<PreviewDto> getDofusRoomPreview(String id, Language language){
+    public Mono<PreviewDto> getDofusRoomPreview(String id, String token, Language language){
         return webClient.post()
                 .uri("/{id}", id)
                 .header(ACCEPT_LANGUAGE, language.getAbbreviation())
+                .bodyValue(TokenDto.builder().token(token).build())
                 .retrieve()
                 .bodyToMono(PreviewDto.class)
-                .map(preview -> preview.toBuilder().id(id).build());
+                .map(preview -> preview.toBuilder().id(id).token(token).isPrivate(token != null && ! token.trim().isEmpty()).build());
     }
 }

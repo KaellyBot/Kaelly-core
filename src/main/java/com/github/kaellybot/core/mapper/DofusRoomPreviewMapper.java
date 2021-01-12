@@ -31,12 +31,15 @@ public class DofusRoomPreviewMapper {
 
     public void decorateSpec(MessageCreateSpec spec, PreviewDto preview, Language language){
         spec.setEmbed(embedSpec -> embedSpec.setTitle(preview.getData().getName())
-                .setDescription(translator.getLabel(language, "dofusroom.made_by",
+                .setDescription(translator.getLabel(language,
+                        preview.isPrivate() ? "dofusroom.private.made_by" : "dofusroom.public.made_by",
                         preview.getData().getLevel(), preview.getData().getAuthor()))
                 .setThumbnail("https://i.imgur.com/kwc2f0J.png")
                 .setColor(Color.of(16628048))
                 .setFooter(translator.getLabel(language, "dofusroom.generated"), null)
-                .setUrl(Constants.DOFUS_ROOM_BUILD_URL_REFERRER.replace("{}", preview.getId()))
+                .setUrl(preview.isPrivate() ? Constants.DOFUS_ROOM_BUILD_PRIVATE_URL_REFERRER
+                                .replaceFirst("\\{}", preview.getToken()).replace("{}", preview.getId()) :
+                        Constants.DOFUS_ROOM_BUILD_PUBLIC_URL_REFERRER.replace("{}", preview.getId()))
                 .setImage("attachment://" + ATTACHMENT_FILENAME))
                 .addFile(ATTACHMENT_FILENAME, createBuild(preview));
     }

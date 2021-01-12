@@ -8,6 +8,8 @@ import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.model.constant.PermissionScope;
 import discord4j.core.object.entity.Message;
+import lombok.Builder;
+import lombok.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -34,7 +36,7 @@ public class DofusRoomTrigger extends AbstractTrigger {
         this.dofusRoomService = dofusRoomService;
         this.dofusRoomPreviewMapper = dofusRoomPreviewMapper;
         this.dofusRoomUrlPatterns = Constants.DOFUS_ROOM_BUILD_URL.parallelStream()
-                .map(url -> Pattern.compile(url + "(\\d+)"))
+                .map(Pattern::compile)
                 .collect(Collectors.toList());
     }
 
@@ -54,7 +56,7 @@ public class DofusRoomTrigger extends AbstractTrigger {
                 .distinct()).collectList()
                 .zipWith(translator.getLanguage(message))
                 .flatMapMany(tuple -> Flux.fromIterable(tuple.getT1())
-                        .flatMap(id -> dofusRoomService.getDofusRoomPreview(id, tuple.getT2()))
+                        .flatMap(id -> dofusRoomService.getDofusRoomPreview(id.getId(), id.getToken(), tuple.getT2()))
                         .filter(preview -> StatusDto.SUCCESS.equals(preview.getStatus()))
                         .collectList()
                         .zipWith(message.getChannel())
@@ -64,9 +66,21 @@ public class DofusRoomTrigger extends AbstractTrigger {
                 .onErrorResume(error -> manageUnknownException(message, error));
     }
 
-    private Stream<String> findAllDofusRoomIds(Matcher m){
-        List<String> ids = new ArrayList<>();
-        while(m.find()) ids.add(m.group(1));
+    private Stream<DofusRoomId> findAllDofusRoomIds(Matcher m){
+        List<DofusRoomId> ids = new ArrayList<>();
+        while(m.find()) {
+            if (m.groupCount() == 2)
+                ids.add(DofusRoomId.builder().id(m.group(2)).token(m.group(1)).build());
+            else
+                ids.add(DofusRoomId.builder().id(m.group(1)).build());
+        }
         return ids.parallelStream();
+    }
+
+    @Value
+    @Builder
+    private static class DofusRoomId {
+        String id;
+        String token;
     }
 }
