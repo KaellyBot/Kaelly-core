@@ -56,7 +56,7 @@ public class DiscordService {
                             Intent.GUILD_MESSAGES,
                             Intent.GUILD_MESSAGE_REACTIONS,
                             Intent.DIRECT_MESSAGES))
-                    .setInitialStatus(ignored -> Presence.online(Activity.playing(Constants.GAME.getName().toUpperCase())))
+                    .setInitialPresence(ignored -> Presence.online(Activity.playing(Constants.GAME.getName().toUpperCase())))
                     .setMemberRequestFilter(MemberRequestFilter.none())
                     .withGateway(client -> Mono.when(
                         reconnectListener(client),
