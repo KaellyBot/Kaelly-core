@@ -11,6 +11,7 @@ import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.util.annotation.Described;
 import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -41,16 +42,16 @@ public class ChangeChannelLanguageArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
+    public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
         return languageService.findByAbbreviation(matcher.group(2))
-                .map(newLanguage -> message.getGuildId()
+                .map(newLanguage -> interaction.getGuildId()
                         .map(guildService::findById)
                         .orElse(Mono.empty())
-                        .map(guild -> changeChannelLanguage(guild, message.getChannelId().asString(), newLanguage))
+                        .map(guild -> changeChannelLanguage(guild, interaction.getChannelId().asString(), newLanguage))
                         .flatMap(guildService::update)
-                        .flatMap(guild -> message.getChannel().flatMap(channel -> channel.createMessage(translator
+                        .flatMap(guild -> interaction.getChannel().flatMap(channel -> channel.createMessage(translator
                                 .getLabel(newLanguage, "lang.updated")))))
-                .orElse(message.getChannel().flatMap(channel -> channel.createMessage(translator
+                .orElse(interaction.getChannel().flatMap(channel -> channel.createMessage(translator
                         .getLabel(language, "lang.not_found", matcher.group(2)))))
                 .flatMapMany(Flux::just);
     }
@@ -62,7 +63,7 @@ public class ChangeChannelLanguageArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public String help(Language lg, String prefix){
-        return prefix + "`" + getParent().getName() + " -channel FR` : " + translator.getLabel(lg, "lang.change_channel_config");
+    public String help(Language lg){
+        return "`" + getParent().getName() + " -channel FR` : " + translator.getLabel(lg, "lang.change_channel_config");
     }
 }

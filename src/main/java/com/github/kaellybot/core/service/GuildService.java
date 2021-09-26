@@ -29,7 +29,6 @@ public class GuildService {
         return guildRepository.save(Guild.builder()
                 .id(guild.getId().asString())
                 .language(Constants.DEFAULT_LANGUAGE)
-                .prefix(Constants.DEFAULT_PREFIX)
                 .server(Constants.UNKNOWN_SERVER)
                 .channelLanguageList(Collections.emptyList())
                 .channelServersList(Collections.emptyList())

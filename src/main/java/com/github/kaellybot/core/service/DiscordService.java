@@ -8,6 +8,7 @@ import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.GuildCreateEvent;
 import discord4j.core.event.domain.guild.GuildDeleteEvent;
+import discord4j.core.event.domain.interaction.ApplicationCommandInteractionEvent;
 import discord4j.core.event.domain.lifecycle.ReconnectEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.presence.Activity;
@@ -69,13 +70,12 @@ public class DiscordService {
     }
 
     private Mono<Void> commandListener(GatewayDiscordClient client){
-        return client.getEventDispatcher().on(MessageCreateEvent.class)
-                .map(MessageCreateEvent::getMessage)
-                .filterWhen(message -> message.getAuthorAsMember().map(member -> ! member.isBot()))
-                .flatMap(msg -> translator.getPrefix(msg)
-                        .zipWith(translator.getLanguage(msg))
-                        .flatMapMany(tuple -> Flux.fromIterable(commands)
-                                .flatMap(cmd -> cmd.request(msg, tuple.getT1(), tuple.getT2()))))
+        return client.getEventDispatcher().on(ApplicationCommandInteractionEvent.class)
+                .map(ApplicationCommandInteractionEvent::getInteraction)
+                .filter(interaction -> ! interaction.getUser().isBot())
+                .flatMap(interaction -> translator.getLanguage(interaction)
+                        .flatMapMany(language -> Flux.fromIterable(commands)
+                                .flatMap(cmd -> cmd.request(interaction, language))))
                 .then();
     }
 

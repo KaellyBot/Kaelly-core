@@ -10,11 +10,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class MisusedCommandError implements Error {
 
-    private final String prefix;
     private final Command command;
 
     @Override
     public String getLabel(Translator translator, Language language){
-        return translator.getLabel(language, "error.misused_command", prefix + HelpCommand.COMMAND_NAME + " " + command.getName());
+        return translator.getLabel(language, "error.misused_command", HelpCommand.COMMAND_NAME + " " + command.getName());
     }
 }

@@ -10,8 +10,8 @@ public final class ErrorFactory {
 
     private ErrorFactory(){}
 
-    public static Error createMisusedCommandError(String prefix, Command command){
-        return new MisusedCommandError(prefix, command);
+    public static Error createMisusedCommandError(Command command){
+        return new MisusedCommandError(command);
     }
 
     public static Error createMissingNSFWOptionError(){

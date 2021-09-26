@@ -10,9 +10,9 @@ import com.github.kaellybot.core.model.constant.Priority;
 import com.github.kaellybot.core.util.annotation.Hidden;
 import com.github.kaellybot.core.util.annotation.PriorityProcessing;
 import com.github.kaellybot.core.util.annotation.SuperAdministrator;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
-import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.rest.http.client.ClientException;
 import discord4j.rest.util.PermissionSet;
@@ -58,54 +58,54 @@ public abstract class AbstractCommand implements Command {
     }
 
     @Override
-    public final Flux<Message> request(Message message, String prefix, Language language) {
-        return getBotPermissions(message)
-                .zipWith(getUserPermissions(message))
+    public final Flux<Message> request(Interaction interaction, Language language) {
+        return getBotPermissions(interaction)
+                .zipWith(getUserPermissions(interaction))
                 .flatMapMany(tuple -> Flux.fromIterable(arguments)
-                        .filter(argument -> argument.triggerMessage(message, prefix))
+                        .filter(argument -> argument.triggerInteraction(interaction))
                         .sort(Comparator.comparing(CommandArgument::getPriority)).take(1)
-                        .flatMap(argument -> argument.tryExecute(message, prefix, language, tuple.getT1(), tuple.getT2()))
-                        .switchIfEmpty(manageMisusedCommandError(message, prefix, language, tuple.getT1())));
+                        .flatMap(argument -> argument.tryExecute(interaction, language, tuple.getT1(), tuple.getT2()))
+                        .switchIfEmpty(manageMisusedCommandError(interaction, language, tuple.getT1())));
     }
 
-    private Flux<Message> manageMisusedCommandError(Message message, String prefix, Language language, PermissionSet permissions){
-        return Flux.just(message.getContent().startsWith(prefix + getName()))
+    private Flux<Message> manageMisusedCommandError(Interaction interaction, Language language, PermissionSet permissions){
+        return Flux.just(interaction.getMessage().map(message -> message.getContent().startsWith(getName())).orElse(false))
                 .filter(Boolean.TRUE::equals)
-                .flatMap(result -> sendException(message, language, permissions,
-                        ErrorFactory.createMisusedCommandError(prefix, this)));
+                .flatMap(result -> sendException(interaction, language, permissions,
+                        ErrorFactory.createMisusedCommandError(this)));
     }
 
-    public Flux<Message> sendException(Message message, Language language, PermissionSet permissions, Error error){
-        return message.getChannel()
+    public Flux<Message> sendException(Interaction interaction, Language language, PermissionSet permissions, Error error){
+        return interaction.getChannel()
                 .filter(channel -> permissions.containsAll(PermissionScope.TEXT_PERMISSIONS.getPermissions()))
                 .flatMapMany(channel -> channel.createMessage(translator.getLabel(language, error)))
-                .switchIfEmpty(message.getAuthor().map(User::getPrivateChannel).orElseGet(Mono::empty)
+                .switchIfEmpty(interaction.getUser().getPrivateChannel()
                         .flatMapMany(channel -> channel.createMessage(translator.getLabel(Constants.DEFAULT_LANGUAGE, error))))
                 .onErrorResume(ClientException.isStatusCode(403), err -> Mono.empty());
     }
 
-    private Mono<PermissionSet> getBotPermissions(Message message){
-        return message.getChannel()
-                .filter(channel -> channel instanceof TextChannel)
+    private Mono<PermissionSet> getBotPermissions(Interaction interaction){
+        return interaction.getChannel()
+                .filter(TextChannel.class::isInstance)
                 .map(TextChannel.class::cast)
-                .flatMap(channel -> channel.getEffectivePermissions(message.getClient().getSelfId()));
+                .flatMap(channel -> channel.getEffectivePermissions(interaction.getClient().getSelfId()));
     }
 
-    private Mono<PermissionSet> getUserPermissions(Message message){
-        return message.getAuthorAsMember().flatMap(Member::getBasePermissions);
-    }
-
-    @Override
-    public String help(Language lg, String prefix){
-        return "**" + prefix + name + "** " + translator.getLabel(lg, name.toLowerCase() + ".help");
+    private Mono<PermissionSet> getUserPermissions(Interaction interaction){
+        return interaction.getMember().map(Member::getBasePermissions).orElse(Mono.empty());
     }
 
     @Override
-    public String moreHelp(Language lg, String prefix){
-        return help(lg, prefix) + arguments.stream()
+    public String help(Language lg){
+        return "**" + name + "** " + translator.getLabel(lg, name.toLowerCase() + ".help");
+    }
+
+    @Override
+    public String moreHelp(Language lg){
+        return help(lg) + arguments.stream()
                 .filter(CommandArgument::isDescribed)
                 .sorted(Comparator.comparing(CommandArgument::getOrder))
-                .map(arg -> "\n" + arg.help(lg, prefix))
+                .map(arg -> "\n" + arg.help(lg))
                 .reduce(StringUtils.EMPTY, (arg1, arg2) -> arg1 + arg2);
     }
 
@@ -117,15 +117,15 @@ public abstract class AbstractCommand implements Command {
         }
 
         @Override
-        public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-            return message.getChannel()
-                    .flatMap(channel -> channel.createMessage(getParent().moreHelp(language, prefix)))
+        public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
+            return interaction.getChannel()
+                    .flatMap(channel -> channel.createMessage(getParent().moreHelp(language)))
                     .flatMapMany(Flux::just);
         }
 
         @Override
-        public String help(Language lg, String prefix) {
-            return prefix + "`" + getParent().getName() + " help` : " + translator.getLabel(lg, "lambda.help");
+        public String help(Language lg) {
+            return "`" + getParent().getName() + " help` : " + translator.getLabel(lg, "lambda.help");
         }
     }
 }

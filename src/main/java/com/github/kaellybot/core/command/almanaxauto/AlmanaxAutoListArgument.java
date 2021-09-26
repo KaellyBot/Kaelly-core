@@ -7,6 +7,7 @@ import com.github.kaellybot.core.service.AlmanaxWebhookService;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.util.annotation.Described;
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.Channel;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,16 +33,16 @@ public class AlmanaxAutoListArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-        return  message.getGuildId().map(almanaxWebhookService::findAllByGuildId).orElse(Flux.empty())
-                .flatMap(entity -> message.getClient().getWebhookById(Snowflake.of(entity.getWebhookId()))
+    public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
+        return  interaction.getGuildId().map(almanaxWebhookService::findAllByGuildId).orElse(Flux.empty())
+                .flatMap(entity -> interaction.getClient().getWebhookById(Snowflake.of(entity.getWebhookId()))
                         .onErrorResume(error -> Mono.empty()))
-                .flatMap(webhook -> message.getClient().getChannelById(webhook.getChannelId())
+                .flatMap(webhook -> interaction.getClient().getChannelById(webhook.getChannelId())
                         .onErrorResume(error -> Mono.empty()))
                 .map(Channel::getMention)
                 .collectList()
                 .map(list -> getListLabel(language, list))
-                .zipWith(message.getChannel())
+                .zipWith(interaction.getChannel())
                 .flatMap(tuple -> tuple.getT2().createMessage(tuple.getT1()))
                 .flatMapMany(Flux::just);
     }
@@ -53,7 +54,7 @@ public class AlmanaxAutoListArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public String help(Language lg, String prefix) {
-        return prefix + "`" + getParent().getName() + "` : " + translator.getLabel(lg, "almanax-auto.help.list");
+    public String help(Language lg) {
+        return "`" + getParent().getName() + "` : " + translator.getLabel(lg, "almanax-auto.help.list");
     }
 }

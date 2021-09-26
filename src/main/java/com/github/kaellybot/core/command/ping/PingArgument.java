@@ -4,6 +4,7 @@ import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.core.command.util.AbstractCommandArgument;
 import com.github.kaellybot.core.command.util.Command;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -22,10 +23,11 @@ public class PingArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-        return message.getChannel()
+    public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
+        return interaction.getChannel()
                 .flatMap(chan -> chan.createMessage(
-                        Math.abs(Duration.between(message.getTimestamp(), Instant.now()).toMillis()) + "ms!"))
+                        Math.abs(Duration.between(interaction.getMessage().map(Message::getTimestamp)
+                                .orElse(Instant.now()), Instant.now()).toMillis()) + "ms!"))
                 .flatMapMany(Flux::just);
     }
 }

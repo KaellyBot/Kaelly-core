@@ -7,6 +7,7 @@ import com.github.kaellybot.core.model.constant.Nude;
 import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.util.annotation.NSFW;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import discord4j.rest.util.Color;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,8 +29,8 @@ public class SendNudeArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-        return message.getChannel()
+    public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
+        return interaction.getChannel()
                 .flatMap(channel -> channel.createEmbed(spec -> spec
                         .setTitle(translator.getLabel(language, "sendnude.title"))
                         .setFooter(translator.getLabel(language, "sendnude.author",

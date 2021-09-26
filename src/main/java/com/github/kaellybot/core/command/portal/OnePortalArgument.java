@@ -13,6 +13,7 @@ import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.util.annotation.Described;
 import com.github.kaellybot.core.util.annotation.DisplayOrder;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -44,19 +45,19 @@ public class OnePortalArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
+    public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
        // TODO determine server & dimension in the message
         Server server = Server.builder().labels(Map.of(language, "Mériana")).build();
         Dimension dimension = Dimension.builder().labels(Map.of(language, "Enutrosor")).build();
 
         return portalService.getPortal(server, dimension, language)
-                .flatMap(portal -> message.getChannel().flatMap(channel -> channel
+                .flatMap(portal -> interaction.getChannel().flatMap(channel -> channel
                         .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language))))
                 .flatMapMany(Flux::just);
     }
 
     @Override
-    public String help(Language lg, String prefix){
-        return prefix + "`" + getParent().getName() + " Srambad` : " + translator.getLabel(lg, "pos.one_portal");
+    public String help(Language lg){
+        return "`" + getParent().getName() + " Srambad` : " + translator.getLabel(lg, "pos.one_portal");
     }
 }

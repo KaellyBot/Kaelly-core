@@ -25,12 +25,11 @@ public class MentionTrigger extends AbstractTrigger {
 
     @Override
     public Flux<Message> execute(Message message) {
-        return translator.getPrefix(message)
-                .zipWith(translator.getLanguage(message))
-                .flatMap(tuple -> message.getChannel()
-                        .flatMap(channel -> channel.createMessage(translator.getRandomLabel(tuple.getT2(),
-                                "mention.help", tuple.getT1() + HelpCommand.COMMAND_NAME,
-                                helpNoArgument.getCommandList(tuple.getT2(), tuple.getT1())))))
+        return translator.getLanguage(message)
+                .flatMap(language -> message.getChannel()
+                        .flatMap(channel -> channel.createMessage(translator.getRandomLabel(language,
+                                "mention.help", HelpCommand.COMMAND_NAME,
+                                helpNoArgument.getCommandList(language)))))
                 .flatMapMany(Flux::just);
     }
 }

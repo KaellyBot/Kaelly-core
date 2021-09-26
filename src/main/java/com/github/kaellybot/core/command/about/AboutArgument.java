@@ -8,6 +8,7 @@ import com.github.kaellybot.core.model.constant.Donator;
 import com.github.kaellybot.core.model.constant.Graphist;
 import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import discord4j.rest.util.Color;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,8 +30,8 @@ public class AboutArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-        return message.getChannel()
+    public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
+        return interaction.getChannel()
                 .flatMap(channel -> channel.createEmbed(spec -> spec
                         .setTitle(translator.getLabel(language, "about.title",
                                 Constants.NAME, Constants.VERSION))

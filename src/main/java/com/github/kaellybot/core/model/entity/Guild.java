@@ -21,8 +21,6 @@ public class Guild {
 
     private Server server;
 
-    private String prefix;
-
     private List<ChannelLanguage> channelLanguageList;
 
     private List<ChannelServer> channelServersList;

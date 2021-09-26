@@ -10,6 +10,7 @@ import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.util.annotation.Described;
 import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -36,13 +37,13 @@ public class ResetChannelLanguageArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-        return message.getGuildId()
+    public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
+        return interaction.getGuildId()
                         .map(guildService::findById)
                         .orElse(Mono.empty())
-                        .map(guild -> resetChannelLanguage(guild, message.getChannelId().asString()))
+                        .map(guild -> resetChannelLanguage(guild, interaction.getChannelId().asString()))
                         .flatMap(guildService::update)
-                        .flatMap(guild -> message.getChannel().flatMap(channel -> channel.createMessage(translator
+                        .flatMap(guild -> interaction.getChannel().flatMap(channel -> channel.createMessage(translator
                                 .getLabel(guild.getLanguage(), "lang.updated"))))
                 .flatMapMany(Flux::just);
     }
@@ -53,7 +54,7 @@ public class ResetChannelLanguageArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public String help(Language lg, String prefix){
-        return prefix + "`" + getParent().getName() + " -channel -reset` : " + translator.getLabel(lg, "lang.reset_channel_config");
+    public String help(Language lg){
+        return "`" + getParent().getName() + " -channel -reset` : " + translator.getLabel(lg, "lang.reset_channel_config");
     }
 }

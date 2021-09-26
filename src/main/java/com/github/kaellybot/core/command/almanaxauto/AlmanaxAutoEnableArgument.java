@@ -14,6 +14,7 @@ import com.github.kaellybot.core.util.annotation.Described;
 import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,26 +46,26 @@ public class AlmanaxAutoEnableArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-        return message.getChannel().flatMapMany(chan -> ((TextChannel) chan).getWebhooks())
+    public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
+        return interaction.getChannel().flatMapMany(chan -> ((TextChannel) chan).getWebhooks())
                 .filterWhen(webhook -> almanaxWebhookService.existsById(webhook.getId()))
-                .flatMap(webhook -> message.getChannel().flatMap(channel -> channel
+                .flatMap(webhook -> interaction.getChannel().flatMap(channel -> channel
                         .createMessage(translator.getLabel(language, "almanax-auto.enable_exist"))))
-                .switchIfEmpty(message.getClient().getSelf().flatMap(self -> self.getAvatar()
-                        .zipWith(message.getChannel().map(channel -> (TextChannel) channel))
+                .switchIfEmpty(interaction.getClient().getSelf().flatMap(self -> self.getAvatar()
+                        .zipWith(interaction.getChannel().map(TextChannel.class::cast))
                         .flatMap(tuple -> tuple.getT2().createWebhook(spec -> webhookMapper.decorateSpec(spec, self, tuple.getT1()))))
                         .flatMap(webhook -> almanaxWebhookService.save(AlmanaxWebhook.builder()
                                 .webhookId(webhook.getId().asString())
                                 .webhookToken(webhook.getToken())
-                                .guildId(message.getGuildId().map(Snowflake::asString).orElse(null))
+                                .guildId(interaction.getGuildId().map(Snowflake::asString).orElse(null))
                                 .language(Constants.DEFAULT_LANGUAGE)
                                 .build()))
-                        .flatMap(webhook -> message.getChannel().flatMap(channel -> channel
+                        .flatMap(webhook -> interaction.getChannel().flatMap(channel -> channel
                                 .createMessage(translator.getLabel(language, "almanax-auto.enable")))));
     }
 
     @Override
-    public String help(Language lg, String prefix) {
-        return prefix + "`" + getParent().getName() + " true` : " + translator.getLabel(lg, "almanax-auto.help.enable");
+    public String help(Language lg) {
+        return "`" + getParent().getName() + " true` : " + translator.getLabel(lg, "almanax-auto.help.enable");
     }
 }

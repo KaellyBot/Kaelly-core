@@ -10,8 +10,6 @@ public final class Constants {
 
     private Constants(){}
 
-    public static final String DEFAULT_PREFIX = "!!";
-
     public static final Language DEFAULT_LANGUAGE = Language.FR;
 
     public static final Server UNKNOWN_SERVER = Server.builder()

@@ -6,6 +6,8 @@ import com.github.kaellybot.core.model.constant.Priority;
 import com.github.kaellybot.core.model.error.ErrorFactory;
 import com.github.kaellybot.core.util.annotation.*;
 import com.github.kaellybot.core.util.DiscordTranslator;
+import discord4j.core.object.command.ApplicationCommandInteraction;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.PrivateChannel;
@@ -45,7 +47,7 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     private final Priority priority;
     private final boolean isNSFW;
 
-    public AbstractCommandArgument(Command parent, String subPattern, DiscordTranslator translator) {
+    protected AbstractCommandArgument(Command parent, String subPattern, DiscordTranslator translator) {
         super();
         this.parent = parent;
         this.pattern = parent.getName() + subPattern;
@@ -58,13 +60,13 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
         this.isNSFW = this.getClass().isAnnotationPresent(NSFW.class);
     }
 
-    public AbstractCommandArgument(Command parent, DiscordTranslator translator) {
+    protected AbstractCommandArgument(Command parent, DiscordTranslator translator) {
         this(parent, StringUtils.EMPTY, translator);
     }
 
     @Override
-    public boolean triggerMessage(Message message, String prefix) {
-        return message.getContent().matches(Pattern.quote(prefix) + pattern);
+    public boolean triggerInteraction(Interaction interaction) {
+        return interaction.getMessage().map(message -> message.getContent().matches(pattern)).orElse(false);
     }
 
     @Override
@@ -84,38 +86,39 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
     }
 
     @Override
-    public Flux<Message> tryExecute(Message message, String prefix, Language language, PermissionSet botPermission,
+    public Flux<Message> tryExecute(Interaction interaction, Language language, PermissionSet botPermission,
                                     PermissionSet userPermission) {
         return Mono.just(isArgumentHasPermissionsNeeded(botPermission))
                 .flatMapMany(hasPermissions -> Boolean.TRUE.equals(hasPermissions) ?
-                        Flux.empty() : getParent().sendException(message, language, botPermission,
+                        Flux.empty() : getParent().sendException(interaction, language, botPermission,
                         ErrorFactory.createMissingBotPermissionError(getParent(), botPermissions)))
-                .switchIfEmpty(message.getChannel().flatMapMany(channel -> isUserHasPermissionsNeeded(userPermission) ?
-                        Flux.empty() : getParent().sendException(message, language, botPermission,
+                .switchIfEmpty(interaction.getChannel().flatMapMany(channel -> isUserHasPermissionsNeeded(userPermission) ?
+                        Flux.empty() : getParent().sendException(interaction, language, botPermission,
                         ErrorFactory.createMissingUserPermissionError(getParent(), userPermissions))))
-                .switchIfEmpty(message.getChannel().flatMapMany(channel -> isChannelNSFWCompatible(channel) ?
-                        Flux.empty() : getParent().sendException(message, language, botPermission,
+                .switchIfEmpty(interaction.getChannel().flatMapMany(channel -> isChannelNSFWCompatible(channel) ?
+                        Flux.empty() : getParent().sendException(interaction, language, botPermission,
                         ErrorFactory.createMissingNSFWOptionError())))
-                .switchIfEmpty(execute(message, prefix, language, botPermission));
+                .switchIfEmpty(execute(interaction, language, botPermission));
     }
 
-    private Flux<Message> execute(Message message, String prefix, Language language, PermissionSet permissions) {
-        return Mono.just(Pattern.compile(Pattern.quote(prefix) + pattern).matcher(message.getContent()))
+    private Flux<Message> execute(Interaction interaction, Language language, PermissionSet permissions) {
+        return Mono.just(Pattern.compile(pattern).matcher(interaction.getMessage().map(Message::getContent).orElse(StringUtils.EMPTY)))
                 .filter(Matcher::matches)
-                .flatMapMany(matcher -> execute(message, prefix, language, matcher))
-                .onErrorResume(error -> manageUnknownException(message, error))
-                .switchIfEmpty(getParent().sendException(message, language, permissions, ErrorFactory.createUnknownError()));
+                .flatMapMany(matcher -> execute(interaction, language, matcher))
+                .onErrorResume(error -> manageUnknownException(interaction, error))
+                .switchIfEmpty(getParent().sendException(interaction, language, permissions, ErrorFactory.createUnknownError()));
     }
 
-    public abstract Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher);
+    public abstract Flux<Message> execute(Interaction interaction, Language language, Matcher matcher);
 
-    protected Flux<Message> manageUnknownException(Message message, Throwable error) {
-        LOG.error("Error with the following command: {}", message.getContent(), error);
+    protected Flux<Message> manageUnknownException(Interaction interaction, Throwable error) {
+        LOG.error("Error with the following command: {}", interaction.getCommandInteraction()
+                .flatMap(ApplicationCommandInteraction::getName), error);
         return Flux.empty();
     }
 
     @Override
-    public String help(Language lg, String prefix) {
-        return prefix + parent.getName();
+    public String help(Language lg) {
+        return parent.getName();
     }
 }

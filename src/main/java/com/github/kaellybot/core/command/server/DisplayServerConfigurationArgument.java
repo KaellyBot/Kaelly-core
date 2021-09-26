@@ -10,6 +10,7 @@ import com.github.kaellybot.core.service.GuildService;
 import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.util.annotation.Described;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,13 +44,13 @@ public class DisplayServerConfigurationArgument extends AbstractCommandArgument 
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-        return Mono.zip(message.getGuild(),
-                message.getGuild().flatMapMany(Guild::getChannels).collectList(),
-                message.getGuildId().map(guildService::findById).orElse(Mono.empty()),
-                translator.getServer(message),
+    public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
+        return Mono.zip(interaction.getGuild(),
+                interaction.getGuild().flatMapMany(Guild::getChannels).collectList(),
+                interaction.getGuildId().map(guildService::findById).orElse(Mono.empty()),
+                translator.getServer(interaction),
                 serverService.findAll().filter(server -> Constants.GAME.equals(server.getGame())).collectList())
-                .flatMap(tuple -> message.getChannel()
+                .flatMap(tuple -> interaction.getChannel()
                         .flatMap(channel -> channel.createEmbed(spec -> serverSnapshotMapper
                                 .decorateSpec(spec, tuple.getT1(), tuple.getT2(), tuple.getT3(), tuple.getT4(),
                                         tuple.getT5(), language))))
@@ -57,7 +58,7 @@ public class DisplayServerConfigurationArgument extends AbstractCommandArgument 
     }
 
     @Override
-    public String help(Language lg, String prefix){
-        return prefix + "`" + getParent().getName() + "` : " + translator.getLabel(lg, "server.display_config");
+    public String help(Language lg){
+        return "`" + getParent().getName() + "` : " + translator.getLabel(lg, "server.display_config");
     }
 }

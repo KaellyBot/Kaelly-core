@@ -9,6 +9,7 @@ import com.github.kaellybot.core.service.PortalService;
 import com.github.kaellybot.core.util.annotation.BotPermissions;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.util.annotation.Described;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -36,18 +37,18 @@ public class AllPortalsArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-        return translator.getServer(message)
+    public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
+        return translator.getServer(interaction)
                 .filter(Predicate.not(Constants.UNKNOWN_SERVER::equals))
                 .flatMapMany(server -> portalService.getPortals(server, language))
-                .flatMap(portal -> message.getChannel().flatMap(channel -> channel
+                .flatMap(portal -> interaction.getChannel().flatMap(channel -> channel
                         .createEmbed(spec -> portalMapper.decorateSpec(spec, portal, language))))
-                .switchIfEmpty(message.getChannel().flatMap(channel -> channel
+                .switchIfEmpty(interaction.getChannel().flatMap(channel -> channel
                         .createMessage(translator.getLabel(language, "pos.default_server_not_found"))));
     }
 
     @Override
-    public String help(Language lg, String prefix){
-        return prefix + "`" + getParent().getName() + "` : " + translator.getLabel(lg, "pos.all_portals");
+    public String help(Language lg){
+        return "`" + getParent().getName() + "` : " + translator.getLabel(lg, "pos.all_portals");
     }
 }

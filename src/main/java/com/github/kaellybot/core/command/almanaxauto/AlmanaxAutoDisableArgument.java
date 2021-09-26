@@ -10,6 +10,7 @@ import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.util.annotation.Described;
 import com.github.kaellybot.core.util.annotation.DisplayOrder;
 import com.github.kaellybot.core.util.annotation.UserPermissions;
+import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,16 +39,16 @@ public class AlmanaxAutoDisableArgument extends AbstractCommandArgument {
     }
 
     @Override
-    public Flux<Message> execute(Message message, String prefix, Language language, Matcher matcher) {
-        return message.getChannel().flatMapMany(chan -> ((TextChannel) chan).getWebhooks())
+    public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
+        return interaction.getChannel().flatMapMany(chan -> ((TextChannel) chan).getWebhooks())
                 .flatMap(webhook -> almanaxWebhookService.deleteById(webhook.getId()).then(webhook.delete()))
-                .then(message.getChannel())
+                .then(interaction.getChannel())
                 .flatMap(channel -> channel.createMessage(translator.getLabel(language, "almanax-auto.disable")))
                 .flatMapMany(Flux::just);
     }
 
     @Override
-    public String help(Language lg, String prefix) {
-        return prefix + "`" + getParent().getName() + " false` : " + translator.getLabel(lg, "almanax-auto.help.disable");
+    public String help(Language lg) {
+        return "`" + getParent().getName() + " false` : " + translator.getLabel(lg, "almanax-auto.help.disable");
     }
 }
