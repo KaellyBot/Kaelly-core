@@ -3,7 +3,7 @@ package com.github.kaellybot.core.mapper;
 import com.github.kaellybot.commons.model.constants.Language;
 import com.github.kaellybot.core.payload.kaelly.portal.PortalDto;
 import com.github.kaellybot.core.util.DiscordTranslator;
-import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.core.spec.legacy.LegacyEmbedCreateSpec;
 import discord4j.rest.util.Color;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public class PortalMapper {
         this.translator = translator;
     }
 
-    public void decorateSpec(EmbedCreateSpec spec, PortalDto portal, Language language){
+    public void decorateSpec(LegacyEmbedCreateSpec spec, PortalDto portal, Language language){
         spec.setTitle(portal.getDimension().getName())
                 .setThumbnail(portal.getDimension().getImage())
                 .setColor(Color.of(portal.getDimension().getColor()));

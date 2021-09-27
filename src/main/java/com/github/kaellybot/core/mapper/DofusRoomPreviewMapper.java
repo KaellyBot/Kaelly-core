@@ -11,6 +11,7 @@ import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.spec.MessageCreateSpec;
 import static com.github.kaellybot.core.util.DofusRoomPreviewProcessor.ItemPosition;
 
+import discord4j.core.spec.legacy.LegacyMessageCreateSpec;
 import discord4j.rest.util.Color;
 import org.openimaj.image.MBFImage;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,7 @@ public class DofusRoomPreviewMapper {
         this.dofusRoomPreviewProcessor = dofusRoomPreviewProcessor;
     }
 
-    public void decorateSpec(MessageCreateSpec spec, PreviewDto preview, Language language){
+    public void decorateSpec(LegacyMessageCreateSpec spec, PreviewDto preview, Language language){
         spec.setEmbed(embedSpec -> embedSpec.setTitle(preview.getData().getName())
                 .setDescription(translator.getLabel(language,
                         preview.isPrivate() ? "dofusroom.private.made_by" : "dofusroom.public.made_by",

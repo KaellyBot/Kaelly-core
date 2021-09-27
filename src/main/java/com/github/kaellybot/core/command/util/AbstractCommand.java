@@ -6,14 +6,15 @@ import com.github.kaellybot.core.model.constant.Constants;
 import com.github.kaellybot.core.model.error.ErrorFactory;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import com.github.kaellybot.core.model.constant.PermissionScope;
-import com.github.kaellybot.core.model.constant.Priority;
 import com.github.kaellybot.core.util.annotation.Hidden;
-import com.github.kaellybot.core.util.annotation.PriorityProcessing;
 import com.github.kaellybot.core.util.annotation.SuperAdministrator;
+import discord4j.core.event.domain.interaction.ApplicationCommandInteractionEvent;
 import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.discordjson.json.ApplicationCommandRequest;
+import discord4j.discordjson.json.ImmutableApplicationCommandRequest;
 import discord4j.rest.http.client.ClientException;
 import discord4j.rest.util.PermissionSet;
 import lombok.Getter;
@@ -23,12 +24,8 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.PostConstruct;
 import java.util.Comparator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Getter
 public abstract class AbstractCommand implements Command {
@@ -50,29 +47,32 @@ public abstract class AbstractCommand implements Command {
         this.translator = translator;
     }
 
-    @PostConstruct
-    public void init() {
-        this.arguments = Stream.concat(arguments.stream(),
-                Stream.of(new CommonHelpArgument(this, translator)))
-                .collect(Collectors.toList());
+    @Override
+    public ApplicationCommandRequest getApplicationCommandRequest() {
+        ImmutableApplicationCommandRequest.Builder builder = ApplicationCommandRequest.builder()
+                .name(getName())
+                .description(help(Constants.DEFAULT_LANGUAGE));
+        return builder.build();
     }
 
     @Override
-    public final Flux<Message> request(Interaction interaction, Language language) {
-        return getBotPermissions(interaction)
-                .zipWith(getUserPermissions(interaction))
+    public final Flux<Void> request(ApplicationCommandInteractionEvent event, Language language) {
+        return getBotPermissions(event.getInteraction())
+                .zipWith(getUserPermissions(event.getInteraction()))
                 .flatMapMany(tuple -> Flux.fromIterable(arguments)
-                        .filter(argument -> argument.triggerInteraction(interaction))
-                        .sort(Comparator.comparing(CommandArgument::getPriority)).take(1)
-                        .flatMap(argument -> argument.tryExecute(interaction, language, tuple.getT1(), tuple.getT2()))
-                        .switchIfEmpty(manageMisusedCommandError(interaction, language, tuple.getT1())));
+                        .filter(argument -> argument.triggerInteraction(event.getInteraction()))
+                        .sort(Comparator.comparing(CommandArgument::getPriority))
+                        .take(1)
+                        .flatMap(argument -> argument.tryExecute(event.getInteraction(), language, tuple.getT1(), tuple.getT2()))
+                        .thenMany(Flux.empty()));
     }
 
-    private Flux<Message> manageMisusedCommandError(Interaction interaction, Language language, PermissionSet permissions){
+    private Flux<Void> manageMisusedCommandError(Interaction interaction, Language language, PermissionSet permissions){
         return Flux.just(interaction.getMessage().map(message -> message.getContent().startsWith(getName())).orElse(false))
                 .filter(Boolean.TRUE::equals)
                 .flatMap(result -> sendException(interaction, language, permissions,
-                        ErrorFactory.createMisusedCommandError(this)));
+                        ErrorFactory.createMisusedCommandError(this)))
+                .thenMany(Flux.empty());
     }
 
     public Flux<Message> sendException(Interaction interaction, Language language, PermissionSet permissions, Error error){
@@ -107,25 +107,5 @@ public abstract class AbstractCommand implements Command {
                 .sorted(Comparator.comparing(CommandArgument::getOrder))
                 .map(arg -> "\n" + arg.help(lg))
                 .reduce(StringUtils.EMPTY, (arg1, arg2) -> arg1 + arg2);
-    }
-
-    @PriorityProcessing(Priority.HIGH)
-    private static class CommonHelpArgument extends AbstractCommandArgument {
-
-        public CommonHelpArgument(Command parent, DiscordTranslator translator) {
-            super(parent, "\\s+help", translator);
-        }
-
-        @Override
-        public Flux<Message> execute(Interaction interaction, Language language, Matcher matcher) {
-            return interaction.getChannel()
-                    .flatMap(channel -> channel.createMessage(getParent().moreHelp(language)))
-                    .flatMapMany(Flux::just);
-        }
-
-        @Override
-        public String help(Language lg) {
-            return "`" + getParent().getName() + " help` : " + translator.getLabel(lg, "lambda.help");
-        }
     }
 }

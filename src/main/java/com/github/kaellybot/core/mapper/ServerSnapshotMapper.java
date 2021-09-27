@@ -7,6 +7,7 @@ import com.github.kaellybot.core.model.entity.Guild;
 import com.github.kaellybot.core.util.DiscordTranslator;
 import discord4j.core.object.entity.channel.GuildChannel;
 import discord4j.core.spec.EmbedCreateSpec;
+import discord4j.core.spec.legacy.LegacyEmbedCreateSpec;
 import discord4j.rest.util.Color;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class ServerSnapshotMapper {
 
     private final DiscordTranslator translator;
 
-    public void decorateSpec(EmbedCreateSpec spec, discord4j.core.object.entity.Guild discordGuild,
+    public void decorateSpec(LegacyEmbedCreateSpec spec, discord4j.core.object.entity.Guild discordGuild,
                              List<GuildChannel> channels, Guild guild, Server currentServer,
                              List<Server> serverList, Language language){
         spec.setTitle(translator.getLabel(language, "server.status_title", GAME.getName().toUpperCase()))

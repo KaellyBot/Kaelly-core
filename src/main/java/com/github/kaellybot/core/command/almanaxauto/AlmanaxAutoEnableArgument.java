@@ -17,6 +17,7 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.object.command.Interaction;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.channel.TextChannel;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -56,7 +57,7 @@ public class AlmanaxAutoEnableArgument extends AbstractCommandArgument {
                         .flatMap(tuple -> tuple.getT2().createWebhook(spec -> webhookMapper.decorateSpec(spec, self, tuple.getT1()))))
                         .flatMap(webhook -> almanaxWebhookService.save(AlmanaxWebhook.builder()
                                 .webhookId(webhook.getId().asString())
-                                .webhookToken(webhook.getToken())
+                                .webhookToken(webhook.getToken().orElse(StringUtils.EMPTY))
                                 .guildId(interaction.getGuildId().map(Snowflake::asString).orElse(null))
                                 .language(Constants.DEFAULT_LANGUAGE)
                                 .build()))

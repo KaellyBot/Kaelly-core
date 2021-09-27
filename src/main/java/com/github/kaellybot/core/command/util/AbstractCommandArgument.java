@@ -66,7 +66,10 @@ public abstract class AbstractCommandArgument implements CommandArgument<Message
 
     @Override
     public boolean triggerInteraction(Interaction interaction) {
-        return interaction.getMessage().map(message -> message.getContent().matches(pattern)).orElse(false);
+        return interaction.getCommandInteraction()
+                .flatMap(ApplicationCommandInteraction::getName)
+                .map(name -> name.equals(getParent().getName()))
+                .orElse(false);
     }
 
     @Override

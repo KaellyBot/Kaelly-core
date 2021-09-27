@@ -11,21 +11,31 @@ import discord4j.core.event.domain.guild.GuildDeleteEvent;
 import discord4j.core.event.domain.interaction.ApplicationCommandInteractionEvent;
 import discord4j.core.event.domain.lifecycle.ReconnectEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import discord4j.core.object.presence.Activity;
-import discord4j.core.object.presence.Presence;
+import discord4j.core.object.presence.ClientActivity;
+import discord4j.core.object.presence.ClientPresence;
 import discord4j.core.shard.MemberRequestFilter;
+import discord4j.discordjson.json.ApplicationCommandData;
+import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
+import discord4j.rest.service.ApplicationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 @Service
 public class DiscordService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DiscordService.class);
 
     private DiscordClient discordClient;
 
@@ -57,7 +67,7 @@ public class DiscordService {
                             Intent.GUILD_MESSAGES,
                             Intent.GUILD_MESSAGE_REACTIONS,
                             Intent.DIRECT_MESSAGES))
-                    .setInitialPresence(ignored -> Presence.online(Activity.playing(Constants.GAME.getName().toUpperCase())))
+                    .setInitialPresence(ignored -> ClientPresence.online(ClientActivity.playing(Constants.GAME.getName().toUpperCase())))
                     .setMemberRequestFilter(MemberRequestFilter.none())
                     .withGateway(client -> Mono.when(
                         reconnectListener(client),
@@ -66,16 +76,17 @@ public class DiscordService {
                         commandListener(client),
                         triggerListener(client)))
                     .subscribe();
+
+            registerCommands(discordClient);
         }
     }
 
     private Mono<Void> commandListener(GatewayDiscordClient client){
         return client.getEventDispatcher().on(ApplicationCommandInteractionEvent.class)
-                .map(ApplicationCommandInteractionEvent::getInteraction)
-                .filter(interaction -> ! interaction.getUser().isBot())
-                .flatMap(interaction -> translator.getLanguage(interaction)
+                .filter(event -> ! event.getInteraction().getUser().isBot())
+                .flatMap(event -> translator.getLanguage(event.getInteraction())
                         .flatMapMany(language -> Flux.fromIterable(commands)
-                                .flatMap(cmd -> cmd.request(interaction, language))))
+                                .flatMap(cmd -> cmd.request(event, language))))
                 .then();
     }
 
@@ -91,7 +102,7 @@ public class DiscordService {
     private Mono<Void> reconnectListener(GatewayDiscordClient client){
         return client.getEventDispatcher().on(ReconnectEvent.class)
                 .flatMap(event -> event.getClient()
-                        .updatePresence(Presence.online(Activity.playing(Constants.GAME.getName().toUpperCase()))))
+                        .updatePresence(ClientPresence.online(ClientActivity.playing(Constants.GAME.getName().toUpperCase()))))
                 .then();
     }
 
@@ -109,5 +120,51 @@ public class DiscordService {
                 .map(GuildDeleteEvent::getGuildId)
                 .flatMap(guildService::deleteById)
                 .then();
+    }
+
+    private void registerCommands(DiscordClient client){
+        ApplicationService applicationService = client.getApplicationService();
+        final long applicationId = discordClient.getApplicationId().block();
+        Map<String, ApplicationCommandData> discordCommands = applicationService
+                .getGlobalApplicationCommands(applicationId)
+                .collectMap(ApplicationCommandData::name)
+                .blockOptional().orElse(Collections.emptyMap());
+        Map<String, ApplicationCommandRequest> localCommands = new HashMap<>();
+        for(Command command : commands){
+            localCommands.put(command.getName(), command.getApplicationCommandRequest());
+            if (! discordCommands.containsKey(command.getName())) {
+                applicationService.createGlobalApplicationCommand(applicationId, localCommands.get(command.getName())).block();
+                LOG.info("Created global command: {}", command.getName());
+            }
+        }
+
+        for (ApplicationCommandData discordCommand : discordCommands.values()) {
+            long discordCommandId = Long.parseLong(discordCommand.id());
+            ApplicationCommandRequest command = localCommands.get(discordCommand.name());
+
+            if (command == null) {
+                applicationService.deleteGlobalApplicationCommand(applicationId, discordCommandId).block();
+                LOG.info("Deleted global command: {}", discordCommand.name());
+                continue;
+            }
+
+            if (hasChanged(discordCommand, command)) {
+                applicationService.modifyGlobalApplicationCommand(applicationId, discordCommandId, command).block();
+                LOG.info("Updated global command: {}", command.name());
+            }
+        }
+    }
+
+    private boolean hasChanged(ApplicationCommandData discordCommand, ApplicationCommandRequest command) {
+        boolean isDescriptionChanged = !command.description().toOptional()
+                .map(desc -> desc.equals(discordCommand.description()))
+                .orElse(true);
+        if (isDescriptionChanged) return true;
+
+        boolean isPermissionChanged = ! discordCommand.defaultPermission().toOptional().orElse(true)
+                .equals(command.defaultPermission().toOptional().orElse(true));
+        if (isPermissionChanged) return true;
+
+        return !discordCommand.options().equals(command.options());
     }
 }
